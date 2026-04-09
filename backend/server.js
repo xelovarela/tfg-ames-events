@@ -3,6 +3,8 @@ const cors = require('cors');
 require('dotenv').config();
 
 const eventsRoutes = require('./src/routes/events');
+const categoriesRoutes = require('./src/routes/categories');
+const locationsRoutes = require('./src/routes/locations');
 
 const app = express();
 
@@ -15,8 +17,11 @@ app.get('/', (req, res) => {
   res.send('API Ames Events funcionando 🚀');
 });
 
-// Ruta de eventos
+// Ruta de eventos, categorias y ubicaciones
 app.use('/events', eventsRoutes);
+
+app.use('/categories', categoriesRoutes);
+app.use('/locations', locationsRoutes);
 
 // Puerto
 const PORT = process.env.PORT || 3001;

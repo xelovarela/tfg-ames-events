@@ -2,10 +2,23 @@ const express = require('express');
 const router = express.Router();
 const db = require('../config/db');
 
-
+// GET /events
 router.get('/', async (req, res) => {
   try {
-    const [rows] = await db.query('SELECT id, title, category, lat, lng FROM events');
+    const [rows] = await db.query(`
+      SELECT 
+        e.id,
+        e.title,
+        c.name AS category,
+        l.name AS location,
+        l.lat,
+        l.lng
+      FROM events e
+      JOIN categories c ON e.category_id = c.id
+      JOIN locations l ON e.location_id = l.id
+      ORDER BY e.id
+    `);
+
     res.json(rows);
   } catch (error) {
     console.error('Error retrieving events:', error);
@@ -13,13 +26,26 @@ router.get('/', async (req, res) => {
   }
 });
 
+// GET /events/:id
 router.get('/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const [rows] = await db.query(
-      'SELECT id, title, category, lat, lng FROM events WHERE id = ?',
-      [id]
-    );
+
+    const [rows] = await db.query(`
+      SELECT 
+        e.id,
+        e.title,
+        c.name AS category,
+        l.name AS location,
+        l.lat,
+        l.lng,
+        e.category_id,
+        e.location_id
+      FROM events e
+      JOIN categories c ON e.category_id = c.id
+      JOIN locations l ON e.location_id = l.id
+      WHERE e.id = ?
+    `, [id]);
 
     if (rows.length === 0) {
       return res.status(404).json({ error: 'Event not found' });
@@ -32,17 +58,18 @@ router.get('/:id', async (req, res) => {
   }
 });
 
+// POST /events
 router.post('/', async (req, res) => {
   try {
-    const { title, category, lat, lng } = req.body;
+    const { title, category_id, location_id } = req.body;
 
-    if (!title || !category || lat === undefined || lng === undefined) {
+    if (!title || !category_id || !location_id) {
       return res.status(400).json({ error: 'Missing required fields' });
     }
 
     const [result] = await db.query(
-      'INSERT INTO events (title, category, lat, lng) VALUES (?, ?, ?, ?)',
-      [title, category, lat, lng]
+      'INSERT INTO events (title, category_id, location_id) VALUES (?, ?, ?)',
+      [title, category_id, location_id]
     );
 
     res.status(201).json({
@@ -55,18 +82,19 @@ router.post('/', async (req, res) => {
   }
 });
 
+// PUT /events/:id
 router.put('/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, category, lat, lng } = req.body;
+    const { title, category_id, location_id } = req.body;
 
-    if (!title || !category || lat === undefined || lng === undefined) {
+    if (!title || !category_id || !location_id) {
       return res.status(400).json({ error: 'Missing required fields' });
     }
 
     const [result] = await db.query(
-      'UPDATE events SET title = ?, category = ?, lat = ?, lng = ? WHERE id = ?',
-      [title, category, lat, lng, id]
+      'UPDATE events SET title = ?, category_id = ?, location_id = ? WHERE id = ?',
+      [title, category_id, location_id, id]
     );
 
     if (result.affectedRows === 0) {
@@ -80,6 +108,7 @@ router.put('/:id', async (req, res) => {
   }
 });
 
+// DELETE /events/:id
 router.delete('/:id', async (req, res) => {
   try {
     const { id } = req.params;
