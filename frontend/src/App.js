@@ -1,28 +1,32 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './App.css';
 import AmesMap from './AmesMap';
+import EventForm from './EventForm';
 
 function App() {
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+
+  const handleEventCreated = () => {
+    setRefreshTrigger(prev => prev + 1);
+  };
+
   return (
     <div className="app-container">
-      {/* 1. Header más fino */}
       <header className="app-header">
         <h1>Ames Events</h1>
       </header>
 
-      {/* 2. Barra de Menú/Usuario (estilo App móvil) */}
       <nav className="app-toolbar">
-        <div className="icon-btn">☰</div> {/* Icono de Menú */}
+        <div className="icon-btn">☰</div>
         <div className="search-placeholder">Search events...</div>
-        <div className="icon-btn">👤</div> {/* Icono de Usuario */}
+        <div className="icon-btn">👤</div>
       </nav>
 
-      {/* 3. Contenedor del Mapa */}
       <main className="app-main">
-        <AmesMap />
+        <EventForm onEventCreated={handleEventCreated} />
+        <AmesMap refreshTrigger={refreshTrigger} />
       </main>
 
-      {/* 4. Footer pequeño */}
       <footer className="app-footer">
         <p>Angel Varela - 2026</p>
       </footer>
