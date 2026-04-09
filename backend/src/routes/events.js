@@ -1,25 +1,15 @@
 const express = require('express');
 const router = express.Router();
+const db = require('../config/db');
 
-const events = [
-  {
-    id: 1,
-    title: "Cuentacuentos en Ames",
-    category: "Cultura",
-    lat: 42.859,
-    lng: -8.652
-  },
-  {
-    id: 2,
-    title: "Taller infantil",
-    category: "Educación",
-    lat: 42.861,
-    lng: -8.654
+router.get('/', async (req, res) => {
+  try {
+    const [rows] = await db.query('SELECT id, title, category, lat, lng FROM events');
+    res.json(rows);
+  } catch (error) {
+    console.error('Error retrieving events:', error);
+    res.status(500).json({ error: 'Error retrieving events from database' });
   }
-];
-
-router.get('/', (req, res) => {
-  res.json(events);
 });
 
 module.exports = router;
