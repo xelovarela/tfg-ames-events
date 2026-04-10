@@ -1,0 +1,94 @@
+.event-form-card {
+  padding: 1rem;
+  background: #f5f5f5;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.event-form-title {
+  margin: 0 0 1rem 0;
+}
+
+.event-form {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.5rem;
+}
+
+.event-form-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.event-form-input {
+  width: 100%;
+  padding: 0.7rem;
+  border: 1px solid #cfcfcf;
+  border-radius: 6px;
+  font-size: 1rem;
+}
+
+.event-form-input:focus {
+  outline: 2px solid #f5b2b2;
+  border-color: #b30000;
+}
+
+.event-form-age-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.6rem;
+}
+
+.event-form-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.event-btn {
+  border: 0;
+  border-radius: 6px;
+  padding: 0.7rem 1rem;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.event-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.event-btn-primary {
+  background: #b30000;
+  color: #fff;
+}
+
+.event-btn-secondary {
+  background: #e4e4e4;
+  color: #222;
+}
+
+.event-form-message {
+  margin: 0.75rem 0 0 0;
+  font-size: 0.95rem;
+}
+
+@media (max-width: 680px) {
+  .event-form-card {
+    padding: 0.85rem;
+  }
+
+  .event-form-actions {
+    flex-direction: column;
+  }
+
+  .event-form-age-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .event-btn {
+    width: 100%;
+    min-height: 44px;
+  }
+}

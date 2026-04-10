@@ -1,4 +1,4 @@
-const express = require('express');
+﻿const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 
@@ -14,7 +14,7 @@ app.use(express.json());
 
 // Ruta de prueba
 app.get('/', (req, res) => {
-  res.send('API Ames Events funcionando 🚀');
+  res.send('API Ames Events funcionando');
 });
 
 // Ruta de eventos, categorias y ubicaciones

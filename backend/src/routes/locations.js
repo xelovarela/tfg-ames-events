@@ -1,18 +1,12 @@
 const express = require('express');
-const router = express.Router();
-const db = require('../config/db');
+const locationsController = require('../controllers/locationsController');
 
-// GET /locations
-router.get('/', async (req, res) => {
-  try {
-    const [rows] = await db.query(
-      'SELECT id, name, lat, lng FROM locations ORDER BY name'
-    );
-    res.json(rows);
-  } catch (error) {
-    console.error('Error retrieving locations:', error);
-    res.status(500).json({ error: 'Error retrieving locations from database' });
-  }
-});
+const router = express.Router();
+
+router.get('/', locationsController.getAll);
+router.get('/:id', locationsController.getById);
+router.post('/', locationsController.create);
+router.put('/:id', locationsController.update);
+router.delete('/:id', locationsController.remove);
 
 module.exports = router;

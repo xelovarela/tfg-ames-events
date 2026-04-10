@@ -1,0 +1,92 @@
+.categories-card {
+  padding: 1rem;
+  background: #f7f7f7;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.categories-title {
+  margin: 0 0 1rem;
+}
+
+.categories-form {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.6rem;
+  align-items: center;
+}
+
+.categories-input {
+  width: 100%;
+  padding: 0.65rem;
+  border: 1px solid #cdcdcd;
+  border-radius: 6px;
+  font-size: 0.95rem;
+}
+
+.categories-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.categories-btn {
+  border: 0;
+  border-radius: 6px;
+  padding: 0.6rem 0.95rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.categories-btn-primary {
+  background: #b30000;
+  color: #fff;
+}
+
+.categories-btn-secondary {
+  background: #e4e4e4;
+  color: #222;
+}
+
+.categories-btn-danger {
+  background: #d64545;
+  color: #fff;
+}
+
+.categories-message {
+  margin: 0.75rem 0 0;
+}
+
+.categories-list {
+  margin-top: 1rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 0.7rem;
+}
+
+.categories-item {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 0.8rem;
+  background: #fff;
+}
+
+.categories-item-actions {
+  margin-top: 0.6rem;
+  display: flex;
+  gap: 0.45rem;
+}
+
+@media (max-width: 720px) {
+  .categories-form {
+    grid-template-columns: 1fr;
+  }
+
+  .categories-actions {
+    flex-direction: column;
+  }
+
+  .categories-btn {
+    width: 100%;
+    min-height: 44px;
+  }
+}

@@ -1,70 +1,109 @@
-# Getting Started with Create React App
+# Ames Events - TFG
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Aplicacion web para gestionar y visualizar eventos infantiles geolocalizados en Ames.
 
-## Available Scripts
+## Stack
+- Frontend: React + Leaflet
+- Backend: Node.js + Express (REST API)
+- Base de datos: MySQL
 
-In the project directory, you can run:
+## Estado Actual
+- Mapa interactivo con Leaflet y agrupacion de eventos por ubicacion.
+- CRUD de eventos.
+- CRUD completo de categorias.
+- CRUD completo de ubicaciones.
+- Validaciones backend y frontend para datos clave.
+- Modelo `events` actualizado a v2 con:
+  - `event_date`
+  - `is_free`
+  - `price`
+  - `min_age`
+  - `max_age`
 
-### `npm start`
+## Estructura
+- `frontend/`: SPA React
+- `backend/`: API Express
+- `database/`: schema, seed y migraciones SQL
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Requisitos
+- Node.js 18+ (recomendado)
+- MySQL 8+
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Configuracion
+### Backend `.env`
+1. Copia `backend/.env.example` como `backend/.env`
+2. Ajusta credenciales:
 
-### `npm test`
+```env
+DB_HOST=localhost
+DB_USER=root
+DB_PASSWORD=your_password
+DB_NAME=ames_events
+DB_PORT=3306
+PORT=3001
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Base de Datos
+### Opcion A: instalacion limpia
+Ejecuta:
+- `database/schema.sql`
+- `database/seed.sql`
 
-### `npm run build`
+### Opcion B: base ya existente (migrar `events` a v2)
+Ejecuta:
+- `database/migrate_events_v2.sql`
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Ejecucion
+### Backend
+```powershell
+cd backend
+npm install
+node server.js
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### Frontend
+```powershell
+cd frontend
+npm install
+npm start
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## URLs
+- Frontend: `http://localhost:3000`
+- Backend: `http://localhost:3001`
 
-### `npm run eject`
+## Endpoints Principales
+### Events
+- `GET /events`
+- `GET /events/:id`
+- `POST /events`
+- `PUT /events/:id`
+- `DELETE /events/:id`
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### Categories
+- `GET /categories`
+- `GET /categories/:id`
+- `POST /categories`
+- `PUT /categories/:id`
+- `DELETE /categories/:id`
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### Locations
+- `GET /locations`
+- `GET /locations/:id`
+- `POST /locations`
+- `PUT /locations/:id`
+- `DELETE /locations/:id`
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## Notas de Validacion (Events v2)
+- `title`: obligatorio, maximo 150 caracteres.
+- `category_id`, `location_id`: enteros positivos existentes.
+- `is_free`: obligatorio (`1/0` o booleano).
+- Si `is_free = 0`, `price > 0`.
+- `event_date`: opcional.
+- `min_age` y `max_age`: opcionales, pero deben ir juntos si se informan.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+## Build Frontend
+```powershell
+cd frontend
+npm run build
+```

@@ -1,30 +1,24 @@
-html, body, #root {
-  height: 100%;
+﻿html, body, #root {
   margin: 0;
   padding: 0;
-  overflow: hidden; /* Prohibido el scroll en la ventana principal */
+  min-height: 100%;
+  /* Quitamos overflow: hidden */
 }
 
 * {
-  box-sizing: border-box; /* Para que el padding no sume tamaño extra */
+  box-sizing: border-box;
 }
+
 .app-container {
   display: flex;
   flex-direction: column;
-  height: 100dvh; /* Altura exacta del dispositivo */
-  width: 100vw;
-  overflow: hidden;
-}
-
-.app-main {
-  flex: 1; /* El mapa se estira para ocupar el hueco exacto */
+  min-height: 100vh;
   width: 100%;
-  position: relative;
-  overflow: hidden;
+  /* Quitamos overflow: hidden */
 }
 
 .app-header {
-  background-color: #b30000; /* Un rojo institucional */
+  background-color: #b30000;
   color: white;
   padding: 5px 15px;
   text-align: center;
@@ -62,8 +56,10 @@ html, body, #root {
 }
 
 .app-main {
-  flex-grow: 1; /* El mapa ocupa todo el espacio sobrante */
-  position: relative;
+  flex: 1;
+  width: 100%;
+  padding: 1rem;
+  /* Quitamos overflow: hidden */
 }
 
 .app-footer {
