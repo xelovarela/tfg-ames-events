@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
+import { useNavigate } from 'react-router-dom';
 import { API_BASE_URL } from './config';
 
 // Correccion para los iconos de Leaflet en React
@@ -15,6 +16,7 @@ L.Icon.Default.mergeOptions({
 const AmesMap = ({ refreshTrigger }) => {
   const amesCenter = [42.8595, -8.65];
   const [groupedLocations, setGroupedLocations] = useState([]);
+  const navigate = useNavigate();
 
   const formatDate = (value) => {
     if (!value) return 'Sin fecha';
@@ -102,12 +104,16 @@ const AmesMap = ({ refreshTrigger }) => {
         {groupedLocations.map((locationGroup, index) => (
           <Marker key={index} position={[locationGroup.lat, locationGroup.lng]}>
             <Popup>
-              <div>
-                <strong>{locationGroup.location}</strong>
-                <br />
-                <br />
+              <div className="map-popup">
+                <strong className="map-popup-location">{locationGroup.location}</strong>
+                <div className="map-popup-events">
                 {locationGroup.events.map((event) => (
-                  <div key={event.id} style={{ marginBottom: '0.5rem' }}>
+                  <button
+                    key={event.id}
+                    type="button"
+                    className="map-event-card"
+                    onClick={() => navigate(`/events/${event.id}`)}
+                  >
                     <strong>{event.title}</strong>
                     <br />
                     Categoria: {event.category}
@@ -121,8 +127,9 @@ const AmesMap = ({ refreshTrigger }) => {
                     Precio: {formatPrice(event)}
                     <br />
                     Edad: {formatAgeRange(event)}
-                  </div>
+                  </button>
                 ))}
+                </div>
               </div>
             </Popup>
           </Marker>
