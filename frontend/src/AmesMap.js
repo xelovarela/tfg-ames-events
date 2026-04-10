@@ -13,10 +13,11 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
 });
 
-const AmesMap = ({ refreshTrigger }) => {
+const AmesMap = ({ refreshTrigger, events: externalEvents }) => {
   const amesCenter = [42.8595, -8.65];
   const [groupedLocations, setGroupedLocations] = useState([]);
   const navigate = useNavigate();
+  const isControlled = Array.isArray(externalEvents);
 
   const formatDate = (value) => {
     if (!value) return 'Sin fecha';
@@ -42,7 +43,48 @@ const AmesMap = ({ refreshTrigger }) => {
     return `${event.min_age}-${event.max_age} anios`;
   };
 
-  const loadEvents = () => {
+  const groupEventsByLocation = (data) => {
+    if (!Array.isArray(data)) {
+      setGroupedLocations([]);
+      return;
+    }
+
+    const grouped = {};
+
+    data.forEach((event) => {
+      const key = `${event.location}-${event.lat}-${event.lng}`;
+
+      if (!grouped[key]) {
+        grouped[key] = {
+          location: event.location,
+          lat: parseFloat(event.lat),
+          lng: parseFloat(event.lng),
+          events: []
+        };
+      }
+
+      grouped[key].events.push({
+        id: event.id,
+        title: event.title,
+        category: event.category,
+        audience: event.audience,
+        organizer: event.organizer,
+        event_date: event.event_date,
+        is_free: event.is_free,
+        price: event.price,
+        min_age: event.min_age,
+        max_age: event.max_age
+      });
+    });
+
+    setGroupedLocations(Object.values(grouped));
+  };
+
+  useEffect(() => {
+    if (isControlled) {
+      return;
+    }
+
     fetch(`${API_BASE_URL}/events`)
       .then((res) => res.json())
       .then((data) => {
@@ -52,45 +94,21 @@ const AmesMap = ({ refreshTrigger }) => {
           return;
         }
 
-        const grouped = {};
-
-        data.forEach((event) => {
-          const key = `${event.location}-${event.lat}-${event.lng}`;
-
-          if (!grouped[key]) {
-            grouped[key] = {
-              location: event.location,
-              lat: parseFloat(event.lat),
-              lng: parseFloat(event.lng),
-              events: []
-            };
-          }
-
-          grouped[key].events.push({
-            id: event.id,
-            title: event.title,
-            category: event.category,
-            audience: event.audience,
-            organizer: event.organizer,
-            event_date: event.event_date,
-            is_free: event.is_free,
-            price: event.price,
-            min_age: event.min_age,
-            max_age: event.max_age
-          });
-        });
-
-        setGroupedLocations(Object.values(grouped));
+        groupEventsByLocation(data);
       })
       .catch((err) => {
         console.error('Error fetching events:', err);
         setGroupedLocations([]);
       });
-  };
+  }, [refreshTrigger, isControlled]);
 
   useEffect(() => {
-    loadEvents();
-  }, [refreshTrigger]);
+    if (!isControlled) {
+      return;
+    }
+
+    groupEventsByLocation(externalEvents);
+  }, [externalEvents, isControlled]);
 
   return (
     <div style={{ height: '500px', width: '100%' }}>

@@ -1,11 +1,107 @@
-import React from 'react';
 import AmesMap from '../AmesMap';
+import React, { useEffect, useMemo, useState } from 'react';
+import EventFilters from '../EventFilters';
+import { API_BASE_URL } from '../config';
+import { filterEvents, initialEventFilters, noFilteredEventsMessage } from '../utils/eventFilters';
 
 function MapPage() {
+  const [events, setEvents] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [audiences, setAudiences] = useState([]);
+  const [locations, setLocations] = useState([]);
+  const [organizers, setOrganizers] = useState([]);
+  const [filters, setFilters] = useState({ ...initialEventFilters });
+  const [loadError, setLoadError] = useState('');
+
+  const loadEvents = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/events`);
+      const data = await response.json();
+      if (!response.ok || !Array.isArray(data)) {
+        throw new Error(data?.error || 'No se pudieron cargar los eventos para el mapa');
+      }
+      setEvents(data);
+      setLoadError('');
+    } catch (error) {
+      console.error(error);
+      setEvents([]);
+      setLoadError(error.message || 'No se pudieron cargar los eventos para el mapa');
+    }
+  };
+
+  const loadCatalogs = async () => {
+    try {
+      const [categoriesRes, audiencesRes, locationsRes, organizersRes] = await Promise.all([
+        fetch(`${API_BASE_URL}/categories`),
+        fetch(`${API_BASE_URL}/audiences`),
+        fetch(`${API_BASE_URL}/locations`),
+        fetch(`${API_BASE_URL}/organizers`)
+      ]);
+
+      const [categoriesData, audiencesData, locationsData, organizersData] = await Promise.all([
+        categoriesRes.json(),
+        audiencesRes.json(),
+        locationsRes.json(),
+        organizersRes.json()
+      ]);
+
+      if (!categoriesRes.ok || !Array.isArray(categoriesData)) throw new Error('No se pudieron cargar las categorias');
+      if (!audiencesRes.ok || !Array.isArray(audiencesData)) throw new Error('No se pudieron cargar las audiencias');
+      if (!locationsRes.ok || !Array.isArray(locationsData)) throw new Error('No se pudieron cargar las ubicaciones');
+      if (!organizersRes.ok || !Array.isArray(organizersData)) throw new Error('No se pudieron cargar los organizadores');
+
+      setCategories(categoriesData);
+      setAudiences(audiencesData);
+      setLocations(locationsData);
+      setOrganizers(organizersData);
+    } catch (error) {
+      console.error(error);
+      setLoadError(error.message || 'No se pudieron cargar los catalogos auxiliares');
+    }
+  };
+
+  const handleFilterChange = (event) => {
+    const { name, type, value, checked } = event.target;
+    setFilters((prev) => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value
+    }));
+  };
+
+  const handleClearFilters = () => {
+    setFilters({ ...initialEventFilters });
+  };
+
+  const filteredEvents = useMemo(() => filterEvents(events, filters), [events, filters]);
+
+  useEffect(() => {
+    loadEvents();
+    loadCatalogs();
+  }, []);
+
   return (
     <main>
       <h2>Mapa de Eventos</h2>
-      <AmesMap refreshTrigger={0} />
+
+      <EventFilters
+        filters={filters}
+        categories={categories}
+        audiences={audiences}
+        locations={locations}
+        organizers={organizers}
+        totalCount={events.length}
+        filteredCount={filteredEvents.length}
+        onChange={handleFilterChange}
+        onClear={handleClearFilters}
+      />
+
+      {loadError && <p className="event-filters-feedback event-filters-feedback-error">{loadError}</p>}
+
+      <AmesMap events={filteredEvents} />
+
+      {filteredEvents.length === 0 && !loadError && (
+        <p className="event-filters-feedback event-filters-feedback-empty">{noFilteredEventsMessage}</p>
+      )}
     </main>
   );
 }

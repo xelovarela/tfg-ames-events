@@ -35,9 +35,17 @@ function formatAgeRange(event) {
   return `${event.min_age}-${event.max_age} anios`;
 }
 
-const EventList = ({ refreshTrigger, onEditEvent }) => {
+const EventList = ({
+  refreshTrigger,
+  onEditEvent,
+  events: externalEvents,
+  onEventDeleted,
+  emptyMessage = 'No hay eventos registrados.',
+  showEmptyState = true
+}) => {
   const [events, setEvents] = useState([]);
   const [loadError, setLoadError] = useState('');
+  const isControlled = Array.isArray(externalEvents);
 
   const loadEvents = () => {
     fetch(`${API_BASE_URL}/events`)
@@ -61,8 +69,20 @@ const EventList = ({ refreshTrigger, onEditEvent }) => {
   };
 
   useEffect(() => {
+    if (isControlled) {
+      return;
+    }
     loadEvents();
-  }, [refreshTrigger]);
+  }, [refreshTrigger, isControlled]);
+
+  useEffect(() => {
+    if (!isControlled) {
+      return;
+    }
+
+    setEvents(externalEvents);
+    setLoadError('');
+  }, [externalEvents, isControlled]);
 
   const handleDelete = async (id) => {
     const confirmed = window.confirm('Seguro que quieres borrar este evento?');
@@ -79,7 +99,11 @@ const EventList = ({ refreshTrigger, onEditEvent }) => {
         throw new Error(data.error || 'Error deleting event');
       }
 
-      loadEvents();
+      if (onEventDeleted) {
+        onEventDeleted();
+      } else if (!isControlled) {
+        loadEvents();
+      }
     } catch (error) {
       console.error(error);
       alert('Error al borrar el evento');
@@ -96,9 +120,9 @@ const EventList = ({ refreshTrigger, onEditEvent }) => {
         </p>
       )}
 
-      {events.length === 0 ? (
-        <p>No hay eventos registrados.</p>
-      ) : (
+      {events.length === 0 && showEmptyState ? (
+        <p>{emptyMessage}</p>
+      ) : events.length > 0 ? (
         events.map(event => (
           <div
             key={event.id}
@@ -128,7 +152,7 @@ const EventList = ({ refreshTrigger, onEditEvent }) => {
             <br />
             <div style={{ marginTop: '0.5rem' }}>
               <button
-                onClick={() => onEditEvent(event.id)}
+                onClick={() => onEditEvent && onEditEvent(event.id)}
                 style={{ marginRight: '0.5rem', padding: '0.4rem 0.8rem', cursor: 'pointer' }}
               >
                 Editar
@@ -143,7 +167,8 @@ const EventList = ({ refreshTrigger, onEditEvent }) => {
             </div>
           </div>
         ))
-      )}
+      ) : null
+      }
     </div>
   );
 };
