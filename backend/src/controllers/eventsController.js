@@ -14,6 +14,7 @@ function parseEventPayload(body) {
   const categoryId = toPositiveInt(body.category_id);
   const locationId = toPositiveInt(body.location_id);
   const audienceId = toNullablePositiveInt(body.audience_id);
+  const organizerId = toNullablePositiveInt(body.organizer_id);
   const parsedDate = toNullableDate(body.event_date);
   const isFree = toBooleanFlag(body.is_free);
   let price = toNullableMoney(body.price);
@@ -30,6 +31,10 @@ function parseEventPayload(body) {
 
   if (body.audience_id !== null && body.audience_id !== undefined && body.audience_id !== '' && !audienceId) {
     return { error: 'audience_id must be a positive integer when provided.' };
+  }
+
+  if (body.organizer_id !== null && body.organizer_id !== undefined && body.organizer_id !== '' && !organizerId) {
+    return { error: 'organizer_id must be a positive integer when provided.' };
   }
 
   if (isFree === null) {
@@ -61,6 +66,7 @@ function parseEventPayload(body) {
     categoryId,
     locationId,
     audienceId,
+    organizerId,
     eventDate: parsedDate ? parsedDate.toISOString().slice(0, 19).replace('T', ' ') : null,
     isFree,
     price,
@@ -105,10 +111,11 @@ async function create(req, res) {
   }
 
   try {
-    const [hasCategory, hasLocation, hasAudience] = await Promise.all([
+    const [hasCategory, hasLocation, hasAudience, hasOrganizer] = await Promise.all([
       eventsService.categoryExists(payload.categoryId),
       eventsService.locationExists(payload.locationId),
-      payload.audienceId ? eventsService.audienceExists(payload.audienceId) : Promise.resolve(true)
+      payload.audienceId ? eventsService.audienceExists(payload.audienceId) : Promise.resolve(true),
+      payload.organizerId ? eventsService.organizerExists(payload.organizerId) : Promise.resolve(true)
     ]);
 
     if (!hasCategory) {
@@ -121,6 +128,10 @@ async function create(req, res) {
 
     if (!hasAudience) {
       return res.status(400).json({ error: 'audience_id does not exist' });
+    }
+
+    if (!hasOrganizer) {
+      return res.status(400).json({ error: 'organizer_id does not exist' });
     }
 
     const id = await eventsService.createEvent(payload);
@@ -143,11 +154,12 @@ async function update(req, res) {
   }
 
   try {
-    const [existingEvent, hasCategory, hasLocation, hasAudience] = await Promise.all([
+    const [existingEvent, hasCategory, hasLocation, hasAudience, hasOrganizer] = await Promise.all([
       eventsService.getEventById(id),
       eventsService.categoryExists(payload.categoryId),
       eventsService.locationExists(payload.locationId),
-      payload.audienceId ? eventsService.audienceExists(payload.audienceId) : Promise.resolve(true)
+      payload.audienceId ? eventsService.audienceExists(payload.audienceId) : Promise.resolve(true),
+      payload.organizerId ? eventsService.organizerExists(payload.organizerId) : Promise.resolve(true)
     ]);
 
     if (!existingEvent) {
@@ -164,6 +176,10 @@ async function update(req, res) {
 
     if (!hasAudience) {
       return res.status(400).json({ error: 'audience_id does not exist' });
+    }
+
+    if (!hasOrganizer) {
+      return res.status(400).json({ error: 'organizer_id does not exist' });
     }
 
     await eventsService.updateEvent(id, payload);

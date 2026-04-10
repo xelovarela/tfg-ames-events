@@ -44,6 +44,12 @@ const AmesMap = ({ refreshTrigger }) => {
     fetch(`${API_BASE_URL}/events`)
       .then((res) => res.json())
       .then((data) => {
+        if (!Array.isArray(data)) {
+          console.error('Unexpected /events response for map:', data);
+          setGroupedLocations([]);
+          return;
+        }
+
         const grouped = {};
 
         data.forEach((event) => {
@@ -63,6 +69,7 @@ const AmesMap = ({ refreshTrigger }) => {
             title: event.title,
             category: event.category,
             audience: event.audience,
+            organizer: event.organizer,
             event_date: event.event_date,
             is_free: event.is_free,
             price: event.price,
@@ -73,7 +80,10 @@ const AmesMap = ({ refreshTrigger }) => {
 
         setGroupedLocations(Object.values(grouped));
       })
-      .catch((err) => console.error('Error fetching events:', err));
+      .catch((err) => {
+        console.error('Error fetching events:', err);
+        setGroupedLocations([]);
+      });
   };
 
   useEffect(() => {
@@ -103,6 +113,8 @@ const AmesMap = ({ refreshTrigger }) => {
                     Categoria: {event.category}
                     <br />
                     Audiencia: {event.audience || 'General'}
+                    <br />
+                    Organizador: {event.organizer || 'No especificado'}
                     <br />
                     Fecha: {formatDate(event.event_date)}
                     <br />

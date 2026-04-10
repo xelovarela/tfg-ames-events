@@ -5,6 +5,8 @@ import EventForm from './EventForm';
 import EventList from './EventList';
 import LocationManager from './LocationManager';
 import CategoryManager from './CategoryManager';
+import AudienceManager from './AudienceManager';
+import OrganizerManager from './OrganizerManager';
 import { API_BASE_URL } from './config';
 
 function App() {
@@ -12,6 +14,8 @@ function App() {
   const [eventToEdit, setEventToEdit] = useState(null);
   const [locationsRefreshTrigger, setLocationsRefreshTrigger] = useState(0);
   const [categoriesRefreshTrigger, setCategoriesRefreshTrigger] = useState(0);
+  const [audiencesRefreshTrigger, setAudiencesRefreshTrigger] = useState(0);
+  const [organizersRefreshTrigger, setOrganizersRefreshTrigger] = useState(0);
 
   const refreshAll = () => {
     setRefreshTrigger(prev => prev + 1);
@@ -47,6 +51,16 @@ function App() {
     refreshAll();
   };
 
+  const handleAudiencesChanged = () => {
+    setAudiencesRefreshTrigger((prev) => prev + 1);
+    refreshAll();
+  };
+
+  const handleOrganizersChanged = () => {
+    setOrganizersRefreshTrigger((prev) => prev + 1);
+    refreshAll();
+  };
+
   return (
     <div className="app-container">
       <header className="app-header">
@@ -66,11 +80,17 @@ function App() {
           onEditFinished={handleEditFinished}
           locationRefreshTrigger={locationsRefreshTrigger}
           categoryRefreshTrigger={categoriesRefreshTrigger}
+          audienceRefreshTrigger={audiencesRefreshTrigger}
+          organizerRefreshTrigger={organizersRefreshTrigger}
         />
 
         <CategoryManager onCategoriesChanged={handleCategoriesChanged} />
 
         <LocationManager onLocationsChanged={handleLocationsChanged} />
+
+        <AudienceManager onAudiencesChanged={handleAudiencesChanged} />
+
+        <OrganizerManager onOrganizersChanged={handleOrganizersChanged} />
 
         <EventList
           refreshTrigger={refreshTrigger}

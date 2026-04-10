@@ -12,15 +12,17 @@ Aplicacion web para gestionar y visualizar eventos infantiles geolocalizados en 
 - CRUD de eventos.
 - CRUD completo de categorias.
 - CRUD completo de ubicaciones.
-- Lectura de audiencias (`GET /audiences`).
+- CRUD completo de audiencias.
+- CRUD completo de organizadores.
 - Validaciones backend y frontend para datos clave.
-- Modelo `events` actualizado a v3 con:
+- Modelo `events` actualizado a v4 con:
   - `event_date`
   - `is_free`
   - `price`
   - `min_age`
   - `max_age`
   - `audience_id`
+  - `organizer_id`
 
 ## Estructura
 - `frontend/`: SPA React
@@ -55,6 +57,7 @@ Ejecuta:
 Ejecuta:
 - `database/migrate_events_v2.sql`
 - `database/migrate_events_v3_audience.sql`
+- `database/migrate_events_v4_organizers.sql`
 
 ## Ejecucion
 ### Backend
@@ -99,11 +102,23 @@ npm start
 
 ### Audiences
 - `GET /audiences`
+- `GET /audiences/:id`
+- `POST /audiences`
+- `PUT /audiences/:id`
+- `DELETE /audiences/:id`
 
-## Notas de Validacion (Events v3)
+### Organizers
+- `GET /organizers`
+- `GET /organizers/:id`
+- `POST /organizers`
+- `PUT /organizers/:id`
+- `DELETE /organizers/:id`
+
+## Notas de Validacion (Events v4)
 - `title`: obligatorio, maximo 150 caracteres.
 - `category_id`, `location_id`: enteros positivos existentes.
 - `audience_id`: opcional, pero debe existir si se informa.
+- `organizer_id`: opcional, pero debe existir si se informa.
 - `is_free`: obligatorio (`1/0` o booleano).
 - Si `is_free = 0`, `price > 0`.
 - `event_date`: opcional.

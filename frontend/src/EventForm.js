@@ -10,6 +10,7 @@ const initialFormData = {
   min_age: '',
   max_age: '',
   audience_id: '',
+  organizer_id: '',
   category_id: '',
   location_id: ''
 };
@@ -38,12 +39,15 @@ const EventForm = ({
   eventToEdit,
   onEditFinished,
   locationRefreshTrigger = 0,
-  categoryRefreshTrigger = 0
+  categoryRefreshTrigger = 0,
+  audienceRefreshTrigger = 0,
+  organizerRefreshTrigger = 0
 }) => {
   const [formData, setFormData] = useState(initialFormData);
   const [categories, setCategories] = useState([]);
   const [locations, setLocations] = useState([]);
   const [audiences, setAudiences] = useState([]);
+  const [organizers, setOrganizers] = useState([]);
   const [message, setMessage] = useState('');
   const [isSaving, setIsSaving] = useState(false);
 
@@ -51,15 +55,17 @@ const EventForm = ({
     Promise.all([
       fetch(`${API_BASE_URL}/categories`).then(res => res.json()),
       fetch(`${API_BASE_URL}/locations`).then(res => res.json()),
-      fetch(`${API_BASE_URL}/audiences`).then(res => res.json())
+      fetch(`${API_BASE_URL}/audiences`).then(res => res.json()),
+      fetch(`${API_BASE_URL}/organizers`).then(res => res.json())
     ])
-      .then(([categoriesData, locationsData, audiencesData]) => {
+      .then(([categoriesData, locationsData, audiencesData, organizersData]) => {
         setCategories(categoriesData);
         setLocations(locationsData);
         setAudiences(audiencesData);
+        setOrganizers(organizersData);
       })
       .catch(err => console.error('Error loading form data:', err));
-  }, [locationRefreshTrigger, categoryRefreshTrigger]);
+  }, [locationRefreshTrigger, categoryRefreshTrigger, audienceRefreshTrigger, organizerRefreshTrigger]);
 
   useEffect(() => {
     if (!eventToEdit) {
@@ -74,6 +80,7 @@ const EventForm = ({
       min_age: eventToEdit.min_age !== null && eventToEdit.min_age !== undefined ? String(eventToEdit.min_age) : '',
       max_age: eventToEdit.max_age !== null && eventToEdit.max_age !== undefined ? String(eventToEdit.max_age) : '',
       audience_id: eventToEdit.audience_id ? String(eventToEdit.audience_id) : '',
+      organizer_id: eventToEdit.organizer_id ? String(eventToEdit.organizer_id) : '',
       category_id: eventToEdit.category_id ? String(eventToEdit.category_id) : '',
       location_id: eventToEdit.location_id ? String(eventToEdit.location_id) : ''
     });
@@ -134,6 +141,7 @@ const EventForm = ({
       min_age: minAge,
       max_age: maxAge,
       audience_id: formData.audience_id === '' ? null : Number(formData.audience_id),
+      organizer_id: formData.organizer_id === '' ? null : Number(formData.organizer_id),
       category_id: Number(formData.category_id),
       location_id: Number(formData.location_id)
     };
@@ -280,6 +288,22 @@ const EventForm = ({
           {audiences.map(audience => (
             <option key={audience.id} value={audience.id}>
               {audience.name}
+            </option>
+          ))}
+        </select>
+
+        <label className="event-form-label" htmlFor="organizer_id">Organizador</label>
+        <select
+          id="organizer_id"
+          className="event-form-input"
+          name="organizer_id"
+          value={formData.organizer_id}
+          onChange={handleChange}
+        >
+          <option value="">Sin organizador especifico</option>
+          {organizers.map(organizer => (
+            <option key={organizer.id} value={organizer.id}>
+              {organizer.name}
             </option>
           ))}
         </select>

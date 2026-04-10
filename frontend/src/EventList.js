@@ -37,12 +37,27 @@ function formatAgeRange(event) {
 
 const EventList = ({ refreshTrigger, onEditEvent }) => {
   const [events, setEvents] = useState([]);
+  const [loadError, setLoadError] = useState('');
 
   const loadEvents = () => {
     fetch(`${API_BASE_URL}/events`)
       .then(res => res.json())
-      .then(data => setEvents(data))
-      .catch(err => console.error('Error loading events:', err));
+      .then(data => {
+        if (Array.isArray(data)) {
+          setEvents(data);
+          setLoadError('');
+          return;
+        }
+
+        console.error('Unexpected /events response:', data);
+        setEvents([]);
+        setLoadError(data?.error || 'No se pudieron cargar los eventos.');
+      })
+      .catch(err => {
+        console.error('Error loading events:', err);
+        setEvents([]);
+        setLoadError('No se pudieron cargar los eventos.');
+      });
   };
 
   useEffect(() => {
@@ -75,6 +90,12 @@ const EventList = ({ refreshTrigger, onEditEvent }) => {
     <div style={{ padding: '1rem', background: '#f9f9f9', borderRadius: '8px', marginBottom: '1rem' }}>
       <h3>Lista de eventos</h3>
 
+      {loadError && (
+        <p style={{ color: '#a94442', marginBottom: '0.75rem' }}>
+          {loadError}
+        </p>
+      )}
+
       {events.length === 0 ? (
         <p>No hay eventos registrados.</p>
       ) : (
@@ -94,6 +115,8 @@ const EventList = ({ refreshTrigger, onEditEvent }) => {
             Categoria: {event.category}
             <br />
             Audiencia: {event.audience || 'General'}
+            <br />
+            Organizador: {event.organizer || 'No especificado'}
             <br />
             Ubicacion: {event.location}
             <br />

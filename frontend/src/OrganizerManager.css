@@ -1,0 +1,98 @@
+.organizers-card {
+  padding: 1rem;
+  background: #f7f7f7;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.organizers-title {
+  margin: 0 0 1rem;
+}
+
+.organizers-form {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.6rem;
+}
+
+.organizers-input {
+  width: 100%;
+  padding: 0.65rem;
+  border: 1px solid #cdcdcd;
+  border-radius: 6px;
+  font-size: 0.95rem;
+}
+
+.organizers-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.3rem;
+}
+
+.organizers-btn {
+  border: 0;
+  border-radius: 6px;
+  padding: 0.6rem 0.95rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.organizers-btn-primary {
+  background: #b30000;
+  color: #fff;
+}
+
+.organizers-btn-secondary {
+  background: #e4e4e4;
+  color: #222;
+}
+
+.organizers-btn-danger {
+  background: #d64545;
+  color: #fff;
+}
+
+.organizers-message {
+  margin: 0.75rem 0 0;
+}
+
+.organizers-list {
+  margin-top: 1rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 0.7rem;
+}
+
+.organizers-item {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 0.8rem;
+  background: #fff;
+}
+
+.organizers-item p {
+  margin: 0.35rem 0;
+  font-size: 0.92rem;
+}
+
+.organizers-item-actions {
+  margin-top: 0.6rem;
+  display: flex;
+  gap: 0.45rem;
+}
+
+@media (max-width: 720px) {
+  .organizers-form {
+    grid-template-columns: 1fr;
+  }
+
+  .organizers-actions {
+    flex-direction: column;
+  }
+
+  .organizers-btn {
+    width: 100%;
+    min-height: 44px;
+  }
+}

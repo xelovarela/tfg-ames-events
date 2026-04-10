@@ -2,6 +2,7 @@ USE ames_events;
 
 SET FOREIGN_KEY_CHECKS = 0;
 TRUNCATE TABLE events;
+TRUNCATE TABLE organizers;
 TRUNCATE TABLE audiences;
 TRUNCATE TABLE locations;
 TRUNCATE TABLE categories;
@@ -31,6 +32,12 @@ INSERT INTO audiences (name, age_min, age_max) VALUES
   ('Primaria', 7, 12),
   ('Familiar', NULL, NULL);
 
+INSERT INTO organizers (name, email, phone) VALUES
+  ('Concello de Ames', 'cultura@ames.gal', '+34 981 000 101'),
+  ('Biblioteca de Bertamirans', 'biblioteca@ames.gal', '+34 981 000 102'),
+  ('Asociacion Xogos en Familia', 'xogosfamilia@gmail.com', '+34 622 334 455'),
+  ('Club Deportivo Milladoiro', 'clubmilladoiro@example.org', '+34 981 000 103');
+
 INSERT INTO events (
   title,
   event_date,
@@ -39,16 +46,17 @@ INSERT INTO events (
   min_age,
   max_age,
   audience_id,
+  organizer_id,
   category_id,
   location_id
 ) VALUES
-  ('Taller de pintura', '2026-05-12 17:30:00', 0, 5.00, 5, 12, 3, 1, 1),
-  ('Teatro Infantil', '2026-05-15 18:30:00', 0, 4.00, 4, 10, 2, 5, 5),
-  ('Musical', '2026-05-18 19:00:00', 0, 6.00, 4, 12, 3, 4, 5),
-  ('Show', NULL, 1, NULL, NULL, NULL, 4, 2, 2),
-  ('Circo', NULL, 1, NULL, NULL, NULL, 4, 5, 3),
-  ('Concierto', NULL, 1, NULL, NULL, NULL, 4, 4, 5),
-  ('Proba', NULL, 1, NULL, NULL, NULL, 4, 6, 6),
-  ('Taller de reciclaje creativo', '2026-06-03 17:00:00', 1, NULL, 6, 12, 3, 1, 6),
-  ('Lectura musicalizada', '2026-06-08 18:00:00', 1, NULL, 3, 8, 2, 2, 2),
-  ('Ciencia divertida con agua y color', '2026-06-15 17:30:00', 0, 3.50, 7, 12, 3, 6, 1);
+  ('Taller de pintura', '2026-05-12 17:30:00', 0, 5.00, 5, 12, 3, 1, 1, 1),
+  ('Teatro Infantil', '2026-05-15 18:30:00', 0, 4.00, 4, 10, 2, 1, 5, 5),
+  ('Musical', '2026-05-18 19:00:00', 0, 6.00, 4, 12, 3, 2, 4, 5),
+  ('Show', NULL, 1, NULL, NULL, NULL, 4, NULL, 2, 2),
+  ('Circo', NULL, 1, NULL, NULL, NULL, 4, 3, 5, 3),
+  ('Concierto', NULL, 1, NULL, NULL, NULL, 4, 2, 4, 5),
+  ('Proba', NULL, 1, NULL, NULL, NULL, 4, NULL, 6, 6),
+  ('Taller de reciclaje creativo', '2026-06-03 17:00:00', 1, NULL, 6, 12, 3, 3, 1, 6),
+  ('Lectura musicalizada', '2026-06-08 18:00:00', 1, NULL, 3, 8, 2, 2, 2, 2),
+  ('Ciencia divertida con agua y color', '2026-06-15 17:30:00', 0, 3.50, 7, 12, 3, 1, 6, 1);

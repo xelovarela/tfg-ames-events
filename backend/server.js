@@ -6,6 +6,7 @@ const eventsRoutes = require('./src/routes/events');
 const categoriesRoutes = require('./src/routes/categories');
 const locationsRoutes = require('./src/routes/locations');
 const audiencesRoutes = require('./src/routes/audiences');
+const organizersRoutes = require('./src/routes/organizers');
 
 const app = express();
 
@@ -24,6 +25,7 @@ app.use('/events', eventsRoutes);
 app.use('/categories', categoriesRoutes);
 app.use('/locations', locationsRoutes);
 app.use('/audiences', audiencesRoutes);
+app.use('/organizers', organizersRoutes);
 
 // Puerto
 const PORT = process.env.PORT || 3001;
