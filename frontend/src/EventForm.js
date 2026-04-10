@@ -1,14 +1,27 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 const EventForm = ({ onEventCreated }) => {
   const [formData, setFormData] = useState({
     title: '',
-    category: '',
-    lat: '',
-    lng: ''
+    category_id: '',
+    location_id: ''
   });
 
+  const [categories, setCategories] = useState([]);
+  const [locations, setLocations] = useState([]);
   const [message, setMessage] = useState('');
+
+  useEffect(() => {
+    fetch('http://localhost:3001/categories')
+      .then(res => res.json())
+      .then(data => setCategories(data))
+      .catch(err => console.error('Error loading categories:', err));
+
+    fetch('http://localhost:3001/locations')
+      .then(res => res.json())
+      .then(data => setLocations(data))
+      .catch(err => console.error('Error loading locations:', err));
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -30,9 +43,8 @@ const EventForm = ({ onEventCreated }) => {
         },
         body: JSON.stringify({
           title: formData.title,
-          category: formData.category,
-          lat: parseFloat(formData.lat),
-          lng: parseFloat(formData.lng)
+          category_id: parseInt(formData.category_id, 10),
+          location_id: parseInt(formData.location_id, 10)
         })
       });
 
@@ -46,9 +58,8 @@ const EventForm = ({ onEventCreated }) => {
 
       setFormData({
         title: '',
-        category: '',
-        lat: '',
-        lng: ''
+        category_id: '',
+        location_id: ''
       });
 
       if (onEventCreated) {
@@ -78,41 +89,37 @@ const EventForm = ({ onEventCreated }) => {
         </div>
 
         <div style={{ marginBottom: '0.5rem' }}>
-          <input
-            type="text"
-            name="category"
-            placeholder="Categoría"
-            value={formData.category}
+          <select
+            name="category_id"
+            value={formData.category_id}
             onChange={handleChange}
             required
             style={{ width: '100%', padding: '0.5rem' }}
-          />
+          >
+            <option value="">Selecciona una categoría</option>
+            {categories.map(category => (
+              <option key={category.id} value={category.id}>
+                {category.name}
+              </option>
+            ))}
+          </select>
         </div>
 
         <div style={{ marginBottom: '0.5rem' }}>
-          <input
-            type="number"
-            step="any"
-            name="lat"
-            placeholder="Latitud"
-            value={formData.lat}
+          <select
+            name="location_id"
+            value={formData.location_id}
             onChange={handleChange}
             required
             style={{ width: '100%', padding: '0.5rem' }}
-          />
-        </div>
-
-        <div style={{ marginBottom: '0.5rem' }}>
-          <input
-            type="number"
-            step="any"
-            name="lng"
-            placeholder="Longitud"
-            value={formData.lng}
-            onChange={handleChange}
-            required
-            style={{ width: '100%', padding: '0.5rem' }}
-          />
+          >
+            <option value="">Selecciona una ubicación</option>
+            {locations.map(location => (
+              <option key={location.id} value={location.id}>
+                {location.name}
+              </option>
+            ))}
+          </select>
         </div>
 
         <button type="submit" style={{ padding: '0.6rem 1rem', cursor: 'pointer' }}>
