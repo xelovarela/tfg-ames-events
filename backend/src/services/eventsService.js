@@ -10,12 +10,15 @@ async function listEvents() {
       e.price,
       e.min_age,
       e.max_age,
+      e.audience_id,
       c.name AS category,
+      a.name AS audience,
       l.name AS location,
       l.lat,
       l.lng
     FROM events e
     JOIN categories c ON e.category_id = c.id
+    LEFT JOIN audiences a ON e.audience_id = a.id
     JOIN locations l ON e.location_id = l.id
     ORDER BY e.id`
   );
@@ -33,7 +36,9 @@ async function getEventById(id) {
       e.price,
       e.min_age,
       e.max_age,
+      e.audience_id,
       c.name AS category,
+      a.name AS audience,
       l.name AS location,
       l.lat,
       l.lng,
@@ -41,6 +46,7 @@ async function getEventById(id) {
       e.location_id
     FROM events e
     JOIN categories c ON e.category_id = c.id
+    LEFT JOIN audiences a ON e.audience_id = a.id
     JOIN locations l ON e.location_id = l.id
     WHERE e.id = ?`,
     [id]
@@ -59,10 +65,16 @@ async function locationExists(locationId) {
   return rows.length > 0;
 }
 
+async function audienceExists(audienceId) {
+  const [rows] = await db.query('SELECT id FROM audiences WHERE id = ?', [audienceId]);
+  return rows.length > 0;
+}
+
 async function createEvent({
   title,
   categoryId,
   locationId,
+  audienceId,
   eventDate,
   isFree,
   price,
@@ -71,9 +83,9 @@ async function createEvent({
 }) {
   const [result] = await db.query(
     `INSERT INTO events 
-      (title, category_id, location_id, event_date, is_free, price, min_age, max_age)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-    [title, categoryId, locationId, eventDate, isFree, price, minAge, maxAge]
+      (title, category_id, location_id, audience_id, event_date, is_free, price, min_age, max_age)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    [title, categoryId, locationId, audienceId, eventDate, isFree, price, minAge, maxAge]
   );
 
   return result.insertId;
@@ -81,14 +93,14 @@ async function createEvent({
 
 async function updateEvent(
   id,
-  { title, categoryId, locationId, eventDate, isFree, price, minAge, maxAge }
+  { title, categoryId, locationId, audienceId, eventDate, isFree, price, minAge, maxAge }
 ) {
   const [result] = await db.query(
     `UPDATE events 
-      SET title = ?, category_id = ?, location_id = ?, event_date = ?, is_free = ?, 
+      SET title = ?, category_id = ?, location_id = ?, audience_id = ?, event_date = ?, is_free = ?, 
           price = ?, min_age = ?, max_age = ?
      WHERE id = ?`,
-    [title, categoryId, locationId, eventDate, isFree, price, minAge, maxAge, id]
+    [title, categoryId, locationId, audienceId, eventDate, isFree, price, minAge, maxAge, id]
   );
 
   return result.affectedRows > 0;
@@ -104,6 +116,7 @@ module.exports = {
   getEventById,
   categoryExists,
   locationExists,
+  audienceExists,
   createEvent,
   updateEvent,
   deleteEvent

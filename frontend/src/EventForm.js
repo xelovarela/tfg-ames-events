@@ -9,6 +9,7 @@ const initialFormData = {
   price: '',
   min_age: '',
   max_age: '',
+  audience_id: '',
   category_id: '',
   location_id: ''
 };
@@ -42,17 +43,20 @@ const EventForm = ({
   const [formData, setFormData] = useState(initialFormData);
   const [categories, setCategories] = useState([]);
   const [locations, setLocations] = useState([]);
+  const [audiences, setAudiences] = useState([]);
   const [message, setMessage] = useState('');
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     Promise.all([
       fetch(`${API_BASE_URL}/categories`).then(res => res.json()),
-      fetch(`${API_BASE_URL}/locations`).then(res => res.json())
+      fetch(`${API_BASE_URL}/locations`).then(res => res.json()),
+      fetch(`${API_BASE_URL}/audiences`).then(res => res.json())
     ])
-      .then(([categoriesData, locationsData]) => {
+      .then(([categoriesData, locationsData, audiencesData]) => {
         setCategories(categoriesData);
         setLocations(locationsData);
+        setAudiences(audiencesData);
       })
       .catch(err => console.error('Error loading form data:', err));
   }, [locationRefreshTrigger, categoryRefreshTrigger]);
@@ -69,6 +73,7 @@ const EventForm = ({
       price: eventToEdit.price !== null && eventToEdit.price !== undefined ? String(eventToEdit.price) : '',
       min_age: eventToEdit.min_age !== null && eventToEdit.min_age !== undefined ? String(eventToEdit.min_age) : '',
       max_age: eventToEdit.max_age !== null && eventToEdit.max_age !== undefined ? String(eventToEdit.max_age) : '',
+      audience_id: eventToEdit.audience_id ? String(eventToEdit.audience_id) : '',
       category_id: eventToEdit.category_id ? String(eventToEdit.category_id) : '',
       location_id: eventToEdit.location_id ? String(eventToEdit.location_id) : ''
     });
@@ -128,6 +133,7 @@ const EventForm = ({
       price: isFree ? null : price,
       min_age: minAge,
       max_age: maxAge,
+      audience_id: formData.audience_id === '' ? null : Number(formData.audience_id),
       category_id: Number(formData.category_id),
       location_id: Number(formData.location_id)
     };
@@ -261,6 +267,22 @@ const EventForm = ({
             />
           </div>
         </div>
+
+        <label className="event-form-label" htmlFor="audience_id">Audiencia</label>
+        <select
+          id="audience_id"
+          className="event-form-input"
+          name="audience_id"
+          value={formData.audience_id}
+          onChange={handleChange}
+        >
+          <option value="">Sin audiencia especifica</option>
+          {audiences.map(audience => (
+            <option key={audience.id} value={audience.id}>
+              {audience.name}
+            </option>
+          ))}
+        </select>
 
         <label className="event-form-label" htmlFor="category_id">Categoria</label>
         <select

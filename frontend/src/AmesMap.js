@@ -62,6 +62,7 @@ const AmesMap = ({ refreshTrigger }) => {
             id: event.id,
             title: event.title,
             category: event.category,
+            audience: event.audience,
             event_date: event.event_date,
             is_free: event.is_free,
             price: event.price,
@@ -100,6 +101,8 @@ const AmesMap = ({ refreshTrigger }) => {
                     <strong>{event.title}</strong>
                     <br />
                     Categoria: {event.category}
+                    <br />
+                    Audiencia: {event.audience || 'General'}
                     <br />
                     Fecha: {formatDate(event.event_date)}
                     <br />

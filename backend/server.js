@@ -5,6 +5,7 @@ require('dotenv').config();
 const eventsRoutes = require('./src/routes/events');
 const categoriesRoutes = require('./src/routes/categories');
 const locationsRoutes = require('./src/routes/locations');
+const audiencesRoutes = require('./src/routes/audiences');
 
 const app = express();
 
@@ -22,6 +23,7 @@ app.use('/events', eventsRoutes);
 
 app.use('/categories', categoriesRoutes);
 app.use('/locations', locationsRoutes);
+app.use('/audiences', audiencesRoutes);
 
 // Puerto
 const PORT = process.env.PORT || 3001;

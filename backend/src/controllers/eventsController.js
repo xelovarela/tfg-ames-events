@@ -13,6 +13,7 @@ function parseEventPayload(body) {
   const title = typeof body.title === 'string' ? body.title.trim() : '';
   const categoryId = toPositiveInt(body.category_id);
   const locationId = toPositiveInt(body.location_id);
+  const audienceId = toNullablePositiveInt(body.audience_id);
   const parsedDate = toNullableDate(body.event_date);
   const isFree = toBooleanFlag(body.is_free);
   let price = toNullableMoney(body.price);
@@ -25,6 +26,10 @@ function parseEventPayload(body) {
 
   if (!categoryId || !locationId) {
     return { error: 'category_id and location_id must be positive integers.' };
+  }
+
+  if (body.audience_id !== null && body.audience_id !== undefined && body.audience_id !== '' && !audienceId) {
+    return { error: 'audience_id must be a positive integer when provided.' };
   }
 
   if (isFree === null) {
@@ -55,6 +60,7 @@ function parseEventPayload(body) {
     title,
     categoryId,
     locationId,
+    audienceId,
     eventDate: parsedDate ? parsedDate.toISOString().slice(0, 19).replace('T', ' ') : null,
     isFree,
     price,
@@ -99,9 +105,10 @@ async function create(req, res) {
   }
 
   try {
-    const [hasCategory, hasLocation] = await Promise.all([
+    const [hasCategory, hasLocation, hasAudience] = await Promise.all([
       eventsService.categoryExists(payload.categoryId),
-      eventsService.locationExists(payload.locationId)
+      eventsService.locationExists(payload.locationId),
+      payload.audienceId ? eventsService.audienceExists(payload.audienceId) : Promise.resolve(true)
     ]);
 
     if (!hasCategory) {
@@ -110,6 +117,10 @@ async function create(req, res) {
 
     if (!hasLocation) {
       return res.status(400).json({ error: 'location_id does not exist' });
+    }
+
+    if (!hasAudience) {
+      return res.status(400).json({ error: 'audience_id does not exist' });
     }
 
     const id = await eventsService.createEvent(payload);
@@ -132,10 +143,11 @@ async function update(req, res) {
   }
 
   try {
-    const [existingEvent, hasCategory, hasLocation] = await Promise.all([
+    const [existingEvent, hasCategory, hasLocation, hasAudience] = await Promise.all([
       eventsService.getEventById(id),
       eventsService.categoryExists(payload.categoryId),
-      eventsService.locationExists(payload.locationId)
+      eventsService.locationExists(payload.locationId),
+      payload.audienceId ? eventsService.audienceExists(payload.audienceId) : Promise.resolve(true)
     ]);
 
     if (!existingEvent) {
@@ -148,6 +160,10 @@ async function update(req, res) {
 
     if (!hasLocation) {
       return res.status(400).json({ error: 'location_id does not exist' });
+    }
+
+    if (!hasAudience) {
+      return res.status(400).json({ error: 'audience_id does not exist' });
     }
 
     await eventsService.updateEvent(id, payload);

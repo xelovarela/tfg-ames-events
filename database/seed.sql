@@ -2,6 +2,7 @@ USE ames_events;
 
 SET FOREIGN_KEY_CHECKS = 0;
 TRUNCATE TABLE events;
+TRUNCATE TABLE audiences;
 TRUNCATE TABLE locations;
 TRUNCATE TABLE categories;
 SET FOREIGN_KEY_CHECKS = 1;
@@ -24,6 +25,12 @@ INSERT INTO locations (name, lat, lng) VALUES
   ('Area Verde de Agro do Medio', 42.8508400, -8.5966200),
   ('CEIP A Maia', 42.8613900, -8.6525300);
 
+INSERT INTO audiences (name, age_min, age_max) VALUES
+  ('Primera infancia', 0, 3),
+  ('Infantil', 4, 6),
+  ('Primaria', 7, 12),
+  ('Familiar', NULL, NULL);
+
 INSERT INTO events (
   title,
   event_date,
@@ -31,16 +38,17 @@ INSERT INTO events (
   price,
   min_age,
   max_age,
+  audience_id,
   category_id,
   location_id
 ) VALUES
-  ('Taller de pintura', '2026-05-12 17:30:00', 0, 5.00, 5, 12, 1, 1),
-  ('Teatro Infantil', '2026-05-15 18:30:00', 0, 4.00, 4, 10, 5, 5),
-  ('Musical', '2026-05-18 19:00:00', 0, 6.00, 4, 12, 4, 5),
-  ('Show', NULL, 1, NULL, NULL, NULL, 2, 2),
-  ('Circo', NULL, 1, NULL, NULL, NULL, 5, 3),
-  ('Concierto', NULL, 1, NULL, NULL, NULL, 4, 5),
-  ('Proba', NULL, 1, NULL, NULL, NULL, 6, 6),
-  ('Taller de reciclaje creativo', '2026-06-03 17:00:00', 1, NULL, 6, 12, 1, 6),
-  ('Lectura musicalizada', '2026-06-08 18:00:00', 1, NULL, 3, 8, 2, 2),
-  ('Ciencia divertida con agua y color', '2026-06-15 17:30:00', 0, 3.50, 7, 12, 6, 1);
+  ('Taller de pintura', '2026-05-12 17:30:00', 0, 5.00, 5, 12, 3, 1, 1),
+  ('Teatro Infantil', '2026-05-15 18:30:00', 0, 4.00, 4, 10, 2, 5, 5),
+  ('Musical', '2026-05-18 19:00:00', 0, 6.00, 4, 12, 3, 4, 5),
+  ('Show', NULL, 1, NULL, NULL, NULL, 4, 2, 2),
+  ('Circo', NULL, 1, NULL, NULL, NULL, 4, 5, 3),
+  ('Concierto', NULL, 1, NULL, NULL, NULL, 4, 4, 5),
+  ('Proba', NULL, 1, NULL, NULL, NULL, 4, 6, 6),
+  ('Taller de reciclaje creativo', '2026-06-03 17:00:00', 1, NULL, 6, 12, 3, 1, 6),
+  ('Lectura musicalizada', '2026-06-08 18:00:00', 1, NULL, 3, 8, 2, 2, 2),
+  ('Ciencia divertida con agua y color', '2026-06-15 17:30:00', 0, 3.50, 7, 12, 3, 6, 1);

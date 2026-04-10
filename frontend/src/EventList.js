@@ -93,6 +93,8 @@ const EventList = ({ refreshTrigger, onEditEvent }) => {
             <br />
             Categoria: {event.category}
             <br />
+            Audiencia: {event.audience || 'General'}
+            <br />
             Ubicacion: {event.location}
             <br />
             Fecha: {formatDate(event.event_date)}
