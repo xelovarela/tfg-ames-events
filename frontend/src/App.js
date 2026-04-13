@@ -8,6 +8,8 @@ import OrganizersPage from './pages/OrganizersPage';
 import EventDetailPage from './pages/EventDetailPage';
 import CategoriesPage from './pages/CategoriesPage';
 import LocationsPage from './pages/LocationsPage';
+import EventCreatePage from './pages/EventCreatePage';
+import EventEditPage from './pages/EventEditPage';
 
 function App() {
   return (
@@ -42,13 +44,19 @@ function App() {
         <main className="app-main">
           <Routes>
             <Route path="/" element={<Navigate to="/map" replace />} />
-            <Route path="/events" element={<EventsPage />} />
-            <Route path="/events/:id" element={<EventDetailPage />} />
+            
             <Route path="/map" element={<MapPage />} />
+            
+            <Route path="/events" element={<EventsPage />} />
+            <Route path="/events/new" element={<EventCreatePage />} />
+            <Route path="/events/:id" element={<EventDetailPage />} />
+            <Route path="/events/:id/edit" element={<EventEditPage />} />
+
             <Route path="/audiences" element={<AudiencesPage />} />
             <Route path="/organizers" element={<OrganizersPage />} />
             <Route path="/categories" element={<CategoriesPage />} />
             <Route path="/locations" element={<LocationsPage />} />
+
             <Route path="*" element={<p className="app-not-found">Ruta no encontrada.</p>} />
           </Routes>
         </main>

@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import EventForm from '../EventForm';
+import { useSearchParams, Link } from 'react-router-dom';
 import EventList from '../EventList';
 import EventFilters from '../EventFilters';
 import { API_BASE_URL } from '../config';
@@ -27,17 +26,17 @@ function EventsPage() {
   const [loadError, setLoadError] = useState('');
 
   useEffect(() => {
-  const nextFilters = {
-    ...initialEventFilters,
-    ...filtersFromSearchParams(searchParams)
-  };
+    const nextFilters = {
+      ...initialEventFilters,
+      ...filtersFromSearchParams(searchParams)
+    };
 
-  const isDifferent = JSON.stringify(nextFilters) !== JSON.stringify(filters);
+    const isDifferent = JSON.stringify(nextFilters) !== JSON.stringify(filters);
 
-  if (isDifferent) {
-    setFilters(nextFilters);
-  }
-}, [searchParams]);
+    if (isDifferent) {
+      setFilters(nextFilters);
+    }
+  }, [searchParams]);
 
   const loadEvents = async () => {
     try {
@@ -106,11 +105,6 @@ function EventsPage() {
     }
   };
 
-  const handleEditFinished = () => {
-    setEventToEdit(null);
-    refreshAll();
-  };
-
   const handleFilterChange = (event) => {
     const { name, type, value, checked } = event.target;
 
@@ -153,15 +147,16 @@ function EventsPage() {
 
       {loadError && <p className="event-filters-feedback event-filters-feedback-error">{loadError}</p>}
 
-      <EventForm
-        onEventCreated={refreshAll}
-        eventToEdit={eventToEdit}
-        onEditFinished={handleEditFinished}
-      />
+      <div style={{ marginBottom: '1rem' }}>
+        <Link to="/events/new">
+          <button className="event-btn event-btn-primary">
+            Crear nuevo evento
+          </button>
+        </Link>
+      </div>
 
       <EventList
         events={filteredEvents}
-        onEditEvent={handleEditEvent}
         onEventDeleted={refreshAll}
         emptyMessage={noFilteredEventsMessage}
         showEmptyState={!loadError}

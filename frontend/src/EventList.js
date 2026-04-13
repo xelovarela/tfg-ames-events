@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { API_BASE_URL } from './config';
+import { Link } from 'react-router-dom';
 
 function formatDate(value) {
   if (!value) {
@@ -153,12 +154,14 @@ const EventList = ({
             Edad: {formatAgeRange(event)}
             <br />
             <div style={{ marginTop: '0.5rem' }}>
+            <Link to={`/events/${event.id}/edit`} style={{ marginRight: '0.5rem' }}>
               <button
-                onClick={() => onEditEvent && onEditEvent(event.id)}
-                style={{ marginRight: '0.5rem', padding: '0.4rem 0.8rem', cursor: 'pointer' }}
+                type="button"
+                style={{ padding: '0.4rem 0.8rem', cursor: 'pointer' }}
               >
                 Editar
               </button>
+          </Link>
 
               <button
                 onClick={() => handleDelete(event.id)}
