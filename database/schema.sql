@@ -30,6 +30,7 @@ CREATE TABLE organizers (
 CREATE TABLE events (
   id INT AUTO_INCREMENT PRIMARY KEY,
   title VARCHAR(150) NOT NULL,
+  description TEXT NULL,
   event_date DATETIME NULL,
   is_free TINYINT(1) NOT NULL DEFAULT 1,
   price DECIMAL(10,2) NULL,

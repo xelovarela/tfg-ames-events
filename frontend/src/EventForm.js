@@ -4,6 +4,7 @@ import './EventForm.css';
 
 const initialFormData = {
   title: '',
+  description: '',
   event_date: '',
   is_free: '1',
   price: '',
@@ -74,6 +75,7 @@ const EventForm = ({
 
     setFormData({
       title: eventToEdit.title || '',
+      description: eventToEdit.description || '',
       event_date: toDateTimeLocalInput(eventToEdit.event_date),
       is_free: String(eventToEdit.is_free ?? 1),
       price: eventToEdit.price !== null && eventToEdit.price !== undefined ? String(eventToEdit.price) : '',
@@ -135,6 +137,7 @@ const EventForm = ({
 
     const payload = {
       title: trimmedTitle,
+      description: formData.description.trim() || null,
       event_date: formData.event_date || null,
       is_free: isFree ? 1 : 0,
       price: isFree ? null : price,
@@ -211,6 +214,18 @@ const EventForm = ({
           name="event_date"
           value={formData.event_date}
           onChange={handleChange}
+        />
+
+        <label className="event-form-label" htmlFor="description">Descripcion</label>
+        <textarea
+          id="description"
+          className="event-form-input"
+          name="description"
+          placeholder="Describe brevemente en que consiste el evento"
+          value={formData.description}
+          onChange={handleChange}
+          rows={4}
+          maxLength={2000}
         />
 
         <label className="event-form-label" htmlFor="is_free">Tipo</label>

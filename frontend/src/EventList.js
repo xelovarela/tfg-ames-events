@@ -136,6 +136,8 @@ const EventList = ({
           >
             <strong>{event.title}</strong>
             <br />
+            Descripcion: {event.description || 'Sin descripcion'}
+            <br />
             Categoria: {event.category}
             <br />
             Audiencia: {event.audience || 'General'}

@@ -8,9 +8,11 @@ const {
 } = require('../utils/validation');
 
 const MAX_TITLE_LENGTH = 150;
+const MAX_DESCRIPTION_LENGTH = 2000;
 
 function parseEventPayload(body) {
   const title = typeof body.title === 'string' ? body.title.trim() : '';
+  const description = typeof body.description === 'string' ? body.description.trim() : '';
   const categoryId = toPositiveInt(body.category_id);
   const locationId = toPositiveInt(body.location_id);
   const audienceId = toNullablePositiveInt(body.audience_id);
@@ -23,6 +25,10 @@ function parseEventPayload(body) {
 
   if (!title || title.length > MAX_TITLE_LENGTH) {
     return { error: 'Invalid title. Must be between 1 and 150 characters.' };
+  }
+
+  if (description.length > MAX_DESCRIPTION_LENGTH) {
+    return { error: 'Invalid description. Maximum length is 2000 characters.' };
   }
 
   if (!categoryId || !locationId) {
@@ -63,6 +69,7 @@ function parseEventPayload(body) {
 
   return {
     title,
+    description: description || null,
     categoryId,
     locationId,
     audienceId,

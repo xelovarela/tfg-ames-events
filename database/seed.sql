@@ -40,6 +40,7 @@ INSERT INTO organizers (name, email, phone) VALUES
 
 INSERT INTO events (
   title,
+  description,
   event_date,
   is_free,
   price,
@@ -50,13 +51,13 @@ INSERT INTO events (
   category_id,
   location_id
 ) VALUES
-  ('Taller de pintura', '2026-05-12 17:30:00', 0, 5.00, 5, 12, 3, 1, 1, 1),
-  ('Teatro Infantil', '2026-05-15 18:30:00', 0, 4.00, 4, 10, 2, 1, 5, 5),
-  ('Musical', '2026-05-18 19:00:00', 0, 6.00, 4, 12, 3, 2, 4, 5),
-  ('Show', NULL, 1, NULL, NULL, NULL, 4, NULL, 2, 2),
-  ('Circo', NULL, 1, NULL, NULL, NULL, 4, 3, 5, 3),
-  ('Concierto', NULL, 1, NULL, NULL, NULL, 4, 2, 4, 5),
-  ('Proba', NULL, 1, NULL, NULL, NULL, 4, NULL, 6, 6),
-  ('Taller de reciclaje creativo', '2026-06-03 17:00:00', 1, NULL, 6, 12, 3, 3, 1, 6),
-  ('Lectura musicalizada', '2026-06-08 18:00:00', 1, NULL, 3, 8, 2, 2, 2, 2),
-  ('Ciencia divertida con agua y color', '2026-06-15 17:30:00', 0, 3.50, 7, 12, 3, 1, 6, 1);
+  ('Taller de pintura', 'Sesion creativa con materiales adaptados para ninos y ninas.', '2026-05-12 17:30:00', 0, 5.00, 5, 12, 3, 1, 1, 1),
+  ('Teatro Infantil', 'Espectaculo teatral participativo con personajes clasicos.', '2026-05-15 18:30:00', 0, 4.00, 4, 10, 2, 1, 5, 5),
+  ('Musical', 'Representacion musical familiar con canciones en directo.', '2026-05-18 19:00:00', 0, 6.00, 4, 12, 3, 2, 4, 5),
+  ('Show', NULL, NULL, 1, NULL, NULL, NULL, 4, NULL, 2, 2),
+  ('Circo', NULL, NULL, 1, NULL, NULL, NULL, 4, 3, 5, 3),
+  ('Concierto', NULL, NULL, 1, NULL, NULL, NULL, 4, 2, 4, 5),
+  ('Proba', 'Evento de prueba para validaciones internas.', NULL, 1, NULL, NULL, NULL, 4, NULL, 6, 6),
+  ('Taller de reciclaje creativo', 'Actividad para aprender a reutilizar materiales del hogar.', '2026-06-03 17:00:00', 1, NULL, 6, 12, 3, 3, 1, 6),
+  ('Lectura musicalizada', 'Cuentos narrados con acompanamiento de instrumentos suaves.', '2026-06-08 18:00:00', 1, NULL, 3, 8, 2, 2, 2, 2),
+  ('Ciencia divertida con agua y color', 'Experimentos seguros para descubrir fenomenos basicos de ciencia.', '2026-06-15 17:30:00', 0, 3.50, 7, 12, 3, 1, 6, 1);

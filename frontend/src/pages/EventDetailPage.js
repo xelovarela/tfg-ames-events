@@ -136,6 +136,13 @@ function EventDetailPage() {
             </article>
           </div>
 
+          {event.description && (
+            <article className="event-detail-block">
+              <h4>Descripcion</h4>
+              <p>{event.description}</p>
+            </article>
+          )}
+
           <p className="event-detail-note">
             Informacion de ubicacion: latitud {event.lat}, longitud {event.lng}.
           </p>
