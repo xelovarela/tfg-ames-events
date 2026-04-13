@@ -1,9 +1,16 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import EventForm from '../EventForm';
 import EventList from '../EventList';
 import EventFilters from '../EventFilters';
 import { API_BASE_URL } from '../config';
-import { filterEvents, initialEventFilters, noFilteredEventsMessage } from '../utils/eventFilters';
+import {
+  filterEvents,
+  initialEventFilters,
+  noFilteredEventsMessage,
+  filtersFromSearchParams,
+  buildSearchParamsFromFilters
+} from '../utils/eventFilters';
 
 function EventsPage() {
   const [events, setEvents] = useState([]);
@@ -12,8 +19,19 @@ function EventsPage() {
   const [audiences, setAudiences] = useState([]);
   const [locations, setLocations] = useState([]);
   const [organizers, setOrganizers] = useState([]);
-  const [filters, setFilters] = useState({ ...initialEventFilters });
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [filters, setFilters] = useState(() => ({
+    ...initialEventFilters,
+    ...filtersFromSearchParams(searchParams)
+  }));
   const [loadError, setLoadError] = useState('');
+
+  useEffect(() => {
+    setFilters({
+      ...initialEventFilters,
+      ...filtersFromSearchParams(searchParams)
+    });
+  }, [searchParams]);
 
   const loadEvents = async () => {
     try {
@@ -89,14 +107,19 @@ function EventsPage() {
 
   const handleFilterChange = (event) => {
     const { name, type, value, checked } = event.target;
-    setFilters((prev) => ({
-      ...prev,
+
+    const nextFilters = {
+      ...filters,
       [name]: type === 'checkbox' ? checked : value
-    }));
+    };
+
+    setFilters(nextFilters);
+    setSearchParams(buildSearchParamsFromFilters(nextFilters));
   };
 
   const handleClearFilters = () => {
     setFilters({ ...initialEventFilters });
+    setSearchParams({});
   };
 
   const filteredEvents = useMemo(() => filterEvents(events, filters), [events, filters]);

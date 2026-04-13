@@ -72,6 +72,51 @@ function filterEvents(events, filters) {
   });
 }
 
-export { filterEvents };
-export { initialEventFilters };
-export { noFilteredEventsMessage };
+function filtersFromSearchParams(searchParams) {
+  return {
+    category: searchParams.get('category') || '',
+    audienceId: searchParams.get('audienceId') || '',
+    location: searchParams.get('location') || '',
+    organizerId: searchParams.get('organizerId') || '',
+    freeOnly: searchParams.get('freeOnly') === 'true',
+    compatibleAge: searchParams.get('compatibleAge') || ''
+  };
+}
+
+function buildSearchParamsFromFilters(filters) {
+  const params = new URLSearchParams();
+
+  if (filters.category) {
+    params.set('category', filters.category);
+  }
+
+  if (filters.audienceId) {
+    params.set('audienceId', filters.audienceId);
+  }
+
+  if (filters.location) {
+    params.set('location', filters.location);
+  }
+
+  if (filters.organizerId) {
+    params.set('organizerId', filters.organizerId);
+  }
+
+  if (filters.freeOnly) {
+    params.set('freeOnly', 'true');
+  }
+
+  if (filters.compatibleAge) {
+    params.set('compatibleAge', filters.compatibleAge);
+  }
+
+  return params;
+}
+
+export {
+  filterEvents,
+  initialEventFilters,
+  noFilteredEventsMessage,
+  filtersFromSearchParams,
+  buildSearchParamsFromFilters
+};
