@@ -27,11 +27,17 @@ function EventsPage() {
   const [loadError, setLoadError] = useState('');
 
   useEffect(() => {
-    setFilters({
-      ...initialEventFilters,
-      ...filtersFromSearchParams(searchParams)
-    });
-  }, [searchParams]);
+  const nextFilters = {
+    ...initialEventFilters,
+    ...filtersFromSearchParams(searchParams)
+  };
+
+  const isDifferent = JSON.stringify(nextFilters) !== JSON.stringify(filters);
+
+  if (isDifferent) {
+    setFilters(nextFilters);
+  }
+}, [searchParams]);
 
   const loadEvents = async () => {
     try {
