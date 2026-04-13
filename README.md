@@ -15,7 +15,7 @@ Aplicacion web para gestionar y visualizar eventos infantiles geolocalizados en 
 - CRUD completo de audiencias.
 - CRUD completo de organizadores.
 - Validaciones backend y frontend para datos clave.
-- Modelo `events` actualizado a v4 con:
+- Modelo `events` actualizado a v5 con:
   - `event_date`
   - `is_free`
   - `price`
@@ -23,11 +23,12 @@ Aplicacion web para gestionar y visualizar eventos infantiles geolocalizados en 
   - `max_age`
   - `audience_id`
   - `organizer_id`
+  - `description`
 
 ## Estructura
 - `frontend/`: SPA React
 - `backend/`: API Express
-- `database/`: schema, seed y migraciones SQL
+- `database/`: schema y seed SQL
 
 ## Requisitos
 - Node.js 18+ (recomendado)
@@ -48,16 +49,9 @@ PORT=3001
 ```
 
 ## Base de Datos
-### Opcion A: instalacion limpia
 Ejecuta:
 - `database/schema.sql`
 - `database/seed.sql`
-
-### Opcion B: base ya existente (migraciones incrementales)
-Ejecuta:
-- `database/migrate_events_v2.sql`
-- `database/migrate_events_v3_audience.sql`
-- `database/migrate_events_v4_organizers.sql`
 
 ## Ejecucion
 ### Backend
