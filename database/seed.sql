@@ -1,5 +1,10 @@
+-- Este archivo inserta datos de ejemplo para poder probar la aplicacion.
+-- Limpia las tablas en un orden seguro y despues vuelve a poblar los catalogos
+-- y varios eventos de demostracion relacionados entre si.
+-- Se selecciona la base de datos sobre la que se van a cargar los datos iniciales.
 USE ames_events;
 
+-- Se desactivan temporalmente las claves foraneas para vaciar las tablas sin errores.
 SET FOREIGN_KEY_CHECKS = 0;
 TRUNCATE TABLE events;
 TRUNCATE TABLE organizers;
@@ -8,6 +13,7 @@ TRUNCATE TABLE locations;
 TRUNCATE TABLE categories;
 SET FOREIGN_KEY_CHECKS = 1;
 
+-- Catalogo base de categorias disponibles en la aplicacion.
 INSERT INTO categories (name) VALUES
   ('Taller'),
   ('Cuentacuentos'),
@@ -16,6 +22,7 @@ INSERT INTO categories (name) VALUES
   ('Teatro'),
   ('Ciencia');
 
+-- Conjunto inicial de ubicaciones reales o de ejemplo dentro de Ames.
 INSERT INTO locations (name, lat, lng) VALUES
   ('Casa da Cultura de Ames', 42.8569900, -8.6568200),
   ('Biblioteca Municipal de Bertamirans', 42.8618100, -8.6547800),
@@ -26,18 +33,21 @@ INSERT INTO locations (name, lat, lng) VALUES
   ('Area Verde de Agro do Medio', 42.8508400, -8.5966200),
   ('CEIP A Maia', 42.8613900, -8.6525300);
 
+-- Audiencias con sus rangos de edad orientativos.
 INSERT INTO audiences (name, age_min, age_max) VALUES
   ('Primera infancia', 0, 3),
   ('Infantil', 4, 6),
   ('Primaria', 7, 12),
   ('Familiar', NULL, NULL);
 
+-- Organizadores de ejemplo para vincularlos a los eventos.
 INSERT INTO organizers (name, email, phone) VALUES
   ('Concello de Ames', 'cultura@ames.gal', '+34 981 000 101'),
   ('Biblioteca de Bertamirans', 'biblioteca@ames.gal', '+34 981 000 102'),
   ('Asociacion Xogos en Familia', 'xogosfamilia@gmail.com', '+34 622 334 455'),
   ('Club Deportivo Milladoiro', 'clubmilladoiro@example.org', '+34 981 000 103');
 
+-- Eventos de demostracion que ejercitan distintos casos de uso del sistema.
 INSERT INTO events (
   title,
   description,

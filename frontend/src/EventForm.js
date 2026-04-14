@@ -1,7 +1,13 @@
+/**
+ * Este archivo implementa el formulario reutilizable de eventos.
+ * Sirve tanto para crear como para editar, carga catalogos auxiliares, valida los
+ * datos en cliente y envia el payload final al backend.
+ */
 import React, { useEffect, useState } from 'react';
 import { API_BASE_URL } from './config';
 import './EventForm.css';
 
+// Estado inicial del formulario para altas o reseteos.
 const initialFormData = {
   title: '',
   description: '',
@@ -16,6 +22,7 @@ const initialFormData = {
   location_id: ''
 };
 
+// Convierte la fecha del backend al formato que espera un input datetime-local.
 function toDateTimeLocalInput(value) {
   if (!value) {
     return '';
@@ -35,6 +42,7 @@ function toDateTimeLocalInput(value) {
   return `${year}-${month}-${day}T${hours}:${minutes}`;
 }
 
+// Este componente encapsula toda la logica del formulario de creacion y edicion.
 const EventForm = ({
   onEventCreated,
   eventToEdit,
@@ -52,6 +60,7 @@ const EventForm = ({
   const [message, setMessage] = useState('');
   const [isSaving, setIsSaving] = useState(false);
 
+  // Al montar o refrescar catalogos se cargan las opciones de selects auxiliares.
   useEffect(() => {
     Promise.all([
       fetch(`${API_BASE_URL}/categories`).then(res => res.json()),
@@ -68,6 +77,7 @@ const EventForm = ({
       .catch(err => console.error('Error loading form data:', err));
   }, [locationRefreshTrigger, categoryRefreshTrigger, audienceRefreshTrigger, organizerRefreshTrigger]);
 
+  // Si llega un evento para editar, el formulario se rellena con sus valores actuales.
   useEffect(() => {
     if (!eventToEdit) {
       return;
@@ -89,15 +99,18 @@ const EventForm = ({
     setMessage('');
   }, [eventToEdit]);
 
+  // Actualiza el estado local cuando cambia cualquier campo del formulario.
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
+  // Devuelve el formulario a su estado base despues de guardar o cancelar.
   const resetForm = () => {
     setFormData(initialFormData);
   };
 
+  // Valida, construye el payload final y lo envia al endpoint adecuado.
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (isSaving) return;
@@ -182,6 +195,7 @@ const EventForm = ({
     }
   };
 
+  // En modo edicion permite salir sin guardar y limpiar el formulario.
   const handleCancelEdit = () => {
     resetForm();
     setMessage('');
@@ -192,6 +206,7 @@ const EventForm = ({
     <section className="event-form-card">
       <h3 className="event-form-title">{eventToEdit ? 'Editar evento' : 'Crear nuevo evento'}</h3>
 
+      {/* Formulario principal con campos basicos, precio opcional y relaciones auxiliares. */}
       <form className="event-form" onSubmit={handleSubmit}>
         <label className="event-form-label" htmlFor="title">Titulo</label>
         <input

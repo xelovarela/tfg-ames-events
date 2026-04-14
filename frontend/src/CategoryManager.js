@@ -1,9 +1,16 @@
+/**
+ * Este archivo implementa el gestor de categorias del frontend.
+ * Carga el catalogo, valida el formulario, permite altas, ediciones y borrados,
+ * y mantiene el estado visual sincronizado con la API.
+ */
 import React, { useEffect, useState } from 'react';
 import { API_BASE_URL } from './config';
 import './CategoryManager.css';
 
+// Estado base del formulario de categorias.
 const initialForm = { name: '' };
 
+// Valida el nombre antes de enviarlo al backend.
 function validateCategory(name) {
   const value = name.trim();
   if (!value || value.length > 100) {
@@ -12,6 +19,7 @@ function validateCategory(name) {
   return null;
 }
 
+// Este componente concentra la logica CRUD de categorias.
 function CategoryManager({ onCategoriesChanged }) {
   const [categories, setCategories] = useState([]);
   const [formData, setFormData] = useState(initialForm);
@@ -19,6 +27,7 @@ function CategoryManager({ onCategoriesChanged }) {
   const [message, setMessage] = useState('');
   const [isSaving, setIsSaving] = useState(false);
 
+  // Recupera el catalogo actual de categorias desde la API.
   const loadCategories = async () => {
     try {
       const response = await fetch(`${API_BASE_URL}/categories`);
@@ -33,15 +42,18 @@ function CategoryManager({ onCategoriesChanged }) {
     }
   };
 
+  // La lista se carga una sola vez al montar el componente.
   useEffect(() => {
     loadCategories();
   }, []);
 
+  // Limpia el formulario y sale del modo edicion.
   const clearForm = () => {
     setFormData(initialForm);
     setEditingId(null);
   };
 
+  // Decide si crear o actualizar en funcion de si existe un id en edicion.
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (isSaving) return;
@@ -84,6 +96,7 @@ function CategoryManager({ onCategoriesChanged }) {
     }
   };
 
+  // El borrado pide confirmacion y refresca el catalogo cuando termina.
   const handleDelete = async (id) => {
     const confirmed = window.confirm('Seguro que quieres eliminar esta categoria?');
     if (!confirmed) return;
@@ -108,6 +121,7 @@ function CategoryManager({ onCategoriesChanged }) {
     <section className="categories-card">
       <h3 className="categories-title">Gestion de categorias</h3>
 
+      {/* Formulario de alta y edicion de categorias. */}
       <form className="categories-form" onSubmit={handleSubmit}>
         <input
           className="categories-input"

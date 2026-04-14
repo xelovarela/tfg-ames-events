@@ -1,3 +1,8 @@
+/**
+ * Este archivo implementa el componente del mapa interactivo con Leaflet.
+ * Puede cargar los eventos por si mismo o recibirlos ya filtrados desde fuera,
+ * los agrupa por ubicacion y crea marcadores con informacion resumida.
+ */
 import React, { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -5,7 +10,7 @@ import L from 'leaflet';
 import { useNavigate } from 'react-router-dom';
 import { API_BASE_URL } from './config';
 
-// Correccion para los iconos de Leaflet en React
+// Leaflet necesita esta correccion para resolver bien las rutas de sus iconos en React.
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
@@ -13,12 +18,14 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
 });
 
+// El componente admite modo controlado y no controlado para reutilizarlo en distintas paginas.
 const AmesMap = ({ refreshTrigger, events: externalEvents }) => {
   const amesCenter = [42.8595, -8.65];
   const [groupedLocations, setGroupedLocations] = useState([]);
   const navigate = useNavigate();
   const isControlled = Array.isArray(externalEvents);
 
+  // Formatea fechas de evento para mostrarlas dentro del popup del mapa.
   const formatDate = (value) => {
     if (!value) return 'Sin fecha';
     const date = new Date(value);
@@ -32,17 +39,20 @@ const AmesMap = ({ refreshTrigger, events: externalEvents }) => {
     });
   };
 
+  // Resume el coste del evento usando un texto corto y legible.
   const formatPrice = (event) => {
     if (Number(event.is_free) === 1) return 'Gratis';
     if (event.price === null || event.price === undefined) return 'De pago';
     return `${Number(event.price).toFixed(2)} EUR`;
   };
 
+  // Resume el rango de edad de cada evento mostrado en el popup.
   const formatAgeRange = (event) => {
     if (event.min_age === null || event.max_age === null) return 'Todas las edades';
     return `${event.min_age}-${event.max_age} anios`;
   };
 
+  // Agrupa eventos por ubicacion para evitar varios marcadores superpuestos en el mismo punto.
   const groupEventsByLocation = (data) => {
     if (!Array.isArray(data)) {
       setGroupedLocations([]);
@@ -80,6 +90,7 @@ const AmesMap = ({ refreshTrigger, events: externalEvents }) => {
     setGroupedLocations(Object.values(grouped));
   };
 
+  // En modo no controlado el propio componente pide los eventos al backend.
   useEffect(() => {
     if (isControlled) {
       return;
@@ -102,6 +113,7 @@ const AmesMap = ({ refreshTrigger, events: externalEvents }) => {
       });
   }, [refreshTrigger, isControlled]);
 
+  // En modo controlado solo reorganiza los eventos que recibe por props.
   useEffect(() => {
     if (!isControlled) {
       return;
@@ -113,6 +125,7 @@ const AmesMap = ({ refreshTrigger, events: externalEvents }) => {
   return (
     <div style={{ height: '500px', width: '100%' }}>
       <h3>Prototype CAT3</h3>
+      {/* Contenedor principal del mapa centrado en Ames. */}
       <MapContainer center={amesCenter} zoom={13} style={{ height: '100%', width: '100%' }}>
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

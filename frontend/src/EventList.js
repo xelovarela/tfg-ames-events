@@ -1,7 +1,13 @@
+/**
+ * Este archivo implementa el listado reutilizable de eventos.
+ * Puede cargar sus propios datos o recibirlos ya preparados, y ofrece acciones
+ * para editar, borrar y navegar al detalle de cada evento.
+ */
 import React, { useEffect, useState } from 'react';
 import { API_BASE_URL } from './config';
 import { Link } from 'react-router-dom';
 
+// Convierte la fecha tecnica del backend a un formato legible.
 function formatDate(value) {
   if (!value) {
     return 'Sin fecha';
@@ -19,6 +25,7 @@ function formatDate(value) {
   });
 }
 
+// Muestra si el evento es gratis o cuanto cuesta.
 function formatPrice(event) {
   if (Number(event.is_free) === 1) {
     return 'Gratis';
@@ -29,6 +36,7 @@ function formatPrice(event) {
   return `${Number(event.price).toFixed(2)} EUR`;
 }
 
+// Resume el rango de edad admitido por el evento.
 function formatAgeRange(event) {
   if (event.min_age === null || event.max_age === null) {
     return 'Todas las edades';
@@ -36,6 +44,7 @@ function formatAgeRange(event) {
   return `${event.min_age}-${event.max_age} anios`;
 }
 
+// El componente admite modo controlado para reutilizarlo con eventos ya filtrados.
 const EventList = ({
   refreshTrigger,
   onEditEvent,
@@ -48,6 +57,7 @@ const EventList = ({
   const [loadError, setLoadError] = useState('');
   const isControlled = Array.isArray(externalEvents);
 
+  // En modo no controlado el propio componente recupera los eventos desde la API.
   const loadEvents = () => {
     fetch(`${API_BASE_URL}/events`)
       .then(res => res.json())
@@ -69,6 +79,7 @@ const EventList = ({
       });
   };
 
+  // Si el componente no recibe eventos externos, se carga el listado al montarse.
   useEffect(() => {
     if (isControlled) {
       return;
@@ -76,6 +87,7 @@ const EventList = ({
     loadEvents();
   }, [refreshTrigger, isControlled]);
 
+  // Si recibe eventos desde fuera, se sincroniza el estado interno con esas props.
   useEffect(() => {
     if (!isControlled) {
       return;
@@ -85,6 +97,7 @@ const EventList = ({
     setLoadError('');
   }, [externalEvents, isControlled]);
 
+  // El borrado pide confirmacion y despues actualiza el listado visible.
   const handleDelete = async (id) => {
     const confirmed = window.confirm('Seguro que quieres borrar este evento?');
     if (!confirmed) return;
@@ -121,6 +134,7 @@ const EventList = ({
         </p>
       )}
 
+      {/* Estado vacio y renderizado de tarjetas individuales de evento. */}
       {events.length === 0 && showEmptyState ? (
         <p>{emptyMessage}</p>
       ) : events.length > 0 ? (

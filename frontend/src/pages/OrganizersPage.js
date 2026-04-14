@@ -1,6 +1,11 @@
+/**
+ * Este archivo define la pagina de gestion de organizadores.
+ * Solo encapsula el componente CRUD dentro de la navegacion de la aplicacion.
+ */
 import React from 'react';
 import OrganizerManager from '../OrganizerManager';
 
+// Esta pagina monta el gestor de organizadores.
 function OrganizersPage() {
   return (
     <main>

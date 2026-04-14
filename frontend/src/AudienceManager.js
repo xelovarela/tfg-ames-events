@@ -1,13 +1,20 @@
+/**
+ * Este archivo implementa el gestor de audiencias del frontend.
+ * Permite mantener el catalogo de tipos de publico y su rango de edad asociado
+ * con validaciones de cliente antes de llamar a la API.
+ */
 import React, { useEffect, useState } from 'react';
 import { API_BASE_URL } from './config';
 import './AudienceManager.css';
 
+// Estado base del formulario de audiencias.
 const initialForm = {
   name: '',
   age_min: '',
   age_max: ''
 };
 
+// Valida nombre y rango de edad antes de enviar datos al backend.
 function validateAudience(form) {
   const name = form.name.trim();
   const ageMin = form.age_min === '' ? null : Number(form.age_min);
@@ -32,6 +39,7 @@ function validateAudience(form) {
   return null;
 }
 
+// Este componente concentra la logica CRUD de audiencias.
 function AudienceManager({ onAudiencesChanged }) {
   const [audiences, setAudiences] = useState([]);
   const [formData, setFormData] = useState(initialForm);
@@ -39,6 +47,7 @@ function AudienceManager({ onAudiencesChanged }) {
   const [message, setMessage] = useState('');
   const [isSaving, setIsSaving] = useState(false);
 
+  // Recupera la lista completa de audiencias desde la API.
   const loadAudiences = async () => {
     try {
       const response = await fetch(`${API_BASE_URL}/audiences`);
@@ -53,20 +62,24 @@ function AudienceManager({ onAudiencesChanged }) {
     }
   };
 
+  // La carga inicial se realiza al montar el componente.
   useEffect(() => {
     loadAudiences();
   }, []);
 
+  // Mantiene sincronizados los inputs del formulario con el estado local.
   const handleChange = (event) => {
     const { name, value } = event.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  // Limpia el formulario y desactiva la edicion.
   const clearForm = () => {
     setFormData(initialForm);
     setEditingId(null);
   };
 
+  // Crea o actualiza audiencias segun el estado actual del formulario.
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (isSaving) {
@@ -118,6 +131,7 @@ function AudienceManager({ onAudiencesChanged }) {
     }
   };
 
+  // Carga en el formulario los datos de una audiencia ya existente.
   const handleEdit = (audience) => {
     setEditingId(audience.id);
     setFormData({
@@ -128,6 +142,7 @@ function AudienceManager({ onAudiencesChanged }) {
     setMessage('');
   };
 
+  // Elimina una audiencia previa confirmacion del usuario.
   const handleDelete = async (id) => {
     const confirmed = window.confirm('Seguro que quieres eliminar esta audiencia?');
     if (!confirmed) {
@@ -158,6 +173,7 @@ function AudienceManager({ onAudiencesChanged }) {
     <section className="audiences-card">
       <h3 className="audiences-title">Gestion de audiencias</h3>
 
+      {/* Formulario principal para crear o editar audiencias. */}
       <form className="audiences-form" onSubmit={handleSubmit}>
         <input
           className="audiences-input"

@@ -1,3 +1,8 @@
+/**
+ * Este archivo define la pagina del mapa.
+ * Carga eventos y catalogos auxiliares, sincroniza los filtros con la URL y
+ * renderiza el mapa interactivo mostrando solo los eventos que cumplen esos filtros.
+ */
 import AmesMap from '../AmesMap';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
@@ -11,6 +16,7 @@ import {
   buildSearchParamsFromFilters
 } from '../utils/eventFilters';
 
+// Este componente coordina la carga de datos y el estado de filtrado del mapa.
 function MapPage() {
   const [events, setEvents] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -24,6 +30,7 @@ function MapPage() {
   }));
   const [loadError, setLoadError] = useState('');
 
+  // Si la URL cambia por navegacion o por compartir enlaces, el estado local se actualiza.
   useEffect(() => {
   const nextFilters = {
     ...initialEventFilters,
@@ -37,6 +44,7 @@ function MapPage() {
   }
 }, [searchParams]);
 
+  // Carga el listado de eventos que despues se filtrara en memoria.
   const loadEvents = async () => {
     try {
       const response = await fetch(`${API_BASE_URL}/events`);
@@ -53,6 +61,7 @@ function MapPage() {
     }
   };
 
+  // Carga categorias, audiencias, ubicaciones y organizadores para poblar los filtros.
   const loadCatalogs = async () => {
     try {
       const [categoriesRes, audiencesRes, locationsRes, organizersRes] = await Promise.all([
@@ -84,6 +93,7 @@ function MapPage() {
     }
   };
 
+  // Cada cambio en los filtros actualiza tanto el estado como la query string.
   const handleFilterChange = (event) => {
     const { name, type, value, checked } = event.target;
 
@@ -96,13 +106,16 @@ function MapPage() {
     setSearchParams(buildSearchParamsFromFilters(nextFilters));
   };
 
+  // Este manejador restablece los filtros a su estado inicial.
   const handleClearFilters = () => {
     setFilters({ ...initialEventFilters });
     setSearchParams({});
   };
 
+  // Se memoriza el resultado del filtrado para evitar calculos innecesarios en cada render.
   const filteredEvents = useMemo(() => filterEvents(events, filters), [events, filters]);
 
+  // La primera vez que se monta la pagina se cargan eventos y catalogos auxiliares.
   useEffect(() => {
     loadEvents();
     loadCatalogs();
@@ -112,6 +125,7 @@ function MapPage() {
     <main>
       <h2>Mapa de Eventos</h2>
 
+      {/* Panel de filtros reutilizable compartido con la pagina de listado. */}
       <EventFilters
         filters={filters}
         categories={categories}
@@ -126,6 +140,7 @@ function MapPage() {
 
       {loadError && <p className="event-filters-feedback event-filters-feedback-error">{loadError}</p>}
 
+      {/* El mapa recibe solo los eventos ya filtrados para simplificar la vista. */}
       <AmesMap events={filteredEvents} />
 
       {filteredEvents.length === 0 && !loadError && (

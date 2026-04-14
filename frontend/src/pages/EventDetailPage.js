@@ -1,7 +1,13 @@
+/**
+ * Este archivo define la pagina de detalle de un evento.
+ * Recupera un registro concreto desde la API, formatea sus datos para presentacion
+ * y muestra una ficha legible con su informacion principal.
+ */
 import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { API_BASE_URL } from '../config';
 
+// Convierte la fecha almacenada en base de datos a un formato legible para el usuario.
 function formatDate(value) {
   if (!value) {
     return 'Sin fecha';
@@ -21,6 +27,7 @@ function formatDate(value) {
   });
 }
 
+// Presenta el precio respetando si el evento es gratuito o de pago.
 function formatPrice(event) {
   if (Number(event.is_free) === 1) {
     return 'Gratis';
@@ -33,6 +40,7 @@ function formatPrice(event) {
   return `${Number(event.price).toFixed(2)} EUR`;
 }
 
+// Construye un texto amigable para el rango de edad del evento.
 function formatAgeRange(event) {
   if (event.min_age === null || event.max_age === null) {
     return 'Todas las edades';
@@ -41,12 +49,14 @@ function formatAgeRange(event) {
   return `${event.min_age}-${event.max_age} anios`;
 }
 
+// Este componente carga el evento indicado en la ruta y muestra su detalle.
 function EventDetailPage() {
   const { id } = useParams();
   const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
+  // Al cambiar el id de la URL se vuelve a pedir el evento correspondiente.
   useEffect(() => {
     let isMounted = true;
 
@@ -89,6 +99,7 @@ function EventDetailPage() {
     <main>
       <h2>Detalle del Evento</h2>
 
+      {/* Navegacion secundaria para volver rapidamente a mapa o listado. */}
       <div className="event-detail-nav">
         <Link to="/map" className="app-inline-link">Volver al mapa</Link>
         <span>·</span>
@@ -104,6 +115,7 @@ function EventDetailPage() {
       )}
 
       {!loading && !error && event && (
+        {/* Tarjeta principal que agrupa la informacion relevante del evento. */}
         <section className="event-detail-card">
           <div className="event-detail-hero">
             <h3>{event.title}</h3>

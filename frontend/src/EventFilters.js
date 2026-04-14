@@ -1,6 +1,12 @@
+/**
+ * Este archivo implementa el panel reutilizable de filtros de eventos.
+ * Recibe estado y callbacks desde sus paginas padre y solo se ocupa de renderizar
+ * los controles que permiten refinar el listado o el mapa.
+ */
 import React from 'react';
 import './EventFilters.css';
 
+// Este componente es presentacional: muestra filtros y propaga los cambios hacia arriba.
 function EventFilters({
   filters = {
     category: '',
@@ -21,6 +27,7 @@ function EventFilters({
 }) {
   return (
     <section className="event-filters-card">
+      {/* Cabecera con resumen de eventos totales frente a eventos visibles. */}
       <div className="event-filters-header">
         <h3>Filtros de eventos</h3>
         <p>
@@ -28,6 +35,7 @@ function EventFilters({
         </p>
       </div>
 
+      {/* Controles de filtrado por catalogos, edad y gratuidad. */}
       <div className="event-filters-grid">
         <label>
           Categoria
@@ -122,6 +130,7 @@ function EventFilters({
         </label>
       </div>
 
+      {/* Accion para volver rapidamente al estado inicial del buscador. */}
       <div className="event-filters-actions">
         <button type="button" className="event-filters-clear" onClick={onClear}>
           Limpiar filtros

@@ -1,3 +1,8 @@
+/**
+ * Este archivo contiene el controlador de eventos.
+ * Recibe las peticiones HTTP, valida y normaliza los datos de entrada, coordina
+ * las comprobaciones necesarias y devuelve respuestas HTTP coherentes al cliente.
+ */
 const eventsService = require('../services/eventsService');
 const {
   toPositiveInt,
@@ -7,9 +12,11 @@ const {
   toNullableMoney
 } = require('../utils/validation');
 
+// Estas constantes definen los limites aceptados para los campos de texto.
 const MAX_TITLE_LENGTH = 150;
 const MAX_DESCRIPTION_LENGTH = 2000;
 
+// Esta funcion transforma y valida el cuerpo recibido antes de crear o actualizar un evento.
 function parseEventPayload(body) {
   const title = typeof body.title === 'string' ? body.title.trim() : '';
   const description = typeof body.description === 'string' ? body.description.trim() : '';
@@ -82,6 +89,7 @@ function parseEventPayload(body) {
   };
 }
 
+// Devuelve la lista completa de eventos para el frontend.
 async function getAll(req, res) {
   try {
     const events = await eventsService.listEvents();
@@ -92,6 +100,7 @@ async function getAll(req, res) {
   }
 }
 
+// Recupera un evento concreto validando antes el identificador recibido por URL.
 async function getById(req, res) {
   const id = toPositiveInt(req.params.id);
   if (!id) {
@@ -111,6 +120,7 @@ async function getById(req, res) {
   }
 }
 
+// Crea un nuevo evento despues de validar datos y comprobar relaciones existentes.
 async function create(req, res) {
   const payload = parseEventPayload(req.body);
   if (payload.error) {
@@ -149,6 +159,7 @@ async function create(req, res) {
   }
 }
 
+// Actualiza un evento existente manteniendo las mismas reglas de validacion que en alta.
 async function update(req, res) {
   const id = toPositiveInt(req.params.id);
   if (!id) {
@@ -197,6 +208,7 @@ async function update(req, res) {
   }
 }
 
+// Elimina un evento si el identificador es valido y el registro existe.
 async function remove(req, res) {
   const id = toPositiveInt(req.params.id);
   if (!id) {
@@ -216,6 +228,7 @@ async function remove(req, res) {
   }
 }
 
+// Se exportan las acciones para que el router pueda asociarlas a cada endpoint.
 module.exports = {
   getAll,
   getById,

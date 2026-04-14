@@ -1,13 +1,20 @@
+/**
+ * Este archivo implementa el gestor de ubicaciones del frontend.
+ * Permite mantener los puntos geograficos disponibles para los eventos mediante
+ * formularios con validacion local y operaciones CRUD contra la API.
+ */
 import React, { useEffect, useState } from 'react';
 import { API_BASE_URL } from './config';
 import './LocationManager.css';
 
+// Estado base del formulario de ubicaciones.
 const initialForm = {
   name: '',
   lat: '',
   lng: ''
 };
 
+// Valida nombre y coordenadas antes de persistir una ubicacion.
 function validateLocation(form) {
   const name = form.name.trim();
   const lat = Number(form.lat);
@@ -28,6 +35,7 @@ function validateLocation(form) {
   return null;
 }
 
+// Este componente concentra la logica CRUD de ubicaciones.
 function LocationManager({ onLocationsChanged }) {
   const [locations, setLocations] = useState([]);
   const [formData, setFormData] = useState(initialForm);
@@ -35,6 +43,7 @@ function LocationManager({ onLocationsChanged }) {
   const [message, setMessage] = useState('');
   const [isSaving, setIsSaving] = useState(false);
 
+  // Recupera el catalogo completo de ubicaciones desde la API.
   const loadLocations = async () => {
     try {
       const response = await fetch(`${API_BASE_URL}/locations`);
@@ -49,20 +58,24 @@ function LocationManager({ onLocationsChanged }) {
     }
   };
 
+  // La carga inicial se realiza una sola vez al montar el componente.
   useEffect(() => {
     loadLocations();
   }, []);
 
+  // Sincroniza los inputs del formulario con el estado local.
   const handleChange = (event) => {
     const { name, value } = event.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  // Limpia el formulario y desactiva el modo edicion.
   const clearForm = () => {
     setFormData(initialForm);
     setEditingId(null);
   };
 
+  // Crea o actualiza la ubicacion segun el estado actual del formulario.
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (isSaving) {
@@ -114,6 +127,7 @@ function LocationManager({ onLocationsChanged }) {
     }
   };
 
+  // Carga una ubicacion existente en el formulario para editarla.
   const handleEdit = (location) => {
     setEditingId(location.id);
     setFormData({
@@ -124,6 +138,7 @@ function LocationManager({ onLocationsChanged }) {
     setMessage('');
   };
 
+  // Elimina una ubicacion tras confirmacion del usuario.
   const handleDelete = async (id) => {
     const confirmed = window.confirm('Seguro que quieres eliminar esta ubicacion?');
     if (!confirmed) {
@@ -154,6 +169,7 @@ function LocationManager({ onLocationsChanged }) {
     <section className="locations-card">
       <h3 className="locations-title">Gestion de ubicaciones</h3>
 
+      {/* Formulario principal para crear y editar ubicaciones. */}
       <form className="locations-form" onSubmit={handleSubmit}>
         <input
           className="locations-input"

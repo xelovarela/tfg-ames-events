@@ -1,3 +1,8 @@
+/**
+ * Este archivo define el contenedor principal del frontend.
+ * Configura el enrutado de React Router, el menu lateral, la cabecera comun y
+ * la distribucion general de la aplicacion de Ames Events.
+ */
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter, Navigate, NavLink, Route, Routes, useLocation } from 'react-router-dom';
 import './App.css';
@@ -11,6 +16,7 @@ import LocationsPage from './pages/LocationsPage';
 import EventCreatePage from './pages/EventCreatePage';
 import EventEditPage from './pages/EventEditPage';
 
+// Esta constante describe las opciones visibles en el menu lateral de navegacion.
 const NAV_ITEMS = [
   { to: '/map', label: 'Mapa' },
   { to: '/events', label: 'Eventos' },
@@ -20,16 +26,19 @@ const NAV_ITEMS = [
   { to: '/locations', label: 'Ubicaciones' }
 ];
 
+// Este componente monta la interfaz comun compartida por todas las paginas.
 function AppShell() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
 
+  // Cuando cambia la ruta se cierra el menu movil para mejorar la experiencia de uso.
   useEffect(() => {
     setIsMenuOpen(false);
   }, [location.pathname]);
 
   return (
     <div className="app-container">
+      {/* Cabecera superior con boton de menu, buscador visual y acceso de usuario. */}
       <header className="app-topbar">
         <div className="app-topbar-inner">
           <button
@@ -70,6 +79,7 @@ function AppShell() {
         ))}
       </nav>
 
+      {/* Zona principal donde React Router va renderizando cada pagina. */}
       <main className="app-main">
         <Routes>
           <Route path="/" element={<Navigate to="/map" replace />} />
@@ -97,6 +107,7 @@ function AppShell() {
   );
 }
 
+// Este componente envuelve toda la aplicacion con el router del navegador.
 function App() {
   return (
     <BrowserRouter>
@@ -105,4 +116,5 @@ function App() {
   );
 }
 
+// Se exporta el componente raiz consumido desde index.js.
 export default App;

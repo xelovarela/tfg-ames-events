@@ -1,8 +1,14 @@
+/**
+ * Este archivo define la pagina de edicion de eventos.
+ * Carga el evento seleccionado, muestra estados de carga y error, y reutiliza
+ * el mismo formulario de creacion en modo actualizacion.
+ */
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import EventForm from '../EventForm';
 import { API_BASE_URL } from '../config';
 
+// Este componente resuelve el evento desde la URL y prepara su edicion.
 function EventEditPage() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -10,6 +16,7 @@ function EventEditPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
+  // Cada vez que cambia el id se vuelve a solicitar el evento para editarlo.
   useEffect(() => {
     let isMounted = true;
 
@@ -48,6 +55,7 @@ function EventEditPage() {
     };
   }, [id]);
 
+  // Tras guardar, se redirige al listado principal de eventos.
   const handleEditFinished = () => {
     navigate('/events');
   };
@@ -56,6 +64,7 @@ function EventEditPage() {
     <main>
       <h2>Editar evento</h2>
 
+      {/* Navegacion auxiliar para volver al listado o abrir el detalle del evento. */}
       <div className="event-detail-nav">
         <Link to="/events" className="app-inline-link">Volver a eventos</Link>
         <span>·</span>

@@ -1,3 +1,8 @@
+/*
+ * Este archivo define estilos base heredados por toda la aplicacion.
+ * Ajusta el aspecto tipografico global y la fuente usada para fragmentos de codigo.
+ */
+/* Estilos globales iniciales aplicados al documento completo. */
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -7,6 +12,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Fuente monoespaciada para mostrar texto tecnico o fragmentos de codigo. */
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;

@@ -1,13 +1,20 @@
+/**
+ * Este archivo implementa el gestor de organizadores del frontend.
+ * Controla la carga, validacion y persistencia del catalogo de organizadores
+ * junto con sus datos opcionales de contacto.
+ */
 import React, { useEffect, useState } from 'react';
 import { API_BASE_URL } from './config';
 import './OrganizerManager.css';
 
+// Estado base del formulario de organizadores.
 const initialForm = {
   name: '',
   email: '',
   phone: ''
 };
 
+// Valida nombre, email y telefono antes de enviar el formulario.
 function validateOrganizer(form) {
   const name = form.name.trim();
   const email = form.email.trim();
@@ -28,6 +35,7 @@ function validateOrganizer(form) {
   return null;
 }
 
+// Este componente concentra la logica CRUD de organizadores.
 function OrganizerManager({ onOrganizersChanged }) {
   const [organizers, setOrganizers] = useState([]);
   const [formData, setFormData] = useState(initialForm);
@@ -35,6 +43,7 @@ function OrganizerManager({ onOrganizersChanged }) {
   const [message, setMessage] = useState('');
   const [isSaving, setIsSaving] = useState(false);
 
+  // Recupera el catalogo de organizadores desde la API.
   const loadOrganizers = async () => {
     try {
       const response = await fetch(`${API_BASE_URL}/organizers`);
@@ -49,20 +58,24 @@ function OrganizerManager({ onOrganizersChanged }) {
     }
   };
 
+  // La carga inicial se ejecuta al montar el componente.
   useEffect(() => {
     loadOrganizers();
   }, []);
 
+  // Sincroniza cada input del formulario con el estado local.
   const handleChange = (event) => {
     const { name, value } = event.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  // Limpia el formulario y cierra el modo edicion.
   const clearForm = () => {
     setFormData(initialForm);
     setEditingId(null);
   };
 
+  // Decide entre crear o actualizar en funcion del elemento seleccionado.
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (isSaving) {
@@ -114,6 +127,7 @@ function OrganizerManager({ onOrganizersChanged }) {
     }
   };
 
+  // Rellena el formulario con los datos del organizador elegido.
   const handleEdit = (organizer) => {
     setEditingId(organizer.id);
     setFormData({
@@ -124,6 +138,7 @@ function OrganizerManager({ onOrganizersChanged }) {
     setMessage('');
   };
 
+  // Pide confirmacion antes de borrar un organizador.
   const handleDelete = async (id) => {
     const confirmed = window.confirm('Seguro que quieres eliminar este organizador?');
     if (!confirmed) {
@@ -154,6 +169,7 @@ function OrganizerManager({ onOrganizersChanged }) {
     <section className="organizers-card">
       <h3 className="organizers-title">Gestion de organizadores</h3>
 
+      {/* Formulario principal para crear y editar organizadores. */}
       <form className="organizers-form" onSubmit={handleSubmit}>
         <input
           className="organizers-input"

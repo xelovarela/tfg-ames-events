@@ -1,3 +1,9 @@
+/**
+ * Este archivo agrupa funciones auxiliares de validacion y normalizacion.
+ * Sirve para transformar valores recibidos desde peticiones HTTP a formatos seguros
+ * antes de que los controladores los utilicen o los persistan en base de datos.
+ */
+// Convierte un valor a entero positivo o devuelve null si no cumple la regla.
 function toPositiveInt(value) {
   const parsed = Number(value);
   if (!Number.isInteger(parsed) || parsed <= 0) {
@@ -6,6 +12,7 @@ function toPositiveInt(value) {
   return parsed;
 }
 
+// Permite campos opcionales: acepta vacios y, si hay dato, exige entero positivo.
 function toNullablePositiveInt(value) {
   if (value === null || value === undefined || value === '') {
     return null;
@@ -13,6 +20,7 @@ function toNullablePositiveInt(value) {
   return toPositiveInt(value);
 }
 
+// Valida una latitud dentro del rango geografico permitido.
 function toLatitude(value) {
   const parsed = Number(value);
   if (!Number.isFinite(parsed) || parsed < -90 || parsed > 90) {
@@ -21,6 +29,7 @@ function toLatitude(value) {
   return parsed;
 }
 
+// Valida una longitud dentro del rango geografico permitido.
 function toLongitude(value) {
   const parsed = Number(value);
   if (!Number.isFinite(parsed) || parsed < -180 || parsed > 180) {
@@ -29,6 +38,7 @@ function toLongitude(value) {
   return parsed;
 }
 
+// Convierte una fecha opcional a objeto Date solo cuando el valor es valido.
 function toNullableDate(value) {
   if (value === null || value === undefined || value === '') {
     return null;
@@ -42,6 +52,7 @@ function toNullableDate(value) {
   return parsed;
 }
 
+// Normaliza distintos formatos de booleano al convenio numerico usado en MySQL.
 function toBooleanFlag(value) {
   if (value === true || value === 1 || value === '1' || value === 'true') {
     return 1;
@@ -52,6 +63,7 @@ function toBooleanFlag(value) {
   return null;
 }
 
+// Convierte importes monetarios opcionales a numero con dos decimales.
 function toNullableMoney(value) {
   if (value === null || value === undefined || value === '') {
     return null;
@@ -65,6 +77,7 @@ function toNullableMoney(value) {
   return Number(parsed.toFixed(2));
 }
 
+// Se exportan las utilidades para reutilizarlas desde controladores y otros modulos.
 module.exports = {
   toPositiveInt,
   toNullablePositiveInt,

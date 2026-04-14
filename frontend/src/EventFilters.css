@@ -1,3 +1,9 @@
+/*
+ * Este archivo define los estilos del panel de filtros de eventos.
+ * Organiza la cabecera informativa, la rejilla de controles, los mensajes de estado
+ * y las adaptaciones para tablet y movil.
+ */
+/* Contenedor visual principal del bloque de filtros. */
 .event-filters-card {
   margin-bottom: 1rem;
   padding: 0.9rem;
@@ -6,6 +12,7 @@
   background: #fff;
 }
 
+/* Cabecera con titulo y contador de resultados visibles. */
 .event-filters-header {
   margin-bottom: 0.75rem;
 }
@@ -21,6 +28,7 @@
   font-size: 0.92rem;
 }
 
+/* Rejilla responsiva con selects, checkbox e input numerico. */
 .event-filters-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -48,6 +56,7 @@
   gap: 0.4rem;
 }
 
+/* Zona reservada para acciones como limpiar filtros. */
 .event-filters-actions {
   margin-top: 0.75rem;
   display: flex;
@@ -67,6 +76,7 @@
   background: #ebdfd6;
 }
 
+/* Mensajes de error o estado vacio compartidos por lista y mapa. */
 .event-filters-feedback {
   margin: 0.7rem 0;
   padding: 0.6rem 0.7rem;
@@ -86,12 +96,14 @@
   border: 1px solid #ecddd3;
 }
 
+/* Primer ajuste para tablet reduciendo el numero de columnas. */
 @media (max-width: 900px) {
   .event-filters-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
+/* Ajuste final para movil con una sola columna. */
 @media (max-width: 640px) {
   .event-filters-grid {
     grid-template-columns: 1fr;

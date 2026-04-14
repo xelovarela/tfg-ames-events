@@ -1,10 +1,17 @@
+/**
+ * Este archivo contiene el controlador de organizadores.
+ * Valida la informacion basica de contacto y coordina las operaciones CRUD
+ * relacionadas con los organizadores almacenados en la aplicacion.
+ */
 const organizersService = require('../services/organizersService');
 const { toPositiveInt } = require('../utils/validation');
 
+// Limites maximos para los campos editables del organizador.
 const MAX_ORGANIZER_NAME_LENGTH = 100;
 const MAX_ORGANIZER_EMAIL_LENGTH = 100;
 const MAX_ORGANIZER_PHONE_LENGTH = 30;
 
+// Normaliza nombre, email y telefono antes de crear o actualizar registros.
 function parseOrganizerPayload(body) {
   const name = typeof body.name === 'string' ? body.name.trim() : '';
   const emailValue = typeof body.email === 'string' ? body.email.trim() : '';
@@ -27,6 +34,7 @@ function parseOrganizerPayload(body) {
   return { name, email, phone };
 }
 
+// Devuelve todos los organizadores registrados.
 async function getAll(req, res) {
   try {
     const organizers = await organizersService.listOrganizers();
@@ -37,6 +45,7 @@ async function getAll(req, res) {
   }
 }
 
+// Recupera un organizador concreto validando antes su id.
 async function getById(req, res) {
   const id = toPositiveInt(req.params.id);
   if (!id) {
@@ -56,6 +65,7 @@ async function getById(req, res) {
   }
 }
 
+// Inserta un nuevo organizador cuando el payload es correcto.
 async function create(req, res) {
   const payload = parseOrganizerPayload(req.body);
   if (payload.error) {
@@ -71,6 +81,7 @@ async function create(req, res) {
   }
 }
 
+// Modifica un organizador existente con la informacion recibida.
 async function update(req, res) {
   const id = toPositiveInt(req.params.id);
   if (!id) {
@@ -95,6 +106,7 @@ async function update(req, res) {
   }
 }
 
+// Elimina un organizador solo si no esta enlazado a eventos.
 async function remove(req, res) {
   const id = toPositiveInt(req.params.id);
   if (!id) {
@@ -120,6 +132,7 @@ async function remove(req, res) {
   }
 }
 
+// Se exportan las acciones CRUD para el router de organizadores.
 module.exports = {
   getAll,
   getById,

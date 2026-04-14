@@ -1,3 +1,9 @@
+/*
+ * Este archivo define los estilos globales del frontend y del layout principal.
+ * Incluye la cabecera, el menu lateral, la zona central de contenido, el detalle
+ * de eventos y los estilos responsive compartidos por varias vistas.
+ */
+/* Reset basico para que la aplicacion ocupe toda la altura disponible. */
 html, body, #root {
   margin: 0;
   padding: 0;
@@ -8,12 +14,14 @@ html, body, #root {
   box-sizing: border-box;
 }
 
+/* Estilo general de tipografia y fondo de toda la aplicacion. */
 body {
   font-family: 'Trebuchet MS', 'Segoe UI', sans-serif;
   background: linear-gradient(180deg, #f7f4ef 0%, #efe7da 100%);
   color: #1f1b16;
 }
 
+/* Estructura principal del layout que apila cabecera, contenido y pie. */
 .app-container {
   min-height: 100vh;
   display: flex;
@@ -21,6 +29,7 @@ body {
   position: relative;
 }
 
+/* Cabecera fija con acciones rapidas y buscador visual. */
 .app-topbar {
   position: sticky;
   top: 0;
@@ -102,6 +111,7 @@ body {
   background: #4a3124;
 }
 
+/* Menu lateral deslizante para la navegacion entre secciones. */
 .app-drawer {
   position: fixed;
   top: 0;
@@ -158,6 +168,7 @@ body {
   color: #fff;
 }
 
+/* Zona central donde se renderizan las paginas del router. */
 .app-main {
   flex: 1;
   width: min(1200px, 100%);
@@ -186,6 +197,7 @@ body {
   color: #6c1b0c;
 }
 
+/* Estilos del contenido mostrado dentro de los popups del mapa. */
 .map-popup {
   min-width: 220px;
 }
@@ -217,6 +229,7 @@ body {
   border-color: #e9b79f;
 }
 
+/* Tarjeta reutilizada por la vista de detalle de evento. */
 .event-detail-card {
   background: #fff;
   border: 1px solid #eadfd5;
@@ -296,6 +309,7 @@ body {
   font-size: 0.9rem;
 }
 
+/* Pie de pagina comun para toda la aplicacion. */
 .app-footer {
   background: #2b251f;
   color: #d3c8ba;
@@ -305,6 +319,7 @@ body {
   border-top: 1px solid #474036;
 }
 
+/* Ajustes para pantallas pequenas y uso movil. */
 @media (max-width: 720px) {
   .app-topbar {
     padding: 0.6rem 0.75rem;

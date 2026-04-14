@@ -1,8 +1,15 @@
+/**
+ * Este archivo contiene el controlador de audiencias.
+ * Gestiona la validacion del nombre y del rango de edades antes de utilizar
+ * los servicios que leen o modifican la informacion en base de datos.
+ */
 const audiencesService = require('../services/audiencesService');
 const { toPositiveInt } = require('../utils/validation');
 
+// Limite maximo permitido para el nombre visible de la audiencia.
 const MAX_AUDIENCE_NAME_LENGTH = 100;
 
+// Convierte edades opcionales a enteros no negativos cuando el dato es valido.
 function toNullableNonNegativeInt(value) {
   if (value === null || value === undefined || value === '') {
     return null;
@@ -16,6 +23,7 @@ function toNullableNonNegativeInt(value) {
   return parsed;
 }
 
+// Valida y normaliza el cuerpo de la peticion para altas y ediciones.
 function parseAudiencePayload(body) {
   const name = typeof body.name === 'string' ? body.name.trim() : '';
   const ageMin = toNullableNonNegativeInt(body.age_min);
@@ -44,6 +52,7 @@ function parseAudiencePayload(body) {
   return { name, ageMin, ageMax };
 }
 
+// Devuelve todas las audiencias definidas.
 async function getAll(req, res) {
   try {
     const audiences = await audiencesService.listAudiences();
@@ -54,6 +63,7 @@ async function getAll(req, res) {
   }
 }
 
+// Recupera una audiencia concreta a partir de su identificador.
 async function getById(req, res) {
   const id = toPositiveInt(req.params.id);
   if (!id) {
@@ -73,6 +83,7 @@ async function getById(req, res) {
   }
 }
 
+// Crea una audiencia nueva si los datos cumplen las reglas del dominio.
 async function create(req, res) {
   const payload = parseAudiencePayload(req.body);
   if (payload.error) {
@@ -88,6 +99,7 @@ async function create(req, res) {
   }
 }
 
+// Actualiza una audiencia existente conservando la validacion previa.
 async function update(req, res) {
   const id = toPositiveInt(req.params.id);
   if (!id) {
@@ -112,6 +124,7 @@ async function update(req, res) {
   }
 }
 
+// Elimina una audiencia unicamente cuando no esta asociada a eventos.
 async function remove(req, res) {
   const id = toPositiveInt(req.params.id);
   if (!id) {
@@ -137,6 +150,7 @@ async function remove(req, res) {
   }
 }
 
+// Se exportan las acciones CRUD para el router de audiencias.
 module.exports = {
   getAll,
   getById,
