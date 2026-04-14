@@ -35,8 +35,14 @@ function clearAuthSession() {
   localStorage.removeItem(AUTH_STORAGE_KEY);
 }
 
+function getAuthToken() {
+  const session = getAuthSession();
+  return session?.token || null;
+}
+
 export {
   setAuthSession,
   getAuthSession,
-  clearAuthSession
+  clearAuthSession,
+  getAuthToken
 };

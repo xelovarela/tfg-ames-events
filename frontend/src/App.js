@@ -17,15 +17,16 @@ import EventCreatePage from './pages/EventCreatePage';
 import EventEditPage from './pages/EventEditPage';
 import LoginPage from './pages/LoginPage';
 import { clearAuthSession, getAuthSession } from './utils/authStorage';
+import ProtectedRoute from './ProtectedRoute';
 
 // Esta constante describe las opciones visibles en el menu lateral de navegacion.
 const NAV_ITEMS = [
   { to: '/map', label: 'Mapa' },
   { to: '/events', label: 'Eventos' },
-  { to: '/audiences', label: 'Audiencias' },
-  { to: '/organizers', label: 'Organizadores' },
-  { to: '/categories', label: 'Categorias' },
-  { to: '/locations', label: 'Ubicaciones' }
+  { to: '/audiences', label: 'Audiencias', adminOnly: true },
+  { to: '/organizers', label: 'Organizadores', adminOnly: true },
+  { to: '/categories', label: 'Categorias', adminOnly: true },
+  { to: '/locations', label: 'Ubicaciones', adminOnly: true }
 ];
 
 // Este componente monta la interfaz comun compartida por todas las paginas.
@@ -35,6 +36,8 @@ function AppShell({ session, onLogout, onSessionChange }) {
   const [searchParams, setSearchParams] = useSearchParams();
   const searchValue = searchParams.get('search') || '';
   const isAuthenticated = Boolean(session?.token);
+  const isAdmin = session?.user?.role === 'admin';
+  const visibleNavItems = NAV_ITEMS.filter((item) => !item.adminOnly || isAdmin);
 
   // Cuando cambia la ruta se cierra el menu movil para mejorar la experiencia de uso.
   useEffect(() => {
@@ -106,7 +109,7 @@ function AppShell({ session, onLogout, onSessionChange }) {
 
       <nav className={`app-drawer${isMenuOpen ? ' open' : ''}`}>
         <h1 className="app-title">Ames Events</h1>
-        {NAV_ITEMS.map((item) => (
+        {visibleNavItems.map((item) => (
           <NavLink
             key={item.to}
             to={item.to}
@@ -125,14 +128,56 @@ function AppShell({ session, onLogout, onSessionChange }) {
           <Route path="/map" element={<MapPage />} />
 
           <Route path="/events" element={<EventsPage />} />
-          <Route path="/events/new" element={<EventCreatePage />} />
+          <Route
+            path="/events/new"
+            element={(
+              <ProtectedRoute session={session} requireAdmin>
+                <EventCreatePage />
+              </ProtectedRoute>
+            )}
+          />
           <Route path="/events/:id" element={<EventDetailPage />} />
-          <Route path="/events/:id/edit" element={<EventEditPage />} />
+          <Route
+            path="/events/:id/edit"
+            element={(
+              <ProtectedRoute session={session} requireAdmin>
+                <EventEditPage />
+              </ProtectedRoute>
+            )}
+          />
 
-          <Route path="/audiences" element={<AudiencesPage />} />
-          <Route path="/organizers" element={<OrganizersPage />} />
-          <Route path="/categories" element={<CategoriesPage />} />
-          <Route path="/locations" element={<LocationsPage />} />
+          <Route
+            path="/audiences"
+            element={(
+              <ProtectedRoute session={session} requireAdmin>
+                <AudiencesPage />
+              </ProtectedRoute>
+            )}
+          />
+          <Route
+            path="/organizers"
+            element={(
+              <ProtectedRoute session={session} requireAdmin>
+                <OrganizersPage />
+              </ProtectedRoute>
+            )}
+          />
+          <Route
+            path="/categories"
+            element={(
+              <ProtectedRoute session={session} requireAdmin>
+                <CategoriesPage />
+              </ProtectedRoute>
+            )}
+          />
+          <Route
+            path="/locations"
+            element={(
+              <ProtectedRoute session={session} requireAdmin>
+                <LocationsPage />
+              </ProtectedRoute>
+            )}
+          />
           <Route path="/login" element={<LoginPage onLogin={onSessionChange} />} />
 
           <Route path="*" element={<p className="app-not-found">Ruta no encontrada.</p>} />

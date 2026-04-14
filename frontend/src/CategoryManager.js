@@ -5,6 +5,7 @@
  */
 import React, { useEffect, useState } from 'react';
 import { API_BASE_URL } from './config';
+import { withAuthHeaders } from './utils/authFetch';
 import './CategoryManager.css';
 
 // Estado base del formulario de categorias.
@@ -76,7 +77,7 @@ function CategoryManager({ onCategoriesChanged }) {
     try {
       const response = await fetch(endpoint, {
         method,
-        headers: { 'Content-Type': 'application/json' },
+        headers: withAuthHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify(payload)
       });
       const data = await response.json();
@@ -102,7 +103,10 @@ function CategoryManager({ onCategoriesChanged }) {
     if (!confirmed) return;
 
     try {
-      const response = await fetch(`${API_BASE_URL}/categories/${id}`, { method: 'DELETE' });
+      const response = await fetch(`${API_BASE_URL}/categories/${id}`, {
+        method: 'DELETE',
+        headers: withAuthHeaders()
+      });
       const data = await response.json();
       if (!response.ok) {
         throw new Error(data.error || 'Error eliminando categoria');

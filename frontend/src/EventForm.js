@@ -5,6 +5,7 @@
  */
 import React, { useEffect, useState } from 'react';
 import { API_BASE_URL } from './config';
+import { withAuthHeaders } from './utils/authFetch';
 import './EventForm.css';
 
 // Estado inicial del formulario para altas o reseteos.
@@ -171,9 +172,9 @@ const EventForm = ({
 
       const response = await fetch(endpoint, {
         method,
-        headers: {
+        headers: withAuthHeaders({
           'Content-Type': 'application/json'
-        },
+        }),
         body: JSON.stringify(payload)
       });
 

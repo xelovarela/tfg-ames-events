@@ -6,6 +6,7 @@
 import React, { useEffect, useState } from 'react';
 import { API_BASE_URL } from './config';
 import { Link } from 'react-router-dom';
+import { withAuthHeaders } from './utils/authFetch';
 
 // Convierte la fecha tecnica del backend a un formato legible.
 function formatDate(value) {
@@ -104,7 +105,8 @@ const EventList = ({
 
     try {
       const response = await fetch(`${API_BASE_URL}/events/${id}`, {
-        method: 'DELETE'
+        method: 'DELETE',
+        headers: withAuthHeaders()
       });
 
       const data = await response.json();

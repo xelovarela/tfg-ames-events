@@ -5,6 +5,7 @@
  */
 import React, { useEffect, useState } from 'react';
 import { API_BASE_URL } from './config';
+import { withAuthHeaders } from './utils/authFetch';
 import './AudienceManager.css';
 
 // Estado base del formulario de audiencias.
@@ -109,7 +110,7 @@ function AudienceManager({ onAudiencesChanged }) {
     try {
       const response = await fetch(endpoint, {
         method,
-        headers: { 'Content-Type': 'application/json' },
+        headers: withAuthHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify(payload)
       });
       const data = await response.json();
@@ -151,7 +152,8 @@ function AudienceManager({ onAudiencesChanged }) {
 
     try {
       const response = await fetch(`${API_BASE_URL}/audiences/${id}`, {
-        method: 'DELETE'
+        method: 'DELETE',
+        headers: withAuthHeaders()
       });
       const data = await response.json();
       if (!response.ok) {
