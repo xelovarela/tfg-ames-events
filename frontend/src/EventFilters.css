@@ -28,11 +28,12 @@
   font-size: 0.92rem;
 }
 
-/* Rejilla responsiva con selects, checkbox e input numerico. */
+/* Rejilla compacta para mantener los filtros en una sola linea en escritorio. */
 .event-filters-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: minmax(120px, 0.8fr) minmax(120px, 0.75fr) minmax(150px, 1fr) minmax(140px, 1.0fr) auto auto;
   gap: 0.65rem;
+  align-items: end;
 }
 
 .event-filters-grid label {
@@ -40,6 +41,7 @@
   flex-direction: column;
   gap: 0.3rem;
   font-size: 0.9rem;
+  min-width: 0;
 }
 
 .event-filters-input {
@@ -50,17 +52,19 @@
 }
 
 .event-filters-checkbox {
-  justify-content: flex-end;
+  justify-content: center;
   flex-direction: row;
   align-items: center;
   gap: 0.4rem;
+  white-space: nowrap;
+  align-self: end;
 }
 
 /* Zona reservada para acciones como limpiar filtros. */
 .event-filters-actions {
-  margin-top: 0.75rem;
   display: flex;
-  justify-content: flex-end;
+  justify-content: flex-start;
+  align-self: end;
 }
 
 .event-filters-clear {
@@ -99,7 +103,7 @@
 /* Primer ajuste para tablet reduciendo el numero de columnas. */
 @media (max-width: 900px) {
   .event-filters-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 

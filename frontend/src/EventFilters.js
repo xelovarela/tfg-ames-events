@@ -35,9 +35,9 @@ function EventFilters({
         </p>
       </div>
 
-      {/* Controles de filtrado por catalogos, edad y gratuidad. */}
+      {/* Controles de filtrado en una sola fila para escritorio. */}
       <div className="event-filters-grid">
-        <label>
+        <label className="event-filter-field event-filter-field-category">
           Categoria
           <select
             name="category"
@@ -54,7 +54,7 @@ function EventFilters({
           </select>
         </label>
 
-        <label>
+        <label className="event-filter-field event-filter-field-audience">
           Audiencia
           <select
             name="audienceId"
@@ -71,7 +71,7 @@ function EventFilters({
           </select>
         </label>
 
-        <label>
+        <label className="event-filter-field event-filter-field-location">
           Ubicacion
           <select
             name="location"
@@ -88,7 +88,7 @@ function EventFilters({
           </select>
         </label>
 
-        <label>
+        <label className="event-filter-field event-filter-field-organizer">
           Organizador
           <select
             name="organizerId"
@@ -105,20 +105,6 @@ function EventFilters({
           </select>
         </label>
 
-        <label>
-          Edad compatible
-          <input
-            type="number"
-            min="0"
-            step="1"
-            name="compatibleAge"
-            value={filters.compatibleAge}
-            onChange={onChange}
-            className="event-filters-input"
-            placeholder="Ej: 6"
-          />
-        </label>
-
         <label className="event-filters-checkbox">
           <input
             type="checkbox"
@@ -128,13 +114,13 @@ function EventFilters({
           />
           Solo gratis
         </label>
-      </div>
 
-      {/* Accion para volver rapidamente al estado inicial del buscador. */}
-      <div className="event-filters-actions">
-        <button type="button" className="event-filters-clear" onClick={onClear}>
-          Limpiar filtros
-        </button>
+        {/* Accion para volver rapidamente al estado inicial del buscador. */}
+        <div className="event-filters-actions">
+          <button type="button" className="event-filters-clear" onClick={onClear}>
+            Limpiar filtros
+          </button>
+        </div>
       </div>
     </section>
   );
