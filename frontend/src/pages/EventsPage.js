@@ -19,7 +19,6 @@ import {
 // Este componente coordina la vista de gestion y filtrado del catalogo de eventos.
 function EventsPage() {
   const [events, setEvents] = useState([]);
-  const [eventToEdit, setEventToEdit] = useState(null);
   const [categories, setCategories] = useState([]);
   const [audiences, setAudiences] = useState([]);
   const [locations, setLocations] = useState([]);
@@ -38,11 +37,10 @@ function EventsPage() {
       ...filtersFromSearchParams(searchParams)
     };
 
-    const isDifferent = JSON.stringify(nextFilters) !== JSON.stringify(filters);
-
-    if (isDifferent) {
-      setFilters(nextFilters);
-    }
+    setFilters((currentFilters) => {
+      const isDifferent = JSON.stringify(nextFilters) !== JSON.stringify(currentFilters);
+      return isDifferent ? nextFilters : currentFilters;
+    });
   }, [searchParams]);
 
   // Carga todos los eventos disponibles desde la API.
@@ -97,23 +95,6 @@ function EventsPage() {
   // Se reutiliza al borrar eventos para refrescar el listado visible.
   const refreshAll = () => {
     loadEvents();
-  };
-
-  // Esta funcion preparaba la carga para edicion local; se mantiene como referencia del flujo.
-  const handleEditEvent = async (id) => {
-    try {
-      const response = await fetch(`${API_BASE_URL}/events/${id}`);
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Error loading event');
-      }
-
-      setEventToEdit(data);
-    } catch (error) {
-      console.error(error);
-      alert('Error al cargar el evento');
-    }
   };
 
   // Cada cambio del formulario se refleja en estado y en la URL.

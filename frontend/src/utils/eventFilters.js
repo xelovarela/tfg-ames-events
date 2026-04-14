@@ -5,6 +5,7 @@
  */
 // Estado base usado al inicializar o limpiar el formulario de filtros.
 const initialEventFilters = {
+  search: '',
   category: '',
   audienceId: '',
   location: '',
@@ -54,6 +55,25 @@ function filterEvents(events, filters) {
   }
 
   return events.filter((event) => {
+    const normalizedSearch = filters.search.trim().toLowerCase();
+    if (normalizedSearch) {
+      const searchableFields = [
+        event.title,
+        event.description,
+        event.category,
+        event.location,
+        event.audience,
+        event.organizer
+      ]
+        .filter(Boolean)
+        .join(' ')
+        .toLowerCase();
+
+      if (!searchableFields.includes(normalizedSearch)) {
+        return false;
+      }
+    }
+
     if (filters.category && event.category !== filters.category) {
       return false;
     }
@@ -85,6 +105,7 @@ function filterEvents(events, filters) {
 // Convierte la query string de la URL en un objeto de filtros utilizable por React.
 function filtersFromSearchParams(searchParams) {
   return {
+    search: searchParams.get('search') || '',
     category: searchParams.get('category') || '',
     audienceId: searchParams.get('audienceId') || '',
     location: searchParams.get('location') || '',
@@ -97,6 +118,10 @@ function filtersFromSearchParams(searchParams) {
 // Genera una URL compartible a partir del estado actual de los filtros.
 function buildSearchParamsFromFilters(filters) {
   const params = new URLSearchParams();
+
+  if (filters.search) {
+    params.set('search', filters.search);
+  }
 
   if (filters.category) {
     params.set('category', filters.category);

@@ -32,17 +32,16 @@ function MapPage() {
 
   // Si la URL cambia por navegacion o por compartir enlaces, el estado local se actualiza.
   useEffect(() => {
-  const nextFilters = {
-    ...initialEventFilters,
-    ...filtersFromSearchParams(searchParams)
-  };
+    const nextFilters = {
+      ...initialEventFilters,
+      ...filtersFromSearchParams(searchParams)
+    };
 
-  const isDifferent = JSON.stringify(nextFilters) !== JSON.stringify(filters);
-
-  if (isDifferent) {
-    setFilters(nextFilters);
-  }
-}, [searchParams]);
+    setFilters((currentFilters) => {
+      const isDifferent = JSON.stringify(nextFilters) !== JSON.stringify(currentFilters);
+      return isDifferent ? nextFilters : currentFilters;
+    });
+  }, [searchParams]);
 
   // Carga el listado de eventos que despues se filtrara en memoria.
   const loadEvents = async () => {

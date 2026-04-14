@@ -4,7 +4,7 @@
  * la distribucion general de la aplicacion de Ames Events.
  */
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter, Navigate, NavLink, Route, Routes, useLocation } from 'react-router-dom';
+import { BrowserRouter, Navigate, NavLink, Route, Routes, useLocation, useSearchParams } from 'react-router-dom';
 import './App.css';
 import MapPage from './pages/MapPage';
 import EventsPage from './pages/EventsPage';
@@ -30,11 +30,27 @@ const NAV_ITEMS = [
 function AppShell() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const searchValue = searchParams.get('search') || '';
 
   // Cuando cambia la ruta se cierra el menu movil para mejorar la experiencia de uso.
   useEffect(() => {
     setIsMenuOpen(false);
   }, [location.pathname]);
+
+  // Mantiene el buscador de la cabecera sincronizado con la URL para reutilizar el sistema actual de filtros.
+  const handleSearchChange = (event) => {
+    const nextValue = event.target.value;
+    const nextSearchParams = new URLSearchParams(searchParams);
+
+    if (nextValue.trim()) {
+      nextSearchParams.set('search', nextValue);
+    } else {
+      nextSearchParams.delete('search');
+    }
+
+    setSearchParams(nextSearchParams);
+  };
 
   return (
     <div className="app-container">
@@ -55,7 +71,13 @@ function AppShell() {
           </button>
 
           <div className="app-search-wrap">
-            <input type="text" placeholder="Buscar eventos..." className="app-search" />
+            <input
+              type="text"
+              placeholder="Buscar eventos..."
+              className="app-search"
+              value={searchValue}
+              onChange={handleSearchChange}
+            />
           </div>
 
           <button type="button" className="app-icon-btn" aria-label="Perfil de usuario">
