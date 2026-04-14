@@ -4,7 +4,7 @@
  * la distribucion general de la aplicacion de Ames Events.
  */
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter, Navigate, NavLink, Route, Routes, useLocation, useSearchParams } from 'react-router-dom';
+import { BrowserRouter, Link, Navigate, NavLink, Route, Routes, useLocation, useSearchParams } from 'react-router-dom';
 import './App.css';
 import MapPage from './pages/MapPage';
 import EventsPage from './pages/EventsPage';
@@ -15,6 +15,8 @@ import CategoriesPage from './pages/CategoriesPage';
 import LocationsPage from './pages/LocationsPage';
 import EventCreatePage from './pages/EventCreatePage';
 import EventEditPage from './pages/EventEditPage';
+import LoginPage from './pages/LoginPage';
+import { clearAuthSession, getAuthSession } from './utils/authStorage';
 
 // Esta constante describe las opciones visibles en el menu lateral de navegacion.
 const NAV_ITEMS = [
@@ -27,11 +29,12 @@ const NAV_ITEMS = [
 ];
 
 // Este componente monta la interfaz comun compartida por todas las paginas.
-function AppShell() {
+function AppShell({ session, onLogout, onSessionChange }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
   const searchValue = searchParams.get('search') || '';
+  const isAuthenticated = Boolean(session?.token);
 
   // Cuando cambia la ruta se cierra el menu movil para mejorar la experiencia de uso.
   useEffect(() => {
@@ -80,9 +83,22 @@ function AppShell() {
             />
           </div>
 
-          <button type="button" className="app-icon-btn" aria-label="Perfil de usuario">
-            <span className="app-icon" aria-hidden="true">U</span>
-          </button>
+          <div className="app-auth-wrap">
+            {isAuthenticated ? (
+              <>
+                <span className="app-auth-user">
+                  {session.user?.username || 'Usuario'}
+                </span>
+                <button type="button" className="app-auth-btn" onClick={onLogout}>
+                  Cerrar sesion
+                </button>
+              </>
+            ) : (
+              <Link to="/login" className="app-auth-link">
+                Iniciar sesion
+              </Link>
+            )}
+          </div>
         </div>
       </header>
 
@@ -117,6 +133,7 @@ function AppShell() {
           <Route path="/organizers" element={<OrganizersPage />} />
           <Route path="/categories" element={<CategoriesPage />} />
           <Route path="/locations" element={<LocationsPage />} />
+          <Route path="/login" element={<LoginPage onLogin={onSessionChange} />} />
 
           <Route path="*" element={<p className="app-not-found">Ruta no encontrada.</p>} />
         </Routes>
@@ -131,9 +148,20 @@ function AppShell() {
 
 // Este componente envuelve toda la aplicacion con el router del navegador.
 function App() {
+  const [session, setSession] = useState(() => getAuthSession());
+
+  const handleLogout = () => {
+    clearAuthSession();
+    setSession(null);
+  };
+
+  const syncSessionFromStorage = () => {
+    setSession(getAuthSession());
+  };
+
   return (
     <BrowserRouter>
-      <AppShell />
+      <AppShell session={session} onLogout={handleLogout} onSessionChange={syncSessionFromStorage} />
     </BrowserRouter>
   );
 }
