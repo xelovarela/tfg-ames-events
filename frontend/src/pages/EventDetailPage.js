@@ -115,8 +115,8 @@ function EventDetailPage() {
       )}
 
       {!loading && !error && event && (
-        {/* Tarjeta principal que agrupa la informacion relevante del evento. */}
         <section className="event-detail-card">
+          {/* Tarjeta principal que agrupa la informacion relevante del evento. */}
           <div className="event-detail-hero">
             <h3>{event.title}</h3>
             <div className="event-detail-tags">
