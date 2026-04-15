@@ -7,11 +7,22 @@ USE ames_events;
 -- Se desactivan temporalmente las claves foraneas para vaciar las tablas sin errores.
 SET FOREIGN_KEY_CHECKS = 0;
 TRUNCATE TABLE events;
+TRUNCATE TABLE users;
+TRUNCATE TABLE roles;
 TRUNCATE TABLE organizers;
 TRUNCATE TABLE audiences;
 TRUNCATE TABLE locations;
 TRUNCATE TABLE categories;
 SET FOREIGN_KEY_CHECKS = 1;
+
+-- Roles base para el sistema de autorizacion.
+INSERT INTO roles (name) VALUES
+  ('admin'),
+  ('user');
+
+-- Usuario administrador inicial para acceso al panel de gestion.
+INSERT INTO users (username, email, password_hash, role_id) VALUES
+  ('admin', 'admin@ames.local', '$2b$10$h7aDuOYJEaUiG8u2KUj9qOr2DKf7f4QbovqhY2xK4FcdGFV3OJat2', 1);
 
 -- Catalogo base de categorias disponibles en la aplicacion.
 INSERT INTO categories (name) VALUES

@@ -18,6 +18,7 @@ import EventEditPage from './pages/EventEditPage';
 import LoginPage from './pages/LoginPage';
 import { clearAuthSession, getAuthSession } from './utils/authStorage';
 import ProtectedRoute from './ProtectedRoute';
+import UsersPage from './pages/UsersPage';
 
 // Esta constante describe las opciones visibles en el menu lateral de navegacion.
 const NAV_ITEMS = [
@@ -26,7 +27,8 @@ const NAV_ITEMS = [
   { to: '/audiences', label: 'Audiencias', adminOnly: true },
   { to: '/organizers', label: 'Organizadores', adminOnly: true },
   { to: '/categories', label: 'Categorias', adminOnly: true },
-  { to: '/locations', label: 'Ubicaciones', adminOnly: true }
+  { to: '/locations', label: 'Ubicaciones', adminOnly: true },
+  { to: '/users', label: 'Usuarios', adminOnly: true }
 ];
 
 // Este componente monta la interfaz comun compartida por todas las paginas.
@@ -175,6 +177,14 @@ function AppShell({ session, onLogout, onSessionChange }) {
             element={(
               <ProtectedRoute session={session} requireAdmin>
                 <LocationsPage />
+              </ProtectedRoute>
+            )}
+          />
+          <Route
+            path="/users"
+            element={(
+              <ProtectedRoute session={session} requireAdmin>
+                <UsersPage />
               </ProtectedRoute>
             )}
           />

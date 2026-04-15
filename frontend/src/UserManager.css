@@ -1,0 +1,109 @@
+/*
+ * Este archivo define estilos del gestor de usuarios.
+ * Mantiene el aspecto de los modulos CRUD existentes para
+ * conservar consistencia visual sin redisenos grandes.
+ */
+.users-card {
+  padding: 1rem;
+  background: #f7f7f7;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.users-title {
+  margin: 0 0 1rem;
+}
+
+.users-form {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.6rem;
+}
+
+.users-input {
+  width: 100%;
+  padding: 0.65rem;
+  border: 1px solid #cdcdcd;
+  border-radius: 6px;
+  font-size: 0.95rem;
+}
+
+.users-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.3rem;
+}
+
+.users-btn {
+  border: 0;
+  border-radius: 6px;
+  padding: 0.6rem 0.95rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.users-btn-primary {
+  background: #b30000;
+  color: #fff;
+}
+
+.users-btn-secondary {
+  background: #e4e4e4;
+  color: #222;
+}
+
+.users-btn-danger {
+  background: #d64545;
+  color: #fff;
+}
+
+.users-message {
+  margin: 0.75rem 0 0;
+}
+
+.users-list {
+  margin-top: 1rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 0.7rem;
+}
+
+.users-item {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 0.8rem;
+  background: #fff;
+}
+
+.users-item p {
+  margin: 0.35rem 0;
+  font-size: 0.92rem;
+}
+
+.users-item-actions {
+  margin-top: 0.6rem;
+  display: flex;
+  gap: 0.45rem;
+}
+
+@media (max-width: 860px) {
+  .users-form {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 720px) {
+  .users-form {
+    grid-template-columns: 1fr;
+  }
+
+  .users-actions {
+    flex-direction: column;
+  }
+
+  .users-btn {
+    width: 100%;
+    min-height: 44px;
+  }
+}

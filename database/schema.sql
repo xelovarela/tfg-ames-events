@@ -5,6 +5,22 @@
 CREATE DATABASE IF NOT EXISTS ames_events;
 USE ames_events;
 
+-- Tabla de roles para el control basico de permisos (admin y user).
+CREATE TABLE roles (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(50) NOT NULL UNIQUE
+);
+
+-- Tabla de usuarios para autenticacion y autorizacion por rol.
+CREATE TABLE users (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  username VARCHAR(100) NOT NULL UNIQUE,
+  email VARCHAR(100) NOT NULL UNIQUE,
+  password_hash VARCHAR(255) NOT NULL,
+  role_id INT NOT NULL,
+  CONSTRAINT fk_user_role FOREIGN KEY (role_id) REFERENCES roles(id)
+);
+
 -- Tabla de categorias para clasificar cada evento por tipo.
 CREATE TABLE categories (
   id INT AUTO_INCREMENT PRIMARY KEY,
