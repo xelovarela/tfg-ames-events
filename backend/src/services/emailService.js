@@ -11,6 +11,39 @@ function getVerificationUrl(token) {
   return `${baseUrl}/verify-email?token=${encodeURIComponent(token)}`;
 }
 
+function getEventUrl(eventId) {
+  const baseUrl = process.env.APP_BASE_URL || DEFAULT_APP_BASE_URL;
+  return `${baseUrl}/events/${encodeURIComponent(eventId)}`;
+}
+
+function formatEventDate(value) {
+  if (!value) {
+    return 'Sin fecha';
+  }
+
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) {
+    return 'Sin fecha';
+  }
+
+  return date.toLocaleString('es-ES', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+}
+
+function escapeHtml(value) {
+  return String(value || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
 function createTransporterIfConfigured() {
   const host = process.env.SMTP_HOST;
   const port = Number(process.env.SMTP_PORT || 587);
@@ -74,7 +107,60 @@ async function sendVerificationEmail({ to, name, token }) {
   return { delivered: true, verificationUrl };
 }
 
+async function sendEventAlertEmail({ to, name, alertName, event }) {
+  const eventUrl = getEventUrl(event.id);
+  const transporter = createTransporterIfConfigured();
+  const from = process.env.MAIL_FROM || process.env.SMTP_USER || 'no-reply@ames-events.local';
+  const subject = `Nuevo evento para tu alerta: ${event.title}`;
+  const eventDate = formatEventDate(event.event_date);
+  const location = event.location || 'Ubicacion no especificada';
+  const safeName = escapeHtml(name || 'usuario');
+  const safeAlertName = escapeHtml(alertName);
+  const safeEventTitle = escapeHtml(event.title);
+  const safeEventDate = escapeHtml(eventDate);
+  const safeLocation = escapeHtml(location);
+  const safeEventUrl = escapeHtml(eventUrl);
+  const text = [
+    `Hola ${name || 'usuario'},`,
+    '',
+    `Tu alerta "${alertName}" coincide con un nuevo evento en Ames Events.`,
+    '',
+    `Evento: ${event.title}`,
+    `Fecha: ${eventDate}`,
+    `Ubicacion: ${location}`,
+    '',
+    `Puedes ver el detalle aqui: ${eventUrl}`
+  ].join('\n');
+  const html = `
+    <p>Hola ${safeName},</p>
+    <p>Tu alerta <strong>${safeAlertName}</strong> coincide con un nuevo evento en Ames Events.</p>
+    <ul>
+      <li><strong>Evento:</strong> ${safeEventTitle}</li>
+      <li><strong>Fecha:</strong> ${safeEventDate}</li>
+      <li><strong>Ubicacion:</strong> ${safeLocation}</li>
+    </ul>
+    <p><a href="${safeEventUrl}">Ver detalle del evento</a></p>
+  `;
+
+  if (!transporter) {
+    console.warn(`[emailService] SMTP no configurado. Alerta "${alertName}" para ${to}: ${eventUrl}`);
+    return { delivered: false, eventUrl };
+  }
+
+  await transporter.sendMail({
+    from,
+    to,
+    subject,
+    text,
+    html
+  });
+
+  return { delivered: true, eventUrl };
+}
+
 module.exports = {
   sendVerificationEmail,
-  getVerificationUrl
+  sendEventAlertEmail,
+  getVerificationUrl,
+  getEventUrl
 };

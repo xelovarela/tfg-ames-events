@@ -4,6 +4,7 @@
  * las comprobaciones necesarias y devuelve respuestas HTTP coherentes al cliente.
  */
 const eventsService = require('../services/eventsService');
+const alertsService = require('../services/alertsService');
 const {
   toPositiveInt,
   toNullablePositiveInt,
@@ -152,6 +153,14 @@ async function create(req, res) {
     }
 
     const id = await eventsService.createEvent(payload);
+    const event = await eventsService.getEventById(id);
+
+    try {
+      await alertsService.notifyMatchingAlertsForEvent(event);
+    } catch (alertError) {
+      console.error('Error processing event alerts:', alertError);
+    }
+
     return res.status(201).json({ message: 'Event created successfully', id });
   } catch (error) {
     console.error('Error creating event:', error);

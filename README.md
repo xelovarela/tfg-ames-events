@@ -13,6 +13,7 @@ Aplicacion web para gestionar y visualizar eventos infantiles geolocalizados en 
 - Control de acceso por roles: `admin`, `content_manager` y `user`.
 - Gestion de usuarios para administradores.
 - Favoritos de eventos para usuarios registrados.
+- Alertas de eventos por email para usuarios autenticados.
 - CRUD de eventos.
 - CRUD completo de categorias.
 - CRUD completo de ubicaciones.
@@ -193,10 +194,37 @@ Endpoints protegidos con JWT y rol `user`.
 - `POST /favorites/:eventId`
 - `DELETE /favorites/:eventId`
 
+### Alerts
+Endpoints protegidos con JWT. Cada usuario gestiona solo sus propias alertas.
+
+- `GET /alerts`
+- `POST /alerts`
+- `PUT /alerts/:id`
+- `PATCH /alerts/:id/status`
+- `DELETE /alerts/:id`
+
+Una alerta debe tener nombre y al menos un criterio:
+
+```json
+{
+  "name": "Teatro cerca",
+  "category_id": 1,
+  "location_id": null,
+  "audience_id": null,
+  "min_age": 6,
+  "max_age": 12,
+  "keyword": "teatro",
+  "is_active": true
+}
+```
+
+Cuando se crea un evento nuevo, el backend evalua las alertas activas. Si una alerta coincide, envia un email al usuario siempre que la cuenta este activa y el email verificado. Si falla el envio de un correo, se registra el error y la creacion del evento no se cancela.
+
 ## Rutas Frontend
 - `/map`: mapa de eventos
 - `/events`: listado y gestion de eventos segun rol
 - `/favorites`: favoritos del usuario registrado
+- `/alerts`: alertas de eventos del usuario autenticado
 - `/admin/users`: gestion de usuarios para administradores
 
 ## Notas de Validacion (Events v4)

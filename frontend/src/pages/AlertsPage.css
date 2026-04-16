@@ -1,0 +1,145 @@
+.alerts-card {
+  padding: 1rem;
+  background: #f7f7f7;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.alerts-title {
+  margin: 0 0 1rem;
+}
+
+.alerts-form {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.65rem;
+}
+
+.alerts-input {
+  width: 100%;
+  padding: 0.65rem;
+  border: 1px solid #cdcdcd;
+  border-radius: 6px;
+  font-size: 0.95rem;
+}
+
+.alerts-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.65rem;
+  background: #fff;
+  border: 1px solid #cdcdcd;
+  border-radius: 6px;
+}
+
+.alerts-actions {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.alerts-btn {
+  border: 0;
+  border-radius: 6px;
+  padding: 0.58rem 0.9rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.alerts-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.alerts-btn-primary {
+  background: #b30000;
+  color: #fff;
+}
+
+.alerts-btn-secondary {
+  background: #e4e4e4;
+  color: #222;
+}
+
+.alerts-btn-danger {
+  background: #d64545;
+  color: #fff;
+}
+
+.alerts-message {
+  margin: 0.75rem 0 0;
+  color: #244b24;
+}
+
+.alerts-message-error {
+  color: #a94442;
+}
+
+.alerts-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.alerts-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.85rem;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.alerts-item p {
+  margin: 0.35rem 0;
+}
+
+.alerts-item-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  gap: 0.45rem;
+}
+
+.alerts-badge {
+  display: inline-block;
+  min-width: 74px;
+  padding: 0.28rem 0.5rem;
+  border-radius: 6px;
+  text-align: center;
+  font-size: 0.85rem;
+}
+
+.alerts-badge-ok {
+  background: #dff0d8;
+  color: #2f6627;
+}
+
+.alerts-badge-muted {
+  background: #eeeeee;
+  color: #555;
+}
+
+@media (max-width: 980px) {
+  .alerts-form {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 720px) {
+  .alerts-form {
+    grid-template-columns: 1fr;
+  }
+
+  .alerts-actions,
+  .alerts-item,
+  .alerts-item-actions {
+    flex-direction: column;
+  }
+
+  .alerts-btn {
+    width: 100%;
+    min-height: 44px;
+  }
+}

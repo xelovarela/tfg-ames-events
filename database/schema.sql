@@ -239,3 +239,36 @@ CREATE TABLE IF NOT EXISTS favorites (
     ON DELETE CASCADE
     ON UPDATE CASCADE
 );
+
+-- Tabla de alertas guardadas por usuarios registrados.
+-- Cada alerta contiene filtros opcionales que se evaluan al crear eventos nuevos.
+CREATE TABLE IF NOT EXISTS alerts (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  name VARCHAR(100) NOT NULL,
+  category_id INT NULL,
+  location_id INT NULL,
+  audience_id INT NULL,
+  min_age INT NULL,
+  max_age INT NULL,
+  keyword VARCHAR(150) NULL,
+  is_active TINYINT(1) NOT NULL DEFAULT 1,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT fk_alerts_user
+    FOREIGN KEY (user_id) REFERENCES users(id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT fk_alerts_category
+    FOREIGN KEY (category_id) REFERENCES categories(id)
+    ON DELETE SET NULL
+    ON UPDATE CASCADE,
+  CONSTRAINT fk_alerts_location
+    FOREIGN KEY (location_id) REFERENCES locations(id)
+    ON DELETE SET NULL
+    ON UPDATE CASCADE,
+  CONSTRAINT fk_alerts_audience
+    FOREIGN KEY (audience_id) REFERENCES audiences(id)
+    ON DELETE SET NULL
+    ON UPDATE CASCADE
+);

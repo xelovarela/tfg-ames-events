@@ -19,6 +19,7 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import VerifyEmailPage from './pages/VerifyEmailPage';
 import FavoritesPage from './pages/FavoritesPage';
+import AlertsPage from './pages/AlertsPage';
 import { AUTH_SESSION_EVENT, clearAuthSession, getAuthSession } from './utils/authStorage';
 import ProtectedRoute from './ProtectedRoute';
 import UsersPage from './pages/UsersPage';
@@ -28,6 +29,7 @@ const NAV_ITEMS = [
   { to: '/map', label: 'Mapa' },
   { to: '/events', label: 'Eventos' },
   { to: '/favorites', label: 'Mis favoritos', allowedRoles: ['user'] },
+  { to: '/alerts', label: 'Alertas', authenticatedOnly: true },
   { to: '/audiences', label: 'Audiencias', adminOnly: true },
   { to: '/organizers', label: 'Organizadores', allowedRoles: ['admin', 'content_manager'] },
   { to: '/categories', label: 'Categorias', allowedRoles: ['admin', 'content_manager'] },
@@ -47,6 +49,9 @@ function AppShell({ session, onLogout, onSessionChange }) {
   const visibleNavItems = NAV_ITEMS.filter((item) => {
     if (item.adminOnly) {
       return isAdmin;
+    }
+    if (item.authenticatedOnly) {
+      return isAuthenticated;
     }
     if (Array.isArray(item.allowedRoles) && item.allowedRoles.length > 0) {
       return isAuthenticated && item.allowedRoles.includes(userRole);
@@ -157,6 +162,14 @@ function AppShell({ session, onLogout, onSessionChange }) {
             element={(
               <ProtectedRoute session={session} allowedRoles={['user']}>
                 <FavoritesPage session={session} />
+              </ProtectedRoute>
+            )}
+          />
+          <Route
+            path="/alerts"
+            element={(
+              <ProtectedRoute session={session}>
+                <AlertsPage />
               </ProtectedRoute>
             )}
           />
