@@ -9,6 +9,10 @@ Aplicacion web para gestionar y visualizar eventos infantiles geolocalizados en 
 
 ## Estado Actual
 - Mapa interactivo con Leaflet y agrupacion de eventos por ubicacion.
+- Registro, verificacion de email y login con JWT.
+- Control de acceso por roles: `admin`, `content_manager` y `user`.
+- Gestion de usuarios para administradores.
+- Favoritos de eventos para usuarios registrados.
 - CRUD de eventos.
 - CRUD completo de categorias.
 - CRUD completo de ubicaciones.
@@ -107,6 +111,93 @@ npm start
 - `POST /organizers`
 - `PUT /organizers/:id`
 - `DELETE /organizers/:id`
+
+### Auth
+- `POST /auth/register`
+- `GET /auth/verify-email?token=...`
+- `POST /auth/resend-verification`
+- `POST /auth/login`
+- `GET /auth/me`
+
+El login devuelve un JWT y bloquea el acceso si la cuenta no esta verificada o si `is_active = 0`.
+
+### Users Admin
+Endpoints protegidos con JWT y rol `admin`.
+
+- `GET /users`
+- `GET /users/:id`
+- `PATCH /users/:id/role`
+- `PATCH /users/:id/status`
+
+Los endpoints de lectura devuelven datos seguros del usuario:
+
+```json
+{
+  "id": 1,
+  "name": "admin",
+  "username": "admin",
+  "email": "admin@tfg.local",
+  "role": "admin",
+  "is_active": true,
+  "email_verified": true,
+  "created_at": "2026-04-16T10:00:00.000Z"
+}
+```
+
+`PATCH /users/:id/role` permite cambiar el rol a `admin`, `content_manager` o `user`.
+
+```json
+{
+  "role": "content_manager"
+}
+```
+
+La respuesta incluye el rol actualizado de forma explicita y el usuario recargado desde base de datos:
+
+```json
+{
+  "message": "User role updated successfully",
+  "role": "content_manager",
+  "user": {
+    "id": 2,
+    "name": "gestor",
+    "username": "gestor",
+    "email": "gestor@example.com",
+    "role": "content_manager",
+    "is_active": true,
+    "email_verified": true,
+    "created_at": "2026-04-16T10:00:00.000Z"
+  }
+}
+```
+
+`PATCH /users/:id/status` activa o desactiva cuentas:
+
+```json
+{
+  "is_active": false
+}
+```
+
+Defensas implementadas:
+- un admin no puede quitarse a si mismo el rol `admin`
+- un admin no puede desactivar su propia cuenta
+- no se asignan roles inexistentes
+- no se devuelven `password_hash`, tokens de verificacion ni fechas de expiracion de token
+
+### Favorites
+Endpoints protegidos con JWT y rol `user`.
+
+- `GET /favorites`
+- `GET /favorites/ids`
+- `POST /favorites/:eventId`
+- `DELETE /favorites/:eventId`
+
+## Rutas Frontend
+- `/map`: mapa de eventos
+- `/events`: listado y gestion de eventos segun rol
+- `/favorites`: favoritos del usuario registrado
+- `/admin/users`: gestion de usuarios para administradores
 
 ## Notas de Validacion (Events v4)
 - `title`: obligatorio, maximo 150 caracteres.
