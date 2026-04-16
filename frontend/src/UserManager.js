@@ -1,71 +1,63 @@
 /**
- * Este archivo implementa el gestor CRUD de usuarios.
- * Permite listar usuarios, crear y editar con seleccion de rol
- * y actualizar contrasena solo cuando se informa un nuevo valor.
+ * Gestor de administracion de usuarios.
+ * Permite a admin consultar usuarios, cambiar roles y activar/desactivar cuentas.
  */
 import React, { useEffect, useState } from 'react';
 import { API_BASE_URL } from './config';
 import { withAuthHeaders } from './utils/authFetch';
 import './UserManager.css';
 
-const initialForm = {
-  username: '',
-  email: '',
-  password: '',
-  role_id: ''
+const ROLE_LABELS = {
+  admin: 'Admin',
+  content_manager: 'Gestor de contenido',
+  user: 'Usuario'
 };
 
-function validateUser(form, isEditing) {
-  const username = form.username.trim();
-  const email = form.email.trim();
-  const password = form.password;
-  const roleId = Number(form.role_id);
-
-  if (!username || username.length > 100) {
-    return 'El username es obligatorio y debe tener entre 1 y 100 caracteres.';
+function formatDate(value) {
+  if (!value) {
+    return 'Sin fecha';
   }
 
-  if (!email || email.length > 100) {
-    return 'El email es obligatorio y debe tener entre 1 y 100 caracteres.';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) {
+    return 'Sin fecha';
   }
 
-  if (!Number.isInteger(roleId) || roleId <= 0) {
-    return 'Debes seleccionar un rol valido.';
-  }
-
-  if (!isEditing && (!password || password.length < 6)) {
-    return 'La contraseña es obligatoria y debe tener al menos 6 caracteres.';
-  }
-
-  if (isEditing && password && password.length < 6) {
-    return 'Si indicas una nueva contraseña, debe tener al menos 6 caracteres.';
-  }
-
-  return null;
+  return date.toLocaleDateString('es-ES', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric'
+  });
 }
 
-function UserManager() {
+async function readJsonOrThrow(response, fallbackMessage) {
+  const data = await response.json();
+  if (!response.ok) {
+    throw new Error(data?.error || fallbackMessage);
+  }
+  return data;
+}
+
+function UserManager({ session }) {
   const [users, setUsers] = useState([]);
   const [roles, setRoles] = useState([]);
-  const [formData, setFormData] = useState(initialForm);
-  const [editingId, setEditingId] = useState(null);
   const [message, setMessage] = useState('');
-  const [isSaving, setIsSaving] = useState(false);
-  const selectedRole = roles.find((role) => String(role.id) === formData.role_id);
+  const [loadError, setLoadError] = useState('');
+  const [savingUserId, setSavingUserId] = useState(null);
+  const currentUserId = Number(session?.user?.id);
 
   const loadUsers = async () => {
     try {
       const response = await fetch(`${API_BASE_URL}/users`, {
         headers: withAuthHeaders()
       });
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data.error || 'No se pudieron cargar los usuarios');
-      }
-      setUsers(data);
+      const data = await readJsonOrThrow(response, 'No se pudieron cargar los usuarios');
+      setUsers(Array.isArray(data) ? data : []);
+      setLoadError('');
     } catch (error) {
       console.error(error);
-      setMessage(error.message || 'No se pudieron cargar los usuarios');
+      setUsers([]);
+      setLoadError(error.message || 'No se pudieron cargar los usuarios');
     }
   };
 
@@ -74,11 +66,8 @@ function UserManager() {
       const response = await fetch(`${API_BASE_URL}/roles`, {
         headers: withAuthHeaders()
       });
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data.error || 'No se pudieron cargar los roles');
-      }
-      setRoles(data);
+      const data = await readJsonOrThrow(response, 'No se pudieron cargar los roles');
+      setRoles(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error(error);
       setMessage(error.message || 'No se pudieron cargar los roles');
@@ -90,199 +79,140 @@ function UserManager() {
     loadRoles();
   }, []);
 
-  const clearForm = () => {
-    setFormData(initialForm);
-    setEditingId(null);
+  const updateUserInList = (updatedUser) => {
+    setUsers((currentUsers) => currentUsers.map((user) => (
+      Number(user.id) === Number(updatedUser.id) ? updatedUser : user
+    )));
   };
 
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleEdit = (user) => {
-    setEditingId(user.id);
-    setFormData({
-      username: user.username,
-      email: user.email,
-      password: '',
-      role_id: String(user.role_id)
-    });
-    setMessage('');
-  };
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    if (isSaving) {
+  const handleRoleChange = async (user, nextRole) => {
+    if (Number(user.id) === currentUserId && nextRole !== 'admin') {
+      setMessage('No puedes quitarte tu propio rol de administrador.');
       return;
     }
 
-    const validationError = validateUser(formData, Boolean(editingId));
-    if (validationError) {
-      setMessage(validationError);
-      return;
-    }
-
-    setIsSaving(true);
+    setSavingUserId(user.id);
     setMessage('');
-
-    const payload = {
-      username: formData.username.trim(),
-      email: formData.email.trim(),
-      role_id: Number(formData.role_id)
-    };
-
-    if (!editingId || formData.password) {
-      payload.password = formData.password;
-    }
-
-    const endpoint = editingId
-      ? `${API_BASE_URL}/users/${editingId}`
-      : `${API_BASE_URL}/users`;
-    const method = editingId ? 'PUT' : 'POST';
 
     try {
-      const response = await fetch(endpoint, {
-        method,
+      const response = await fetch(`${API_BASE_URL}/users/${user.id}/role`, {
+        method: 'PATCH',
         headers: withAuthHeaders({
           'Content-Type': 'application/json'
         }),
-        body: JSON.stringify(payload)
+        body: JSON.stringify({ role: nextRole })
       });
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data.error || 'Error guardando usuario');
-      }
-
-      setMessage(editingId ? 'Usuario actualizado correctamente.' : 'Usuario creado correctamente.');
-      clearForm();
-      await loadUsers();
+      const data = await readJsonOrThrow(response, 'No se pudo actualizar el rol');
+      updateUserInList(data.user);
+      setMessage('Rol actualizado correctamente.');
     } catch (error) {
       console.error(error);
-      setMessage(error.message || 'Error guardando usuario');
+      setMessage(error.message || 'No se pudo actualizar el rol');
     } finally {
-      setIsSaving(false);
+      setSavingUserId(null);
     }
   };
 
-  const handleDelete = async (id) => {
-    const confirmed = window.confirm('Seguro que quieres eliminar este usuario?');
-    if (!confirmed) {
+  const handleStatusToggle = async (user) => {
+    const nextIsActive = !user.is_active;
+
+    if (Number(user.id) === currentUserId && !nextIsActive) {
+      setMessage('No puedes desactivar tu propia cuenta.');
       return;
     }
 
-    try {
-      const response = await fetch(`${API_BASE_URL}/users/${id}`, {
-        method: 'DELETE',
-        headers: withAuthHeaders()
-      });
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data.error || 'Error eliminando usuario');
-      }
+    setSavingUserId(user.id);
+    setMessage('');
 
-      setMessage('Usuario eliminado correctamente.');
-      await loadUsers();
+    try {
+      const response = await fetch(`${API_BASE_URL}/users/${user.id}/status`, {
+        method: 'PATCH',
+        headers: withAuthHeaders({
+          'Content-Type': 'application/json'
+        }),
+        body: JSON.stringify({ is_active: nextIsActive })
+      });
+      const data = await readJsonOrThrow(response, 'No se pudo actualizar el estado');
+      updateUserInList(data.user);
+      setMessage(nextIsActive ? 'Usuario activado correctamente.' : 'Usuario desactivado correctamente.');
     } catch (error) {
       console.error(error);
-      setMessage(error.message || 'Error eliminando usuario');
+      setMessage(error.message || 'No se pudo actualizar el estado');
+    } finally {
+      setSavingUserId(null);
     }
   };
 
   return (
     <section className="users-card">
-      <h3 className="users-title">Gestion de usuarios</h3>
-
-      <form className="users-form" onSubmit={handleSubmit}>
-        <input
-          className="users-input"
-          type="text"
-          name="username"
-          placeholder="Username"
-          value={formData.username}
-          onChange={handleChange}
-          maxLength={100}
-          required
-        />
-
-        <input
-          className="users-input"
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={formData.email}
-          onChange={handleChange}
-          maxLength={100}
-          required
-        />
-
-        <select
-          className="users-input"
-          name="role_id"
-          value={formData.role_id}
-          onChange={handleChange}
-          required
-        >
-          <option value="">Selecciona rol</option>
-          {roles.map((role) => (
-            <option key={role.id} value={role.id}>
-              {role.name}
-            </option>
-          ))}
-        </select>
-
-        <input
-          className="users-input"
-          type="password"
-          name="password"
-          placeholder={editingId ? 'Nueva contraseña (opcional)' : 'Contraseña'}
-          value={formData.password}
-          onChange={handleChange}
-          minLength={editingId ? undefined : 6}
-          required={!editingId}
-        />
-
-        <p className="users-role-help">
-          {selectedRole
-            ? `Descripcion del rol: ${selectedRole.description || 'Sin descripcion disponible.'}`
-            : 'Selecciona un rol para ver su descripcion.'}
-        </p>
-
-        <div className="users-actions">
-          <button className="users-btn users-btn-primary" type="submit" disabled={isSaving}>
-            {isSaving ? 'Guardando...' : editingId ? 'Guardar cambios' : 'Crear usuario'}
-          </button>
-          {editingId && (
-            <button className="users-btn users-btn-secondary" type="button" onClick={clearForm}>
-              Cancelar
-            </button>
-          )}
-        </div>
-      </form>
+      <h3 className="users-title">Usuarios registrados</h3>
 
       {message && <p className="users-message">{message}</p>}
+      {loadError && <p className="users-message users-message-error">{loadError}</p>}
 
-      <div className="users-list">
-        {users.length === 0 ? (
-          <p>No hay usuarios registrados.</p>
-        ) : (
-          users.map((user) => (
-            <article className="users-item" key={user.id}>
-              <strong>{user.username}</strong>
-              <p>Email: {user.email}</p>
-              <p>Rol: {user.role}</p>
-              <div className="users-item-actions">
-                <button className="users-btn users-btn-secondary" onClick={() => handleEdit(user)}>
-                  Editar
-                </button>
-                <button className="users-btn users-btn-danger" onClick={() => handleDelete(user.id)}>
-                  Eliminar
-                </button>
-              </div>
-            </article>
-          ))
-        )}
-      </div>
+      {users.length === 0 && !loadError ? (
+        <p>No hay usuarios registrados.</p>
+      ) : (
+        <div className="users-table-wrap">
+          <table className="users-table">
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Email</th>
+                <th>Rol</th>
+                <th>Estado</th>
+                <th>Email</th>
+                <th>Alta</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {users.map((user) => {
+                const isSelf = Number(user.id) === currentUserId;
+                const isSaving = Number(savingUserId) === Number(user.id);
+
+                return (
+                  <tr key={user.id}>
+                    <td>{user.name || user.username || 'Sin nombre'}</td>
+                    <td>{user.email}</td>
+                    <td>
+                      <select
+                        className="users-select"
+                        value={user.role}
+                        onChange={(event) => handleRoleChange(user, event.target.value)}
+                        disabled={isSaving || (isSelf && user.role === 'admin')}
+                      >
+                        {roles.map((role) => (
+                          <option key={role.id} value={role.name}>
+                            {ROLE_LABELS[role.name] || role.name}
+                          </option>
+                        ))}
+                      </select>
+                    </td>
+                    <td>
+                      <span className={user.is_active ? 'users-badge users-badge-ok' : 'users-badge users-badge-muted'}>
+                        {user.is_active ? 'Activo' : 'Inactivo'}
+                      </span>
+                    </td>
+                    <td>{user.email_verified ? 'Verificado' : 'Pendiente'}</td>
+                    <td>{formatDate(user.created_at)}</td>
+                    <td>
+                      <button
+                        type="button"
+                        className={user.is_active ? 'users-btn users-btn-secondary' : 'users-btn users-btn-primary'}
+                        onClick={() => handleStatusToggle(user)}
+                        disabled={isSaving || (isSelf && user.is_active)}
+                      >
+                        {user.is_active ? 'Desactivar' : 'Activar'}
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
     </section>
   );
 }

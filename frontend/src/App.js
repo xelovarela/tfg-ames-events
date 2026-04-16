@@ -32,7 +32,7 @@ const NAV_ITEMS = [
   { to: '/organizers', label: 'Organizadores', allowedRoles: ['admin', 'content_manager'] },
   { to: '/categories', label: 'Categorias', allowedRoles: ['admin', 'content_manager'] },
   { to: '/locations', label: 'Ubicaciones', allowedRoles: ['admin', 'content_manager'] },
-  { to: '/users', label: 'Usuarios', adminOnly: true }
+  { to: '/admin/users', label: 'Usuarios', adminOnly: true }
 ];
 
 // Este componente monta la interfaz comun compartida por todas las paginas.
@@ -202,13 +202,14 @@ function AppShell({ session, onLogout, onSessionChange }) {
             )}
           />
           <Route
-            path="/users"
+            path="/admin/users"
             element={(
               <ProtectedRoute session={session} requireAdmin>
-                <UsersPage />
+                <UsersPage session={session} />
               </ProtectedRoute>
             )}
           />
+          <Route path="/users" element={<Navigate to="/admin/users" replace />} />
           <Route path="/login" element={<LoginPage onLogin={onSessionChange} />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/verify-email" element={<VerifyEmailPage />} />

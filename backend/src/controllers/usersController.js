@@ -1,71 +1,22 @@
 /**
- * Este archivo contiene el controlador de usuarios.
- * Implementa CRUD con validaciones basicas de negocio y garantiza
- * que password_hash nunca salga en respuestas al frontend.
+ * Controlador de administracion de usuarios.
+ * Expone solo operaciones seguras para admin: listar, consultar,
+ * cambiar rol y activar/desactivar cuentas.
  */
-const bcrypt = require('bcrypt');
 const usersService = require('../services/usersService');
 const rolesService = require('../services/rolesService');
-const { toPositiveInt } = require('../utils/validation');
+const { toBooleanFlag, toPositiveIntParam } = require('../utils/validation');
 
-const MAX_USERNAME_LENGTH = 100;
-const MAX_EMAIL_LENGTH = 100;
-const MIN_PASSWORD_LENGTH = 6;
-const SALT_ROUNDS = 10;
+const ALLOWED_ROLE_NAMES = ['admin', 'content_manager', 'user'];
 
-function parseCreatePayload(body) {
-  const username = typeof body.username === 'string' ? body.username.trim() : '';
-  const email = typeof body.email === 'string' ? body.email.trim() : '';
-  const password = typeof body.password === 'string' ? body.password : '';
-  const roleId = toPositiveInt(body.role_id);
+function getRequestedRoleName(body) {
+  const roleName = typeof body.role === 'string'
+    ? body.role.trim()
+    : typeof body.roleName === 'string'
+      ? body.roleName.trim()
+      : '';
 
-  if (!username || username.length > MAX_USERNAME_LENGTH) {
-    return { error: 'Invalid username. Must be between 1 and 100 characters.' };
-  }
-
-  if (!email || email.length > MAX_EMAIL_LENGTH) {
-    return { error: 'Invalid email. Must be between 1 and 100 characters.' };
-  }
-
-  if (!password || password.length < MIN_PASSWORD_LENGTH) {
-    return { error: 'Invalid password. Minimum length is 6 characters.' };
-  }
-
-  if (!roleId) {
-    return { error: 'role_id must be a positive integer.' };
-  }
-
-  return { username, email, password, roleId };
-}
-
-function parseUpdatePayload(body) {
-  const username = typeof body.username === 'string' ? body.username.trim() : '';
-  const email = typeof body.email === 'string' ? body.email.trim() : '';
-  const roleId = toPositiveInt(body.role_id);
-  const password = typeof body.password === 'string' ? body.password : '';
-
-  if (!username || username.length > MAX_USERNAME_LENGTH) {
-    return { error: 'Invalid username. Must be between 1 and 100 characters.' };
-  }
-
-  if (!email || email.length > MAX_EMAIL_LENGTH) {
-    return { error: 'Invalid email. Must be between 1 and 100 characters.' };
-  }
-
-  if (!roleId) {
-    return { error: 'role_id must be a positive integer.' };
-  }
-
-  if (password && password.length < MIN_PASSWORD_LENGTH) {
-    return { error: 'Invalid password. Minimum length is 6 characters when provided.' };
-  }
-
-  return {
-    username,
-    email,
-    roleId,
-    password: password || null
-  };
+  return roleName;
 }
 
 async function getAll(req, res) {
@@ -79,7 +30,7 @@ async function getAll(req, res) {
 }
 
 async function getById(req, res) {
-  const id = toPositiveInt(req.params.id);
+  const id = toPositiveIntParam(req.params.id);
   if (!id) {
     return res.status(400).json({ error: 'Invalid user id' });
   }
@@ -97,98 +48,69 @@ async function getById(req, res) {
   }
 }
 
-async function create(req, res) {
-  const payload = parseCreatePayload(req.body);
-  if (payload.error) {
-    return res.status(400).json({ error: payload.error });
-  }
-
-  try {
-    const [roleExists, conflictUser] = await Promise.all([
-      rolesService.roleExists(payload.roleId),
-      usersService.getUserByUsernameOrEmail(payload.username, payload.email)
-    ]);
-
-    if (!roleExists) {
-      return res.status(400).json({ error: 'role_id does not exist' });
-    }
-
-    if (conflictUser) {
-      return res.status(409).json({ error: 'username or email already exists' });
-    }
-
-    const passwordHash = await bcrypt.hash(payload.password, SALT_ROUNDS);
-    const id = await usersService.createUser({
-      username: payload.username,
-      email: payload.email,
-      passwordHash,
-      roleId: payload.roleId
-    });
-
-    return res.status(201).json({ message: 'User created successfully', id });
-  } catch (error) {
-    console.error('Error creating user:', error);
-    return res.status(500).json({ error: 'Error creating user in database' });
-  }
-}
-
-async function update(req, res) {
-  const id = toPositiveInt(req.params.id);
+async function updateRole(req, res) {
+  const id = toPositiveIntParam(req.params.id);
   if (!id) {
     return res.status(400).json({ error: 'Invalid user id' });
   }
 
-  const payload = parseUpdatePayload(req.body);
-  if (payload.error) {
-    return res.status(400).json({ error: payload.error });
+  const roleName = getRequestedRoleName(req.body);
+  if (!roleName) {
+    return res.status(400).json({ error: 'Role is required' });
+  }
+
+  if (!ALLOWED_ROLE_NAMES.includes(roleName)) {
+    return res.status(400).json({ error: 'Role is not allowed' });
+  }
+
+  if (Number(req.user.id) === id && roleName !== 'admin') {
+    return res.status(400).json({ error: 'You cannot remove your own admin role' });
   }
 
   try {
-    const [existingUser, roleExists, conflictUser] = await Promise.all([
+    const [existingUser, role] = await Promise.all([
       usersService.getUserById(id),
-      rolesService.roleExists(payload.roleId),
-      usersService.getUserByUsernameOrEmailExcludingId(payload.username, payload.email, id)
+      rolesService.getRoleByName(roleName)
     ]);
 
     if (!existingUser) {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    if (!roleExists) {
-      return res.status(400).json({ error: 'role_id does not exist' });
+    if (!role) {
+      return res.status(400).json({ error: 'Role does not exist' });
     }
 
-    if (conflictUser) {
-      return res.status(409).json({ error: 'username or email already exists' });
+    await usersService.updateUserRole(id, role.id);
+    const updatedUser = await usersService.getUserById(id);
+    if (!updatedUser || updatedUser.role !== role.name) {
+      return res.status(500).json({ error: 'User role was updated but could not be verified' });
     }
 
-    if (payload.password) {
-      const passwordHash = await bcrypt.hash(payload.password, SALT_ROUNDS);
-      await usersService.updateUserWithPassword(id, {
-        username: payload.username,
-        email: payload.email,
-        roleId: payload.roleId,
-        passwordHash
-      });
-    } else {
-      await usersService.updateUser(id, {
-        username: payload.username,
-        email: payload.email,
-        roleId: payload.roleId
-      });
-    }
-
-    return res.json({ message: 'User updated successfully' });
+    return res.json({
+      message: 'User role updated successfully',
+      role: updatedUser.role,
+      user: updatedUser
+    });
   } catch (error) {
-    console.error('Error updating user:', error);
-    return res.status(500).json({ error: 'Error updating user in database' });
+    console.error('Error updating user role:', error);
+    return res.status(500).json({ error: 'Error updating user role in database' });
   }
 }
 
-async function remove(req, res) {
-  const id = toPositiveInt(req.params.id);
+async function updateStatus(req, res) {
+  const id = toPositiveIntParam(req.params.id);
   if (!id) {
     return res.status(400).json({ error: 'Invalid user id' });
+  }
+
+  const isActive = toBooleanFlag(req.body.is_active);
+  if (isActive === null) {
+    return res.status(400).json({ error: 'is_active must be a boolean value' });
+  }
+
+  if (Number(req.user.id) === id && isActive === 0) {
+    return res.status(400).json({ error: 'You cannot deactivate your own account' });
   }
 
   try {
@@ -197,18 +119,22 @@ async function remove(req, res) {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    await usersService.deleteUser(id);
-    return res.json({ message: 'User deleted successfully' });
+    await usersService.updateUserStatus(id, isActive === 1);
+    const updatedUser = await usersService.getUserById(id);
+
+    return res.json({
+      message: 'User status updated successfully',
+      user: updatedUser
+    });
   } catch (error) {
-    console.error('Error deleting user:', error);
-    return res.status(500).json({ error: 'Error deleting user from database' });
+    console.error('Error updating user status:', error);
+    return res.status(500).json({ error: 'Error updating user status in database' });
   }
 }
 
 module.exports = {
   getAll,
   getById,
-  create,
-  update,
-  remove
+  updateRole,
+  updateStatus
 };

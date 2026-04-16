@@ -1,16 +1,16 @@
 /**
  * Este archivo define la pagina de gestion de usuarios.
- * Actua como contenedor de alto nivel para el componente CRUD
- * encargado de administrar usuarios y asignarles roles.
+ * Actua como contenedor de alto nivel para el componente encargado
+ * de administrar roles y estado de usuarios.
  */
 import React from 'react';
 import UserManager from '../UserManager';
 
-function UsersPage() {
+function UsersPage({ session }) {
   return (
     <main>
       <h2>Gestion de Usuarios</h2>
-      <UserManager />
+      <UserManager session={session} />
     </main>
   );
 }

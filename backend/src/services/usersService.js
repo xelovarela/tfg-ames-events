@@ -1,41 +1,63 @@
 /**
  * Este archivo implementa la capa de servicios de usuarios.
- * Centraliza las consultas SQL del CRUD de usuarios y evita devolver
- * password_hash fuera de las operaciones internas que lo necesiten.
+ * Centraliza las consultas SQL seguras usadas por la administracion de usuarios.
+ * Las lecturas publicas del modulo no devuelven password_hash ni tokens.
  */
 const db = require('../config/db');
+
+function normalizeUser(row) {
+  if (!row) {
+    return null;
+  }
+
+  return {
+    id: row.id,
+    name: row.name,
+    username: row.name,
+    email: row.email,
+    role: row.role,
+    is_active: Number(row.is_active) === 1,
+    email_verified: Number(row.email_verified) === 1,
+    created_at: row.created_at
+  };
+}
 
 async function listUsers() {
   const [rows] = await db.query(
     `SELECT
       u.id,
-      u.username,
+      u.username AS name,
       u.email,
-      u.role_id,
+      u.is_active,
+      u.email_verified,
+      u.created_at,
       r.name AS role
      FROM users u
      JOIN roles r ON u.role_id = r.id
-     ORDER BY u.id`
+     ORDER BY u.created_at DESC, u.id DESC`
   );
 
-  return rows;
+  return rows.map(normalizeUser);
 }
 
 async function getUserById(id) {
   const [rows] = await db.query(
     `SELECT
       u.id,
-      u.username,
+      u.username AS name,
       u.email,
-      u.role_id,
+      u.is_active,
+      u.email_verified,
+      u.created_at,
       r.name AS role
      FROM users u
      JOIN roles r ON u.role_id = r.id
-     WHERE u.id = ?`,
+     WHERE u.id = ?
+     LIMIT 1`,
     [id]
   );
 
-  return rows[0] || null;
+  return normalizeUser(rows[0]);
 }
 
 async function getUserByUsernameOrEmail(username, email) {
@@ -100,6 +122,28 @@ async function deleteUser(id) {
   return result.affectedRows > 0;
 }
 
+async function updateUserRole(id, roleId) {
+  const [result] = await db.query(
+    `UPDATE users
+     SET role_id = ?
+     WHERE id = ?`,
+    [roleId, id]
+  );
+
+  return result.affectedRows > 0;
+}
+
+async function updateUserStatus(id, isActive) {
+  const [result] = await db.query(
+    `UPDATE users
+     SET is_active = ?
+     WHERE id = ?`,
+    [isActive ? 1 : 0, id]
+  );
+
+  return result.affectedRows > 0;
+}
+
 module.exports = {
   listUsers,
   getUserById,
@@ -108,5 +152,7 @@ module.exports = {
   createUser,
   updateUser,
   updateUserWithPassword,
-  deleteUser
+  deleteUser,
+  updateUserRole,
+  updateUserStatus
 };

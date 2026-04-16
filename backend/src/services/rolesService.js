@@ -15,7 +15,20 @@ async function roleExists(roleId) {
   return rows.length > 0;
 }
 
+async function getRoleByName(roleName) {
+  const [rows] = await db.query(
+    `SELECT id, name, description
+     FROM roles
+     WHERE name = ?
+     LIMIT 1`,
+    [roleName]
+  );
+
+  return rows[0] || null;
+}
+
 module.exports = {
   listRoles,
-  roleExists
+  roleExists,
+  getRoleByName
 };

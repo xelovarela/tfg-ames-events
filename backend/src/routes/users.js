@@ -1,6 +1,6 @@
 /**
- * Este archivo define las rutas REST del recurso usuarios.
- * Todas las operaciones quedan restringidas a sesiones autenticadas con rol admin.
+ * Este archivo define las rutas de administracion de usuarios.
+ * Todas quedan restringidas a sesiones autenticadas con rol admin.
  */
 const express = require('express');
 const usersController = require('../controllers/usersController');
@@ -11,8 +11,7 @@ const router = express.Router();
 router.use(requireAuth, requireAdmin);
 router.get('/', usersController.getAll);
 router.get('/:id', usersController.getById);
-router.post('/', usersController.create);
-router.put('/:id', usersController.update);
-router.delete('/:id', usersController.remove);
+router.patch('/:id/role', usersController.updateRole);
+router.patch('/:id/status', usersController.updateStatus);
 
 module.exports = router;
