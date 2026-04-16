@@ -1,10 +1,5 @@
-/*
- * Este archivo define estilos minimos para la pagina de login.
- * Mantiene el mismo lenguaje visual general de la app sin introducir
- * cambios de diseno grandes para esta primera integracion.
- */
-.login-card {
-  max-width: 420px;
+.register-card {
+  max-width: 460px;
   background: #fff;
   border: 1px solid #eadfd5;
   border-radius: 10px;
@@ -12,37 +7,37 @@
   box-shadow: 0 10px 26px rgba(73, 44, 25, 0.08);
 }
 
-.login-form {
+.register-form {
   display: grid;
   gap: 0.55rem;
 }
 
-.login-form label {
+.register-form label {
   font-size: 0.9rem;
   font-weight: 600;
 }
 
-.login-input {
+.register-input {
   width: 100%;
   padding: 0.6rem;
   border: 1px solid #d5c8bc;
   border-radius: 7px;
 }
 
-.login-input:focus {
+.register-input:focus {
   outline: none;
   border-color: #b84a22;
   box-shadow: 0 0 0 3px rgba(184, 74, 34, 0.16);
 }
 
-.login-actions {
+.register-actions {
   margin-top: 0.5rem;
   display: flex;
   gap: 0.6rem;
   align-items: center;
 }
 
-.login-btn {
+.register-btn {
   border: 0;
   border-radius: 7px;
   padding: 0.55rem 0.9rem;
@@ -50,51 +45,36 @@
   font-weight: 600;
 }
 
-.login-btn:disabled {
+.register-btn:disabled {
   opacity: 0.65;
   cursor: not-allowed;
 }
 
-.login-btn-primary {
+.register-btn-primary {
   background: #b84a22;
   color: #fff;
 }
 
-.login-btn-secondary {
-  background: #e8ddd2;
-  color: #5d2a16;
-}
-
-.login-link {
+.register-link {
   color: #8f2410;
   font-weight: 600;
 }
 
-.login-message {
+.register-message {
   margin: 0.75rem 0 0;
   color: #8f2410;
 }
 
-.login-resend {
-  margin-top: 0.9rem;
-  border-top: 1px solid #eadfd5;
-  padding-top: 0.75rem;
-  display: grid;
-  gap: 0.45rem;
-}
-
-.login-resend-info {
-  margin: 0;
-  font-size: 0.9rem;
-  color: #5d2a16;
+.register-message-success {
+  color: #225c2b;
 }
 
 @media (max-width: 640px) {
-  .login-card {
+  .register-card {
     max-width: 100%;
   }
 
-  .login-actions {
+  .register-actions {
     flex-direction: column;
     align-items: stretch;
   }

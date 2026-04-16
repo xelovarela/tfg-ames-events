@@ -52,8 +52,8 @@ DEALLOCATE PREPARE roles_add_created_at_stmt;
 -- BOOLEAN en MariaDB/MySQL es alias de TINYINT(1), por eso se usa sin perder compatibilidad.
 CREATE TABLE IF NOT EXISTS users (
   id INT AUTO_INCREMENT PRIMARY KEY,
-  name VARCHAR(100) NOT NULL,
-  email VARCHAR(150) NOT NULL UNIQUE,
+  username VARCHAR(100) NOT NULL UNIQUE,
+  email VARCHAR(100) NOT NULL UNIQUE,
   password_hash VARCHAR(255) NOT NULL,
   role_id INT NOT NULL,
   is_active BOOLEAN NOT NULL DEFAULT TRUE,
@@ -68,6 +68,67 @@ CREATE TABLE IF NOT EXISTS users (
     ON DELETE RESTRICT
 );
 
+-- Compatibilidad para bases ya existentes con estructura antigua de users.
+SET @users_add_is_active_sql = (
+  SELECT IF(
+    COUNT(*) = 0,
+    'ALTER TABLE users ADD COLUMN is_active TINYINT(1) NOT NULL DEFAULT 1',
+    'SELECT 1'
+  )
+  FROM information_schema.COLUMNS
+  WHERE TABLE_SCHEMA = DATABASE()
+    AND TABLE_NAME = 'users'
+    AND COLUMN_NAME = 'is_active'
+);
+PREPARE users_add_is_active_stmt FROM @users_add_is_active_sql;
+EXECUTE users_add_is_active_stmt;
+DEALLOCATE PREPARE users_add_is_active_stmt;
+
+SET @users_add_email_verified_sql = (
+  SELECT IF(
+    COUNT(*) = 0,
+    'ALTER TABLE users ADD COLUMN email_verified TINYINT(1) NOT NULL DEFAULT 0',
+    'SELECT 1'
+  )
+  FROM information_schema.COLUMNS
+  WHERE TABLE_SCHEMA = DATABASE()
+    AND TABLE_NAME = 'users'
+    AND COLUMN_NAME = 'email_verified'
+);
+PREPARE users_add_email_verified_stmt FROM @users_add_email_verified_sql;
+EXECUTE users_add_email_verified_stmt;
+DEALLOCATE PREPARE users_add_email_verified_stmt;
+
+SET @users_add_verification_token_sql = (
+  SELECT IF(
+    COUNT(*) = 0,
+    'ALTER TABLE users ADD COLUMN email_verification_token VARCHAR(255) NULL',
+    'SELECT 1'
+  )
+  FROM information_schema.COLUMNS
+  WHERE TABLE_SCHEMA = DATABASE()
+    AND TABLE_NAME = 'users'
+    AND COLUMN_NAME = 'email_verification_token'
+);
+PREPARE users_add_verification_token_stmt FROM @users_add_verification_token_sql;
+EXECUTE users_add_verification_token_stmt;
+DEALLOCATE PREPARE users_add_verification_token_stmt;
+
+SET @users_add_verification_expires_sql = (
+  SELECT IF(
+    COUNT(*) = 0,
+    'ALTER TABLE users ADD COLUMN verification_expires_at DATETIME NULL',
+    'SELECT 1'
+  )
+  FROM information_schema.COLUMNS
+  WHERE TABLE_SCHEMA = DATABASE()
+    AND TABLE_NAME = 'users'
+    AND COLUMN_NAME = 'verification_expires_at'
+);
+PREPARE users_add_verification_expires_stmt FROM @users_add_verification_expires_sql;
+EXECUTE users_add_verification_expires_stmt;
+DEALLOCATE PREPARE users_add_verification_expires_stmt;
+
 -- Roles iniciales del sistema.
 -- ON DUPLICATE KEY evita errores si el esquema se ejecuta mas de una vez.
 INSERT INTO roles (name, description)
@@ -81,7 +142,7 @@ ON DUPLICATE KEY UPDATE
 -- Usuario administrador inicial.
 -- Password original: admin123 (almacenada con hash bcrypt).
 INSERT INTO users (
-  name,
+  username,
   email,
   password_hash,
   role_id,
@@ -91,7 +152,7 @@ INSERT INTO users (
   verification_expires_at
 )
 SELECT
-  'Admin',
+  'admin',
   'admin@tfg.local',
   '$2b$10$6EBZa1q7fZUrXcGh7kfV8uMyl6ZWBNlgjzJt4QJGFwyW9ZfNJxGYq',
   r.id,

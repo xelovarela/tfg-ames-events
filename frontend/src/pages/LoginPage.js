@@ -15,6 +15,9 @@ function LoginPage({ onLogin }) {
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showResend, setShowResend] = useState(false);
+  const [resendMessage, setResendMessage] = useState('');
+  const [isResending, setIsResending] = useState(false);
 
   const existingSession = getAuthSession();
   if (existingSession?.token) {
@@ -28,12 +31,14 @@ function LoginPage({ onLogin }) {
     }
 
     if (!loginValue.trim() || !password) {
-      setMessage('Debes indicar usuario o email y contraseña.');
+      setMessage('Debes indicar usuario o email y contrasena.');
       return;
     }
 
     setIsSubmitting(true);
     setMessage('');
+    setResendMessage('');
+    setShowResend(false);
 
     try {
       const response = await fetch(`${API_BASE_URL}/auth/login`, {
@@ -49,7 +54,9 @@ function LoginPage({ onLogin }) {
 
       const data = await response.json();
       if (!response.ok) {
-        throw new Error(data?.error || 'No se pudo iniciar sesion.');
+        const apiError = data?.error || 'No se pudo iniciar sesion.';
+        setShowResend(apiError.toLowerCase().includes('verificar'));
+        throw new Error(apiError);
       }
 
       setAuthSession({
@@ -70,6 +77,43 @@ function LoginPage({ onLogin }) {
     }
   };
 
+  const handleResendVerification = async () => {
+    if (isResending) {
+      return;
+    }
+
+    const loginAsEmail = loginValue.trim();
+    if (!loginAsEmail.includes('@')) {
+      setResendMessage('Para reenviar la verificacion, inicia sesion usando tu email en lugar de usuario.');
+      return;
+    }
+
+    setIsResending(true);
+    setResendMessage('');
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/auth/resend-verification`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email: loginAsEmail })
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data?.error || 'No se pudo reenviar la verificacion.');
+      }
+
+      setResendMessage(data.message || 'Si la cuenta existe, hemos reenviado el correo.');
+    } catch (error) {
+      console.error(error);
+      setResendMessage(error.message || 'No se pudo reenviar la verificacion.');
+    } finally {
+      setIsResending(false);
+    }
+  };
+
   return (
     <main>
       <h2>Iniciar sesion</h2>
@@ -86,7 +130,7 @@ function LoginPage({ onLogin }) {
             autoComplete="username"
           />
 
-          <label htmlFor="password">Contraseña</label>
+          <label htmlFor="password">Contrasena</label>
           <input
             id="password"
             type="password"
@@ -100,6 +144,9 @@ function LoginPage({ onLogin }) {
             <button className="login-btn login-btn-primary" type="submit" disabled={isSubmitting}>
               {isSubmitting ? 'Accediendo...' : 'Entrar'}
             </button>
+            <Link to="/register" className="login-link">
+              Crear cuenta
+            </Link>
             <Link to="/map" className="login-link">
               Volver al mapa
             </Link>
@@ -107,6 +154,23 @@ function LoginPage({ onLogin }) {
         </form>
 
         {message && <p className="login-message">{message}</p>}
+
+        {showResend && (
+          <div className="login-resend">
+            <p className="login-resend-info">
+              Reenviaremos la verificacion al mismo email que has usado para iniciar sesion.
+            </p>
+            <button
+              className="login-btn login-btn-secondary"
+              type="button"
+              disabled={isResending}
+              onClick={handleResendVerification}
+            >
+              {isResending ? 'Enviando...' : 'Reenviar verificacion'}
+            </button>
+            {resendMessage && <p className="login-message">{resendMessage}</p>}
+          </div>
+        )}
       </section>
     </main>
   );
