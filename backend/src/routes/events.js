@@ -5,7 +5,7 @@
  */
 const express = require('express');
 const eventsController = require('../controllers/eventsController');
-const { requireAuth, requireAdmin } = require('../middleware/authMiddleware');
+const { requireAuth, requireAdmin, requireAnyRole } = require('../middleware/authMiddleware');
 
 const router = express.Router();
 
@@ -13,9 +13,8 @@ const router = express.Router();
 router.get('/', eventsController.getAll);
 router.get('/:id', eventsController.getById);
 
-router.post('/', requireAuth, requireAdmin, eventsController.create);
-router.put('/:id', requireAuth, requireAdmin, eventsController.update);
+router.post('/', requireAuth, requireAnyRole(['admin', 'content_manager']), eventsController.create);
+router.put('/:id', requireAuth, requireAnyRole(['admin', 'content_manager']), eventsController.update);
 router.delete('/:id', requireAuth, requireAdmin, eventsController.remove);
 module.exports = router;
-
 

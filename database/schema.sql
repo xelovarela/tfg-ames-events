@@ -1,34 +1,124 @@
 -- Este archivo define la estructura completa de la base de datos del proyecto.
--- Crea la base principal y todas las tablas necesarias para almacenar eventos,
--- categorias, ubicaciones, audiencias y organizadores con sus relaciones.
--- Se asegura la existencia de la base de datos antes de usarla.
+-- Compatible con MySQL/MariaDB (incluyendo MariaDB 10.6).
 CREATE DATABASE IF NOT EXISTS ames_events;
 USE ames_events;
 
--- Tabla de roles para el control basico de permisos (admin y user).
-CREATE TABLE roles (
+-- =========================
+-- Seguridad: roles y users
+-- =========================
+
+-- Tabla de roles para control de permisos.
+-- Se mantiene separada de users para cumplir 3FN y facilitar evolucion futura.
+CREATE TABLE IF NOT EXISTS roles (
   id INT AUTO_INCREMENT PRIMARY KEY,
-  name VARCHAR(50) NOT NULL UNIQUE
+  name VARCHAR(50) NOT NULL UNIQUE,
+  description VARCHAR(255) NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
--- Tabla de usuarios para autenticacion y autorizacion por rol.
-CREATE TABLE users (
+-- Compatibilidad con BD ya existentes: si roles venia de una version antigua,
+-- se anaden las columnas nuevas sin necesidad de script de migracion separado.
+SET @roles_add_description_sql = (
+  SELECT IF(
+    COUNT(*) = 0,
+    'ALTER TABLE roles ADD COLUMN description VARCHAR(255) NULL',
+    'SELECT 1'
+  )
+  FROM information_schema.COLUMNS
+  WHERE TABLE_SCHEMA = DATABASE()
+    AND TABLE_NAME = 'roles'
+    AND COLUMN_NAME = 'description'
+);
+PREPARE roles_add_description_stmt FROM @roles_add_description_sql;
+EXECUTE roles_add_description_stmt;
+DEALLOCATE PREPARE roles_add_description_stmt;
+
+SET @roles_add_created_at_sql = (
+  SELECT IF(
+    COUNT(*) = 0,
+    'ALTER TABLE roles ADD COLUMN created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP',
+    'SELECT 1'
+  )
+  FROM information_schema.COLUMNS
+  WHERE TABLE_SCHEMA = DATABASE()
+    AND TABLE_NAME = 'roles'
+    AND COLUMN_NAME = 'created_at'
+);
+PREPARE roles_add_created_at_stmt FROM @roles_add_created_at_sql;
+EXECUTE roles_add_created_at_stmt;
+DEALLOCATE PREPARE roles_add_created_at_stmt;
+
+-- Tabla de usuarios registrados.
+-- BOOLEAN en MariaDB/MySQL es alias de TINYINT(1), por eso se usa sin perder compatibilidad.
+CREATE TABLE IF NOT EXISTS users (
   id INT AUTO_INCREMENT PRIMARY KEY,
-  username VARCHAR(100) NOT NULL UNIQUE,
-  email VARCHAR(100) NOT NULL UNIQUE,
+  name VARCHAR(100) NOT NULL,
+  email VARCHAR(150) NOT NULL UNIQUE,
   password_hash VARCHAR(255) NOT NULL,
   role_id INT NOT NULL,
-  CONSTRAINT fk_user_role FOREIGN KEY (role_id) REFERENCES roles(id)
+  is_active BOOLEAN NOT NULL DEFAULT TRUE,
+  email_verified BOOLEAN NOT NULL DEFAULT FALSE,
+  email_verification_token VARCHAR(255) NULL,
+  verification_expires_at DATETIME NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  CONSTRAINT fk_users_role
+    FOREIGN KEY (role_id) REFERENCES roles(id)
+    ON UPDATE CASCADE
+    ON DELETE RESTRICT
 );
 
+-- Roles iniciales del sistema.
+-- ON DUPLICATE KEY evita errores si el esquema se ejecuta mas de una vez.
+INSERT INTO roles (name, description)
+VALUES
+  ('admin', 'Acceso total al sistema'),
+  ('content_manager', 'Gestion de contenidos y catalogos'),
+  ('user', 'Usuario registrado con permisos basicos')
+ON DUPLICATE KEY UPDATE
+  description = VALUES(description);
+
+-- Usuario administrador inicial.
+-- Password original: admin123 (almacenada con hash bcrypt).
+INSERT INTO users (
+  name,
+  email,
+  password_hash,
+  role_id,
+  is_active,
+  email_verified,
+  email_verification_token,
+  verification_expires_at
+)
+SELECT
+  'Admin',
+  'admin@tfg.local',
+  '$2b$10$6EBZa1q7fZUrXcGh7kfV8uMyl6ZWBNlgjzJt4QJGFwyW9ZfNJxGYq',
+  r.id,
+  TRUE,
+  TRUE,
+  NULL,
+  NULL
+FROM roles r
+WHERE r.name = 'admin'
+  AND NOT EXISTS (
+    SELECT 1
+    FROM users u
+    WHERE u.email = 'admin@tfg.local'
+  );
+
+-- ======================
+-- Catalogos de negocio
+-- ======================
+
 -- Tabla de categorias para clasificar cada evento por tipo.
-CREATE TABLE categories (
+CREATE TABLE IF NOT EXISTS categories (
   id INT AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(100) NOT NULL
 );
 
 -- Tabla de ubicaciones con nombre y coordenadas geograficas.
-CREATE TABLE locations (
+CREATE TABLE IF NOT EXISTS locations (
   id INT AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(150) NOT NULL,
   lat DECIMAL(10,7) NOT NULL,
@@ -36,7 +126,7 @@ CREATE TABLE locations (
 );
 
 -- Tabla de audiencias para describir rangos de edad o publico objetivo.
-CREATE TABLE audiences (
+CREATE TABLE IF NOT EXISTS audiences (
   id INT AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(100) NOT NULL,
   age_min INT NULL,
@@ -44,7 +134,7 @@ CREATE TABLE audiences (
 );
 
 -- Tabla de organizadores con informacion basica de contacto.
-CREATE TABLE organizers (
+CREATE TABLE IF NOT EXISTS organizers (
   id INT AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(100) NOT NULL,
   email VARCHAR(100) NULL,
@@ -52,7 +142,7 @@ CREATE TABLE organizers (
 );
 
 -- Tabla principal de eventos con claves ajenas hacia los catalogos auxiliares.
-CREATE TABLE events (
+CREATE TABLE IF NOT EXISTS events (
   id INT AUTO_INCREMENT PRIMARY KEY,
   title VARCHAR(150) NOT NULL,
   description TEXT NULL,

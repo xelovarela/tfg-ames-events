@@ -34,7 +34,18 @@ function requireAdmin(req, res, next) {
   next();
 }
 
+function requireAnyRole(allowedRoles) {
+  return (req, res, next) => {
+    if (!req.user || !allowedRoles.includes(req.user.role)) {
+      return res.status(403).json({ error: 'No tienes permisos suficientes para esta accion.' });
+    }
+
+    next();
+  };
+}
+
 module.exports = {
   requireAuth,
-  requireAdmin
+  requireAdmin,
+  requireAnyRole
 };

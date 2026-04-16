@@ -4,14 +4,15 @@
  */
 const express = require('express');
 const organizersController = require('../controllers/organizersController');
+const { requireAuth, requireAdmin, requireAnyRole } = require('../middleware/authMiddleware');
 
 const router = express.Router();
 
 // Se exponen las operaciones CRUD de organizadores.
 router.get('/', organizersController.getAll);
 router.get('/:id', organizersController.getById);
-router.post('/', organizersController.create);
-router.put('/:id', organizersController.update);
-router.delete('/:id', organizersController.remove);
+router.post('/', requireAuth, requireAnyRole(['admin', 'content_manager']), organizersController.create);
+router.put('/:id', requireAuth, requireAnyRole(['admin', 'content_manager']), organizersController.update);
+router.delete('/:id', requireAuth, requireAdmin, organizersController.remove);
 
 module.exports = router;

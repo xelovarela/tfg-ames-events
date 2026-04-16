@@ -25,9 +25,9 @@ const NAV_ITEMS = [
   { to: '/map', label: 'Mapa' },
   { to: '/events', label: 'Eventos' },
   { to: '/audiences', label: 'Audiencias', adminOnly: true },
-  { to: '/organizers', label: 'Organizadores', adminOnly: true },
-  { to: '/categories', label: 'Categorias', adminOnly: true },
-  { to: '/locations', label: 'Ubicaciones', adminOnly: true },
+  { to: '/organizers', label: 'Organizadores', allowedRoles: ['admin', 'content_manager'] },
+  { to: '/categories', label: 'Categorias', allowedRoles: ['admin', 'content_manager'] },
+  { to: '/locations', label: 'Ubicaciones', allowedRoles: ['admin', 'content_manager'] },
   { to: '/users', label: 'Usuarios', adminOnly: true }
 ];
 
@@ -39,7 +39,16 @@ function AppShell({ session, onLogout, onSessionChange }) {
   const searchValue = searchParams.get('search') || '';
   const isAuthenticated = Boolean(session?.token);
   const isAdmin = session?.user?.role === 'admin';
-  const visibleNavItems = NAV_ITEMS.filter((item) => !item.adminOnly || isAdmin);
+  const userRole = session?.user?.role;
+  const visibleNavItems = NAV_ITEMS.filter((item) => {
+    if (item.adminOnly) {
+      return isAdmin;
+    }
+    if (Array.isArray(item.allowedRoles) && item.allowedRoles.length > 0) {
+      return isAuthenticated && item.allowedRoles.includes(userRole);
+    }
+    return true;
+  });
 
   // Cuando cambia la ruta se cierra el menu movil para mejorar la experiencia de uso.
   useEffect(() => {
@@ -133,7 +142,7 @@ function AppShell({ session, onLogout, onSessionChange }) {
           <Route
             path="/events/new"
             element={(
-              <ProtectedRoute session={session} requireAdmin>
+              <ProtectedRoute session={session} allowedRoles={['admin', 'content_manager']}>
                 <EventCreatePage />
               </ProtectedRoute>
             )}
@@ -142,7 +151,7 @@ function AppShell({ session, onLogout, onSessionChange }) {
           <Route
             path="/events/:id/edit"
             element={(
-              <ProtectedRoute session={session} requireAdmin>
+              <ProtectedRoute session={session} allowedRoles={['admin', 'content_manager']}>
                 <EventEditPage />
               </ProtectedRoute>
             )}
@@ -159,7 +168,7 @@ function AppShell({ session, onLogout, onSessionChange }) {
           <Route
             path="/organizers"
             element={(
-              <ProtectedRoute session={session} requireAdmin>
+              <ProtectedRoute session={session} allowedRoles={['admin', 'content_manager']}>
                 <OrganizersPage />
               </ProtectedRoute>
             )}
@@ -167,7 +176,7 @@ function AppShell({ session, onLogout, onSessionChange }) {
           <Route
             path="/categories"
             element={(
-              <ProtectedRoute session={session} requireAdmin>
+              <ProtectedRoute session={session} allowedRoles={['admin', 'content_manager']}>
                 <CategoriesPage />
               </ProtectedRoute>
             )}
@@ -175,7 +184,7 @@ function AppShell({ session, onLogout, onSessionChange }) {
           <Route
             path="/locations"
             element={(
-              <ProtectedRoute session={session} requireAdmin>
+              <ProtectedRoute session={session} allowedRoles={['admin', 'content_manager']}>
                 <LocationsPage />
               </ProtectedRoute>
             )}

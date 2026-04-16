@@ -51,6 +51,7 @@ function UserManager() {
   const [editingId, setEditingId] = useState(null);
   const [message, setMessage] = useState('');
   const [isSaving, setIsSaving] = useState(false);
+  const selectedRole = roles.find((role) => String(role.id) === formData.role_id);
 
   const loadUsers = async () => {
     try {
@@ -240,6 +241,12 @@ function UserManager() {
           minLength={editingId ? undefined : 6}
           required={!editingId}
         />
+
+        <p className="users-role-help">
+          {selectedRole
+            ? `Descripcion del rol: ${selectedRole.description || 'Sin descripcion disponible.'}`
+            : 'Selecciona un rol para ver su descripcion.'}
+        </p>
 
         <div className="users-actions">
           <button className="users-btn users-btn-primary" type="submit" disabled={isSaving}>

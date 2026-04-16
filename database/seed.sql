@@ -7,8 +7,6 @@ USE ames_events;
 -- Se desactivan temporalmente las claves foraneas para vaciar las tablas sin errores.
 SET FOREIGN_KEY_CHECKS = 0;
 TRUNCATE TABLE events;
-TRUNCATE TABLE users;
-TRUNCATE TABLE roles;
 TRUNCATE TABLE organizers;
 TRUNCATE TABLE audiences;
 TRUNCATE TABLE locations;
@@ -16,13 +14,71 @@ TRUNCATE TABLE categories;
 SET FOREIGN_KEY_CHECKS = 1;
 
 -- Roles base para el sistema de autorizacion.
-INSERT INTO roles (name) VALUES
-  ('admin'),
-  ('user');
+-- No se truncan roles/users para no romper datos de seguridad ya existentes.
+-- Compatibilidad con esquemas antiguos donde roles solo tenia (id, name).
+SET @roles_add_description_sql = (
+  SELECT IF(
+    COUNT(*) = 0,
+    'ALTER TABLE roles ADD COLUMN description VARCHAR(255) NULL',
+    'SELECT 1'
+  )
+  FROM information_schema.COLUMNS
+  WHERE TABLE_SCHEMA = DATABASE()
+    AND TABLE_NAME = 'roles'
+    AND COLUMN_NAME = 'description'
+);
+PREPARE roles_add_description_stmt FROM @roles_add_description_sql;
+EXECUTE roles_add_description_stmt;
+DEALLOCATE PREPARE roles_add_description_stmt;
+
+SET @roles_add_created_at_sql = (
+  SELECT IF(
+    COUNT(*) = 0,
+    'ALTER TABLE roles ADD COLUMN created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP',
+    'SELECT 1'
+  )
+  FROM information_schema.COLUMNS
+  WHERE TABLE_SCHEMA = DATABASE()
+    AND TABLE_NAME = 'roles'
+    AND COLUMN_NAME = 'created_at'
+);
+PREPARE roles_add_created_at_stmt FROM @roles_add_created_at_sql;
+EXECUTE roles_add_created_at_stmt;
+DEALLOCATE PREPARE roles_add_created_at_stmt;
+
+INSERT INTO roles (name, description) VALUES
+  ('admin', 'Acceso total al sistema'),
+  ('content_manager', 'Gestion de contenidos y catalogos'),
+  ('user', 'Usuario registrado con permisos basicos')
+ON DUPLICATE KEY UPDATE
+  description = VALUES(description);
 
 -- Usuario administrador inicial para acceso al panel de gestion.
-INSERT INTO users (username, email, password_hash, role_id) VALUES
-  ('admin', 'admin@ames.local', '$2b$10$h7aDuOYJEaUiG8u2KUj9qOr2DKf7f4QbovqhY2xK4FcdGFV3OJat2', 1);
+-- Password original: admin123 (hash bcrypt).
+INSERT INTO users (
+  name,
+  email,
+  password_hash,
+  role_id,
+  is_active,
+  email_verified,
+  email_verification_token,
+  verification_expires_at
+)
+SELECT
+  'Admin',
+  'admin@tfg.local',
+  '$2b$10$6EBZa1q7fZUrXcGh7kfV8uMyl6ZWBNlgjzJt4QJGFwyW9ZfNJxGYq',
+  r.id,
+  TRUE,
+  TRUE,
+  NULL,
+  NULL
+FROM roles r
+WHERE r.name = 'admin'
+  AND NOT EXISTS (
+    SELECT 1 FROM users u WHERE u.email = 'admin@tfg.local'
+  );
 
 -- Catalogo base de categorias disponibles en la aplicacion.
 INSERT INTO categories (name) VALUES

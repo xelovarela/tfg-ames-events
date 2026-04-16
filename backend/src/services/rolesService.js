@@ -6,7 +6,7 @@
 const db = require('../config/db');
 
 async function listRoles() {
-  const [rows] = await db.query('SELECT id, name FROM roles ORDER BY id');
+  const [rows] = await db.query('SELECT id, name, description FROM roles ORDER BY id');
   return rows;
 }
 
