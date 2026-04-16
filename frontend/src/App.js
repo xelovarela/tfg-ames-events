@@ -3,7 +3,7 @@
  * Configura el enrutado de React Router, el menu lateral, la cabecera comun y
  * la distribucion general de la aplicacion de Ames Events.
  */
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { BrowserRouter, Link, Navigate, NavLink, Route, Routes, useLocation, useSearchParams } from 'react-router-dom';
 import './App.css';
 import MapPage from './pages/MapPage';
@@ -18,7 +18,8 @@ import EventEditPage from './pages/EventEditPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import VerifyEmailPage from './pages/VerifyEmailPage';
-import { clearAuthSession, getAuthSession } from './utils/authStorage';
+import FavoritesPage from './pages/FavoritesPage';
+import { AUTH_SESSION_EVENT, clearAuthSession, getAuthSession } from './utils/authStorage';
 import ProtectedRoute from './ProtectedRoute';
 import UsersPage from './pages/UsersPage';
 
@@ -26,6 +27,7 @@ import UsersPage from './pages/UsersPage';
 const NAV_ITEMS = [
   { to: '/map', label: 'Mapa' },
   { to: '/events', label: 'Eventos' },
+  { to: '/favorites', label: 'Mis favoritos', allowedRoles: ['user'] },
   { to: '/audiences', label: 'Audiencias', adminOnly: true },
   { to: '/organizers', label: 'Organizadores', allowedRoles: ['admin', 'content_manager'] },
   { to: '/categories', label: 'Categorias', allowedRoles: ['admin', 'content_manager'] },
@@ -140,7 +142,7 @@ function AppShell({ session, onLogout, onSessionChange }) {
 
           <Route path="/map" element={<MapPage />} />
 
-          <Route path="/events" element={<EventsPage />} />
+          <Route path="/events" element={<EventsPage session={session} />} />
           <Route
             path="/events/new"
             element={(
@@ -149,7 +151,15 @@ function AppShell({ session, onLogout, onSessionChange }) {
               </ProtectedRoute>
             )}
           />
-          <Route path="/events/:id" element={<EventDetailPage />} />
+          <Route path="/events/:id" element={<EventDetailPage session={session} />} />
+          <Route
+            path="/favorites"
+            element={(
+              <ProtectedRoute session={session} allowedRoles={['user']}>
+                <FavoritesPage session={session} />
+              </ProtectedRoute>
+            )}
+          />
           <Route
             path="/events/:id/edit"
             element={(
@@ -223,9 +233,19 @@ function App() {
     setSession(null);
   };
 
-  const syncSessionFromStorage = () => {
+  const syncSessionFromStorage = useCallback(() => {
     setSession(getAuthSession());
-  };
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener(AUTH_SESSION_EVENT, syncSessionFromStorage);
+    window.addEventListener('storage', syncSessionFromStorage);
+
+    return () => {
+      window.removeEventListener(AUTH_SESSION_EVENT, syncSessionFromStorage);
+      window.removeEventListener('storage', syncSessionFromStorage);
+    };
+  }, [syncSessionFromStorage]);
 
   return (
     <BrowserRouter>

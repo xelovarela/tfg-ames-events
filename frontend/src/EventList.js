@@ -51,11 +51,16 @@ const EventList = ({
   onEditEvent,
   events: externalEvents,
   onEventDeleted,
+  favoriteEventIds = [],
+  onToggleFavorite,
+  showFavoriteButton = false,
+  canManageEvents = false,
   emptyMessage = 'No hay eventos registrados.',
   showEmptyState = true
 }) => {
   const [events, setEvents] = useState([]);
   const [loadError, setLoadError] = useState('');
+  const favoriteIdsSet = new Set((favoriteEventIds || []).map((id) => Number(id)));
   const isControlled = Array.isArray(externalEvents);
 
   // En modo no controlado el propio componente recupera los eventos desde la API.
@@ -126,6 +131,19 @@ const EventList = ({
     }
   };
 
+  const handleToggleFavorite = async (eventId, isFavorite) => {
+    if (!onToggleFavorite) {
+      return;
+    }
+
+    try {
+      await onToggleFavorite(eventId, isFavorite);
+    } catch (error) {
+      console.error(error);
+      alert(error.message || 'No se pudo actualizar el favorito.');
+    }
+  };
+
   return (
     <div style={{ padding: '1rem', background: '#f9f9f9', borderRadius: '8px', marginBottom: '1rem' }}>
       <h3>Lista de eventos</h3>
@@ -170,21 +188,35 @@ const EventList = ({
             Edad: {formatAgeRange(event)}
             <br />
             <div style={{ marginTop: '0.5rem' }}>
-            <Link to={`/events/${event.id}/edit`} style={{ marginRight: '0.5rem' }}>
-              <button
-                type="button"
-                style={{ padding: '0.4rem 0.8rem', cursor: 'pointer' }}
-              >
-                Editar
-              </button>
-          </Link>
+              {showFavoriteButton && (
+                <button
+                  type="button"
+                  onClick={() => handleToggleFavorite(event.id, favoriteIdsSet.has(Number(event.id)))}
+                  style={{ padding: '0.4rem 0.8rem', cursor: 'pointer', marginRight: '0.5rem' }}
+                >
+                  {favoriteIdsSet.has(Number(event.id)) ? 'Quitar favorito' : 'Favorito'}
+                </button>
+              )}
 
-              <button
-                onClick={() => handleDelete(event.id)}
-                style={{ padding: '0.4rem 0.8rem', cursor: 'pointer' }}
-              >
-                Borrar
-              </button>
+              {canManageEvents && (
+                <>
+                  <Link to={`/events/${event.id}/edit`} style={{ marginRight: '0.5rem' }}>
+                    <button
+                      type="button"
+                      style={{ padding: '0.4rem 0.8rem', cursor: 'pointer' }}
+                    >
+                      Editar
+                    </button>
+                  </Link>
+
+                  <button
+                    onClick={() => handleDelete(event.id)}
+                    style={{ padding: '0.4rem 0.8rem', cursor: 'pointer' }}
+                  >
+                    Borrar
+                  </button>
+                </>
+              )}
             </div>
           </div>
         ))

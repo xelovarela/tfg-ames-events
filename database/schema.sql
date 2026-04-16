@@ -222,3 +222,20 @@ CREATE TABLE IF NOT EXISTS events (
   CONSTRAINT fk_category FOREIGN KEY (category_id) REFERENCES categories(id),
   CONSTRAINT fk_location FOREIGN KEY (location_id) REFERENCES locations(id)
 );
+
+-- Tabla de favoritos: relacion N:M entre usuarios y eventos.
+-- Usa INT porque users.id y events.id se declaran explicitamente como INT AUTO_INCREMENT.
+CREATE TABLE IF NOT EXISTS favorites (
+  user_id INT NOT NULL,
+  event_id INT NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (user_id, event_id),
+  CONSTRAINT fk_favorites_user
+    FOREIGN KEY (user_id) REFERENCES users(id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT fk_favorites_event
+    FOREIGN KEY (event_id) REFERENCES events(id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
+);

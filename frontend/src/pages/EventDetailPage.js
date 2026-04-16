@@ -6,6 +6,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { API_BASE_URL } from '../config';
+import { addFavorite, listFavoriteIds, removeFavorite } from '../utils/favoritesApi';
 
 // Convierte la fecha almacenada en base de datos a un formato legible para el usuario.
 function formatDate(value) {
@@ -50,11 +51,16 @@ function formatAgeRange(event) {
 }
 
 // Este componente carga el evento indicado en la ruta y muestra su detalle.
-function EventDetailPage() {
+function EventDetailPage({ session }) {
   const { id } = useParams();
   const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [favoriteMessage, setFavoriteMessage] = useState('');
+  const [isFavoriteLoading, setIsFavoriteLoading] = useState(false);
+  const isAuthenticated = Boolean(session?.token);
+  const canUseFavorites = session?.user?.role === 'user';
 
   // Al cambiar el id de la URL se vuelve a pedir el evento correspondiente.
   useEffect(() => {
@@ -94,6 +100,59 @@ function EventDetailPage() {
       isMounted = false;
     };
   }, [id]);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadFavoriteState = async () => {
+      if (!isAuthenticated || !canUseFavorites) {
+        if (isMounted) {
+          setIsFavorite(false);
+        }
+        return;
+      }
+
+      try {
+        const ids = await listFavoriteIds();
+        if (isMounted) {
+          setIsFavorite(ids.includes(Number(id)));
+        }
+      } catch (loadError) {
+        console.error(loadError);
+      }
+    };
+
+    loadFavoriteState();
+    return () => {
+      isMounted = false;
+    };
+  }, [id, isAuthenticated, canUseFavorites]);
+
+  const handleToggleFavorite = async () => {
+    if (!isAuthenticated || !canUseFavorites || !event || isFavoriteLoading) {
+      return;
+    }
+
+    setIsFavoriteLoading(true);
+    setFavoriteMessage('');
+
+    try {
+      if (isFavorite) {
+        await removeFavorite(event.id);
+        setIsFavorite(false);
+        setFavoriteMessage('Evento eliminado de favoritos.');
+      } else {
+        await addFavorite(event.id);
+        setIsFavorite(true);
+        setFavoriteMessage('Evento guardado en favoritos.');
+      }
+    } catch (toggleError) {
+      console.error(toggleError);
+      setFavoriteMessage(toggleError.message || 'No se pudo actualizar el favorito.');
+    } finally {
+      setIsFavoriteLoading(false);
+    }
+  };
 
   return (
     <main>
@@ -153,6 +212,24 @@ function EventDetailPage() {
               <h4>Descripcion</h4>
               <p>{event.description}</p>
             </article>
+          )}
+
+          {canUseFavorites && (
+            <div style={{ marginTop: '0.75rem' }}>
+              <button
+                type="button"
+                className="event-btn event-btn-primary"
+                onClick={handleToggleFavorite}
+                disabled={isFavoriteLoading}
+              >
+                {isFavoriteLoading
+                  ? 'Actualizando...'
+                  : isFavorite
+                    ? 'Quitar de favoritos'
+                    : 'Guardar en favoritos'}
+              </button>
+              {favoriteMessage && <p style={{ marginTop: '0.5rem' }}>{favoriteMessage}</p>}
+            </div>
           )}
 
           <p className="event-detail-note">

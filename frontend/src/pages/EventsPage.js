@@ -8,6 +8,7 @@ import { useSearchParams, Link } from 'react-router-dom';
 import EventList from '../EventList';
 import EventFilters from '../EventFilters';
 import { API_BASE_URL } from '../config';
+import { addFavorite, listFavoriteIds, removeFavorite } from '../utils/favoritesApi';
 import {
   filterEvents,
   initialEventFilters,
@@ -17,7 +18,7 @@ import {
 } from '../utils/eventFilters';
 
 // Este componente coordina la vista de gestion y filtrado del catalogo de eventos.
-function EventsPage() {
+function EventsPage({ session }) {
   const [events, setEvents] = useState([]);
   const [categories, setCategories] = useState([]);
   const [audiences, setAudiences] = useState([]);
@@ -29,6 +30,10 @@ function EventsPage() {
     ...filtersFromSearchParams(searchParams)
   }));
   const [loadError, setLoadError] = useState('');
+  const [favoriteIds, setFavoriteIds] = useState([]);
+  const isAuthenticated = Boolean(session?.token);
+  const canUseFavorites = session?.user?.role === 'user';
+  const canManageEvents = ['admin', 'content_manager'].includes(session?.user?.role);
 
   // La URL actua como fuente de verdad compartible para el estado de filtros.
   useEffect(() => {
@@ -124,6 +129,51 @@ function EventsPage() {
     loadCatalogs();
   }, []);
 
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadFavoriteIdsForUser = async () => {
+      if (!isAuthenticated || !canUseFavorites) {
+        if (isMounted) {
+          setFavoriteIds([]);
+        }
+        return;
+      }
+
+      try {
+        const ids = await listFavoriteIds();
+        if (isMounted) {
+          setFavoriteIds(ids);
+        }
+      } catch (error) {
+        console.error(error);
+        if (isMounted) {
+          setFavoriteIds([]);
+        }
+      }
+    };
+
+    loadFavoriteIdsForUser();
+    return () => {
+      isMounted = false;
+    };
+  }, [isAuthenticated, canUseFavorites]);
+
+  const handleToggleFavorite = async (eventId, isFavorite) => {
+    if (!isAuthenticated || !canUseFavorites) {
+      return;
+    }
+
+    if (isFavorite) {
+      await removeFavorite(eventId);
+      setFavoriteIds((current) => current.filter((id) => Number(id) !== Number(eventId)));
+      return;
+    }
+
+    await addFavorite(eventId);
+    setFavoriteIds((current) => (current.includes(Number(eventId)) ? current : [...current, Number(eventId)]));
+  };
+
   return (
     <main>
       <h2>Gestion de Eventos</h2>
@@ -145,16 +195,22 @@ function EventsPage() {
 
       {/* Accion principal para acceder al formulario de alta de eventos. */}
       <div style={{ marginBottom: '1rem' }}>
-        <Link to="/events/new">
-          <button className="event-btn event-btn-primary">
-            Crear nuevo evento
-          </button>
-        </Link>
+        {canManageEvents && (
+          <Link to="/events/new">
+            <button className="event-btn event-btn-primary">
+              Crear nuevo evento
+            </button>
+          </Link>
+        )}
       </div>
 
       <EventList
         events={filteredEvents}
         onEventDeleted={refreshAll}
+        favoriteEventIds={favoriteIds}
+        onToggleFavorite={handleToggleFavorite}
+        showFavoriteButton={canUseFavorites}
+        canManageEvents={canManageEvents}
         emptyMessage={noFilteredEventsMessage}
         showEmptyState={!loadError}
       />

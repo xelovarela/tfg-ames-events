@@ -12,6 +12,15 @@ function toPositiveInt(value) {
   return parsed;
 }
 
+// Valida parametros de ruta que deben ser identificadores enteros positivos.
+function toPositiveIntParam(value) {
+  if (typeof value !== 'string' || !/^[1-9]\d*$/.test(value)) {
+    return null;
+  }
+
+  return toPositiveInt(value);
+}
+
 // Permite campos opcionales: acepta vacios y, si hay dato, exige entero positivo.
 function toNullablePositiveInt(value) {
   if (value === null || value === undefined || value === '') {
@@ -80,6 +89,7 @@ function toNullableMoney(value) {
 // Se exportan las utilidades para reutilizarlas desde controladores y otros modulos.
 module.exports = {
   toPositiveInt,
+  toPositiveIntParam,
   toNullablePositiveInt,
   toLatitude,
   toLongitude,

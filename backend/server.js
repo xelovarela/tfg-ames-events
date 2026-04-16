@@ -15,6 +15,7 @@ const organizersRoutes = require('./src/routes/organizers');
 const authRoutes = require('./src/routes/auth');
 const usersRoutes = require('./src/routes/users');
 const rolesRoutes = require('./src/routes/roles');
+const favoritesRoutes = require('./src/routes/favorites');
 
 const app = express();
 
@@ -40,6 +41,7 @@ app.use('/audiences', audiencesRoutes);
 app.use('/organizers', organizersRoutes);
 app.use('/users', usersRoutes);
 app.use('/roles', rolesRoutes);
+app.use('/favorites', favoritesRoutes);
 
 // El puerto puede llegar desde variables de entorno o usar el valor local por defecto.
 const PORT = process.env.PORT || 3001;
