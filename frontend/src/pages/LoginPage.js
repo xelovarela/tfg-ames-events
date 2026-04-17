@@ -147,6 +147,9 @@ function LoginPage({ onLogin }) {
             <Link to="/register" className="login-link">
               Crear cuenta
             </Link>
+            <Link to="/forgot-password" className="login-link">
+              Olvidaste tu contrasena?
+            </Link>
             <Link to="/map" className="login-link">
               Volver al mapa
             </Link>

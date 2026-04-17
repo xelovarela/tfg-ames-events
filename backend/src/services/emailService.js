@@ -11,6 +11,11 @@ function getVerificationUrl(token) {
   return `${baseUrl}/verify-email?token=${encodeURIComponent(token)}`;
 }
 
+function getPasswordResetUrl(token) {
+  const baseUrl = process.env.APP_BASE_URL || DEFAULT_APP_BASE_URL;
+  return `${baseUrl}/reset-password?token=${encodeURIComponent(token)}`;
+}
+
 function getEventUrl(eventId) {
   const baseUrl = process.env.APP_BASE_URL || DEFAULT_APP_BASE_URL;
   return `${baseUrl}/events/${encodeURIComponent(eventId)}`;
@@ -107,6 +112,52 @@ async function sendVerificationEmail({ to, name, token }) {
   return { delivered: true, verificationUrl };
 }
 
+async function sendPasswordResetEmail(user, token) {
+  const resetUrl = getPasswordResetUrl(token);
+  const transporter = createTransporterIfConfigured();
+  const from = process.env.MAIL_FROM || process.env.SMTP_USER || 'no-reply@ames-events.local';
+  const to = user.email;
+  const name = user.username || user.name || 'usuario';
+  const subject = 'Restablece tu contrasena - Ames Events';
+  const safeName = escapeHtml(name);
+  const safeResetUrl = escapeHtml(resetUrl);
+  const text = [
+    `Hola ${name},`,
+    '',
+    'Hemos recibido una solicitud para restablecer tu contrasena en Ames Events.',
+    'Puedes crear una nueva contrasena usando este enlace:',
+    resetUrl,
+    '',
+    'El enlace caduca en 1 hora.',
+    'Si no solicitaste este cambio, ignora este mensaje.'
+  ].join('\n');
+  const html = `
+    <p>Hola ${safeName},</p>
+    <p>Hemos recibido una solicitud para restablecer tu contrasena en Ames Events.</p>
+    <p>
+      Puedes crear una nueva contrasena usando este enlace:
+      <a href="${safeResetUrl}">${safeResetUrl}</a>
+    </p>
+    <p>El enlace caduca en 1 hora.</p>
+    <p>Si no solicitaste este cambio, ignora este mensaje.</p>
+  `;
+
+  if (!transporter) {
+    console.warn(`[emailService] SMTP no configurado. Link de recuperacion para ${to}: ${resetUrl}`);
+    return { delivered: false, resetUrl };
+  }
+
+  await transporter.sendMail({
+    from,
+    to,
+    subject,
+    text,
+    html
+  });
+
+  return { delivered: true, resetUrl };
+}
+
 async function sendEventAlertEmail({ to, name, alertName, event }) {
   const eventUrl = getEventUrl(event.id);
   const transporter = createTransporterIfConfigured();
@@ -160,7 +211,9 @@ async function sendEventAlertEmail({ to, name, alertName, event }) {
 
 module.exports = {
   sendVerificationEmail,
+  sendPasswordResetEmail,
   sendEventAlertEmail,
   getVerificationUrl,
+  getPasswordResetUrl,
   getEventUrl
 };

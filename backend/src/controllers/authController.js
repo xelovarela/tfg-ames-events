@@ -12,6 +12,9 @@ const MAX_NAME_LENGTH = 50;
 const MAX_EMAIL_LENGTH = 150;
 const VERIFICATION_TOKEN_BYTES = 32;
 const VERIFICATION_EXPIRY_HOURS = 24;
+const PASSWORD_RESET_TOKEN_BYTES = 32;
+const PASSWORD_RESET_EXPIRY_HOURS = 1;
+const PASSWORD_RESET_GENERIC_MESSAGE = 'Si el email existe, recibiras instrucciones para restablecer la contrasena.';
 
 function isValidEmail(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -21,8 +24,16 @@ function buildVerificationExpiryDate() {
   return new Date(Date.now() + VERIFICATION_EXPIRY_HOURS * 60 * 60 * 1000);
 }
 
+function buildPasswordResetExpiryDate() {
+  return new Date(Date.now() + PASSWORD_RESET_EXPIRY_HOURS * 60 * 60 * 1000);
+}
+
 function generateVerificationToken() {
   return crypto.randomBytes(VERIFICATION_TOKEN_BYTES).toString('hex');
+}
+
+function generatePasswordResetToken() {
+  return crypto.randomBytes(PASSWORD_RESET_TOKEN_BYTES).toString('hex');
 }
 
 async function register(req, res) {
@@ -143,6 +154,66 @@ async function resendVerification(req, res) {
   }
 }
 
+async function forgotPassword(req, res) {
+  const email = typeof req.body.email === 'string' ? req.body.email.trim().toLowerCase() : '';
+  const genericResponse = { message: PASSWORD_RESET_GENERIC_MESSAGE };
+
+  if (!email || email.length > MAX_EMAIL_LENGTH || !isValidEmail(email)) {
+    return res.json(genericResponse);
+  }
+
+  try {
+    const user = await authService.getUserByEmail(email);
+
+    if (user) {
+      const resetToken = generatePasswordResetToken();
+      const resetExpiresAt = buildPasswordResetExpiryDate();
+
+      await authService.storePasswordResetToken(user.id, resetToken, resetExpiresAt);
+      await emailService.sendPasswordResetEmail(user, resetToken);
+    }
+
+    return res.json(genericResponse);
+  } catch (error) {
+    console.error('Error en forgotPassword:', error);
+    return res.status(500).json({ error: 'Error interno al solicitar recuperacion de contrasena.' });
+  }
+}
+
+async function resetPassword(req, res) {
+  const token = typeof req.body.token === 'string' ? req.body.token.trim() : '';
+  const newPassword = typeof req.body.newPassword === 'string' ? req.body.newPassword : '';
+
+  if (!token) {
+    return res.status(400).json({ error: 'Token invalido o expirado.' });
+  }
+
+  if (!newPassword || newPassword.length < MIN_PASSWORD_LENGTH) {
+    return res.status(400).json({ error: `La contrasena debe tener al menos ${MIN_PASSWORD_LENGTH} caracteres.` });
+  }
+
+  try {
+    const user = await authService.getUserByPasswordResetToken(token);
+
+    if (!user) {
+      return res.status(400).json({ error: 'Token invalido o expirado.' });
+    }
+
+    if (!user.password_reset_expires_at || new Date(user.password_reset_expires_at) < new Date()) {
+      await authService.clearPasswordResetToken(user.id);
+      return res.status(400).json({ error: 'Token invalido o expirado.' });
+    }
+
+    const passwordHash = await bcrypt.hash(newPassword, SALT_ROUNDS);
+    await authService.updatePasswordAndClearResetToken(user.id, passwordHash);
+
+    return res.json({ message: 'Contrasena actualizada correctamente.' });
+  } catch (error) {
+    console.error('Error en resetPassword:', error);
+    return res.status(500).json({ error: 'Error interno al restablecer contrasena.' });
+  }
+}
+
 async function login(req, res) {
   const loginValue = typeof req.body.login === 'string' ? req.body.login.trim() : '';
   const password = typeof req.body.password === 'string' ? req.body.password : '';
@@ -224,6 +295,8 @@ module.exports = {
   register,
   verifyEmail,
   resendVerification,
+  forgotPassword,
+  resetPassword,
   login,
   me
 };

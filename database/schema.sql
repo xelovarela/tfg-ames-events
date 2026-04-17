@@ -60,6 +60,8 @@ CREATE TABLE IF NOT EXISTS users (
   email_verified BOOLEAN NOT NULL DEFAULT FALSE,
   email_verification_token VARCHAR(255) NULL,
   verification_expires_at DATETIME NULL,
+  password_reset_token VARCHAR(255) NULL,
+  password_reset_expires_at DATETIME NULL,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   CONSTRAINT fk_users_role
@@ -129,6 +131,36 @@ PREPARE users_add_verification_expires_stmt FROM @users_add_verification_expires
 EXECUTE users_add_verification_expires_stmt;
 DEALLOCATE PREPARE users_add_verification_expires_stmt;
 
+SET @users_add_password_reset_token_sql = (
+  SELECT IF(
+    COUNT(*) = 0,
+    'ALTER TABLE users ADD COLUMN password_reset_token VARCHAR(255) NULL',
+    'SELECT 1'
+  )
+  FROM information_schema.COLUMNS
+  WHERE TABLE_SCHEMA = DATABASE()
+    AND TABLE_NAME = 'users'
+    AND COLUMN_NAME = 'password_reset_token'
+);
+PREPARE users_add_password_reset_token_stmt FROM @users_add_password_reset_token_sql;
+EXECUTE users_add_password_reset_token_stmt;
+DEALLOCATE PREPARE users_add_password_reset_token_stmt;
+
+SET @users_add_password_reset_expires_sql = (
+  SELECT IF(
+    COUNT(*) = 0,
+    'ALTER TABLE users ADD COLUMN password_reset_expires_at DATETIME NULL',
+    'SELECT 1'
+  )
+  FROM information_schema.COLUMNS
+  WHERE TABLE_SCHEMA = DATABASE()
+    AND TABLE_NAME = 'users'
+    AND COLUMN_NAME = 'password_reset_expires_at'
+);
+PREPARE users_add_password_reset_expires_stmt FROM @users_add_password_reset_expires_sql;
+EXECUTE users_add_password_reset_expires_stmt;
+DEALLOCATE PREPARE users_add_password_reset_expires_stmt;
+
 -- Roles iniciales del sistema.
 -- ON DUPLICATE KEY evita errores si el esquema se ejecuta mas de una vez.
 INSERT INTO roles (name, description)
@@ -149,7 +181,9 @@ INSERT INTO users (
   is_active,
   email_verified,
   email_verification_token,
-  verification_expires_at
+  verification_expires_at,
+  password_reset_token,
+  password_reset_expires_at
 )
 SELECT
   'admin',
@@ -158,6 +192,8 @@ SELECT
   r.id,
   TRUE,
   TRUE,
+  NULL,
+  NULL,
   NULL,
   NULL
 FROM roles r

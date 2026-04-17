@@ -4,7 +4,9 @@ const VERIFICATION_COLUMNS = [
   { name: 'is_active', sql: 'ALTER TABLE users ADD COLUMN is_active TINYINT(1) NOT NULL DEFAULT 1' },
   { name: 'email_verified', sql: 'ALTER TABLE users ADD COLUMN email_verified TINYINT(1) NOT NULL DEFAULT 0' },
   { name: 'email_verification_token', sql: 'ALTER TABLE users ADD COLUMN email_verification_token VARCHAR(255) NULL' },
-  { name: 'verification_expires_at', sql: 'ALTER TABLE users ADD COLUMN verification_expires_at DATETIME NULL' }
+  { name: 'verification_expires_at', sql: 'ALTER TABLE users ADD COLUMN verification_expires_at DATETIME NULL' },
+  { name: 'password_reset_token', sql: 'ALTER TABLE users ADD COLUMN password_reset_token VARCHAR(255) NULL' },
+  { name: 'password_reset_expires_at', sql: 'ALTER TABLE users ADD COLUMN password_reset_expires_at DATETIME NULL' }
 ];
 
 let usersMetaPromise = null;
@@ -96,6 +98,58 @@ async function getUserByEmail(email) {
   );
 
   return rows[0] || null;
+}
+
+async function storePasswordResetToken(userId, token, resetExpiresAt) {
+  await getUsersMeta();
+  await db.query(
+    `UPDATE users
+     SET password_reset_token = ?,
+         password_reset_expires_at = ?
+     WHERE id = ?`,
+    [token, resetExpiresAt, userId]
+  );
+}
+
+async function getUserByPasswordResetToken(token) {
+  const { identityColumn } = await getUsersMeta();
+  const [rows] = await db.query(
+    `SELECT
+      u.id,
+      u.${identityColumn} AS username,
+      u.email,
+      u.password_reset_token,
+      u.password_reset_expires_at
+     FROM users u
+     WHERE u.password_reset_token = ?
+     LIMIT 1`,
+    [token]
+  );
+
+  return rows[0] || null;
+}
+
+async function updatePasswordAndClearResetToken(userId, passwordHash) {
+  await getUsersMeta();
+  await db.query(
+    `UPDATE users
+     SET password_hash = ?,
+         password_reset_token = NULL,
+         password_reset_expires_at = NULL
+     WHERE id = ?`,
+    [passwordHash, userId]
+  );
+}
+
+async function clearPasswordResetToken(userId) {
+  await getUsersMeta();
+  await db.query(
+    `UPDATE users
+     SET password_reset_token = NULL,
+         password_reset_expires_at = NULL
+     WHERE id = ?`,
+    [userId]
+  );
 }
 
 async function createRegisteredUser({
@@ -209,6 +263,10 @@ module.exports = {
   getUserByLogin,
   getRoleByName,
   getUserByEmail,
+  storePasswordResetToken,
+  getUserByPasswordResetToken,
+  updatePasswordAndClearResetToken,
+  clearPasswordResetToken,
   createRegisteredUser,
   storeVerificationToken,
   getUserByVerificationToken,

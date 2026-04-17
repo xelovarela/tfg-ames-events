@@ -18,6 +18,8 @@ import EventEditPage from './pages/EventEditPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import VerifyEmailPage from './pages/VerifyEmailPage';
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import ResetPasswordPage from './pages/ResetPasswordPage';
 import FavoritesPage from './pages/FavoritesPage';
 import AlertsPage from './pages/AlertsPage';
 import { AUTH_SESSION_EVENT, clearAuthSession, getAuthSession } from './utils/authStorage';
@@ -226,6 +228,8 @@ function AppShell({ session, onLogout, onSessionChange }) {
           <Route path="/login" element={<LoginPage onLogin={onSessionChange} />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/verify-email" element={<VerifyEmailPage />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
 
           <Route path="*" element={<p className="app-not-found">Ruta no encontrada.</p>} />
         </Routes>
