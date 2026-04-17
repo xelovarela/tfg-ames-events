@@ -157,7 +157,7 @@ function UserManager({ session }) {
           <table className="users-table">
             <thead>
               <tr>
-                <th>Nombre</th>
+                <th>Usuario</th>
                 <th>Email</th>
                 <th>Rol</th>
                 <th>Estado</th>
@@ -173,7 +173,7 @@ function UserManager({ session }) {
 
                 return (
                   <tr key={user.id}>
-                    <td>{user.name || user.username || 'Sin nombre'}</td>
+                    <td>{user.username || 'Sin usuario'}</td>
                     <td>{user.email}</td>
                     <td>
                       <select

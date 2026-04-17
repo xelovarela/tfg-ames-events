@@ -153,7 +153,7 @@ async function clearPasswordResetToken(userId) {
 }
 
 async function createRegisteredUser({
-  name,
+  username,
   email,
   passwordHash,
   roleId,
@@ -174,7 +174,7 @@ async function createRegisteredUser({
       verification_expires_at
     ) VALUES (?, ?, ?, ?, 1, ?, ?, ?)`,
     [
-      name,
+      username,
       email,
       passwordHash,
       roleId,
@@ -245,7 +245,7 @@ async function getSafeUserById(userId) {
   const [rows] = await db.query(
     `SELECT
       u.id,
-      u.${identityColumn} AS name,
+      u.${identityColumn} AS username,
       u.email,
       u.email_verified,
       r.name AS role

@@ -8,6 +8,9 @@ const { requireAuth, requireAdmin } = require('../middleware/authMiddleware');
 
 const router = express.Router();
 
+router.patch('/me', requireAuth, usersController.updateMe);
+router.patch('/me/password', requireAuth, usersController.updateMyPassword);
+
 router.use(requireAuth, requireAdmin);
 router.get('/', usersController.getAll);
 router.get('/:id', usersController.getById);

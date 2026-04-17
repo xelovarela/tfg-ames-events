@@ -12,8 +12,7 @@ function normalizeUser(row) {
 
   return {
     id: row.id,
-    name: row.name,
-    username: row.name,
+    username: row.username,
     email: row.email,
     role: row.role,
     is_active: Number(row.is_active) === 1,
@@ -26,7 +25,7 @@ async function listUsers() {
   const [rows] = await db.query(
     `SELECT
       u.id,
-      u.username AS name,
+      u.username,
       u.email,
       u.is_active,
       u.email_verified,
@@ -44,7 +43,7 @@ async function getUserById(id) {
   const [rows] = await db.query(
     `SELECT
       u.id,
-      u.username AS name,
+      u.username,
       u.email,
       u.is_active,
       u.email_verified,
@@ -58,6 +57,18 @@ async function getUserById(id) {
   );
 
   return normalizeUser(rows[0]);
+}
+
+async function getUserCredentialsById(id) {
+  const [rows] = await db.query(
+    `SELECT id, password_hash
+     FROM users
+     WHERE id = ?
+     LIMIT 1`,
+    [id]
+  );
+
+  return rows[0] || null;
 }
 
 async function getUserByUsernameOrEmail(username, email) {
@@ -85,6 +96,19 @@ async function getUserByUsernameOrEmailExcludingId(username, email, excludedId) 
   return rows[0] || null;
 }
 
+async function getUserByUsernameExcludingId(username, excludedId) {
+  const [rows] = await db.query(
+    `SELECT id, username
+     FROM users
+     WHERE username = ?
+       AND id <> ?
+     LIMIT 1`,
+    [username, excludedId]
+  );
+
+  return rows[0] || null;
+}
+
 async function createUser({ username, email, passwordHash, roleId }) {
   const [result] = await db.query(
     `INSERT INTO users (username, email, password_hash, role_id)
@@ -101,6 +125,28 @@ async function updateUser(id, { username, email, roleId }) {
      SET username = ?, email = ?, role_id = ?
      WHERE id = ?`,
     [username, email, roleId, id]
+  );
+
+  return result.affectedRows > 0;
+}
+
+async function updateOwnUsername(id, username) {
+  const [result] = await db.query(
+    `UPDATE users
+     SET username = ?
+     WHERE id = ?`,
+    [username, id]
+  );
+
+  return result.affectedRows > 0;
+}
+
+async function updateOwnPassword(id, passwordHash) {
+  const [result] = await db.query(
+    `UPDATE users
+     SET password_hash = ?
+     WHERE id = ?`,
+    [passwordHash, id]
   );
 
   return result.affectedRows > 0;
@@ -147,10 +193,14 @@ async function updateUserStatus(id, isActive) {
 module.exports = {
   listUsers,
   getUserById,
+  getUserCredentialsById,
   getUserByUsernameOrEmail,
   getUserByUsernameOrEmailExcludingId,
+  getUserByUsernameExcludingId,
   createUser,
   updateUser,
+  updateOwnUsername,
+  updateOwnPassword,
   updateUserWithPassword,
   deleteUser,
   updateUserRole,

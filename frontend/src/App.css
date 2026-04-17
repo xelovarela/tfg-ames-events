@@ -130,6 +130,82 @@ body {
   border-color: #cf9e84;
 }
 
+.app-user-menu-wrap {
+  position: relative;
+}
+
+.app-user-avatar-btn {
+  width: 40px;
+  height: 40px;
+  border: 1px solid #cf9e84;
+  border-radius: 50%;
+  background: #b84a22;
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 6px 14px rgba(184, 74, 34, 0.18);
+}
+
+.app-user-avatar-btn:hover {
+  background: #9f3819;
+}
+
+.app-user-menu {
+  position: absolute;
+  top: calc(100% + 0.55rem);
+  right: 0;
+  z-index: 70;
+  min-width: 210px;
+  padding: 0.45rem;
+  background: #fff;
+  border: 1px solid #eadfd5;
+  border-radius: 10px;
+  box-shadow: 0 14px 30px rgba(47, 34, 26, 0.16);
+  display: grid;
+  gap: 0.2rem;
+}
+
+.app-user-menu-header {
+  padding: 0.55rem 0.65rem;
+  border-bottom: 1px solid #efe4da;
+  display: grid;
+  gap: 0.15rem;
+}
+
+.app-user-menu-header strong {
+  color: #4a3124;
+}
+
+.app-user-menu-header span {
+  color: #6f5a4d;
+  font-size: 0.82rem;
+  overflow-wrap: anywhere;
+}
+
+.app-user-menu-link,
+.app-user-menu-button {
+  width: 100%;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: #4a3124;
+  padding: 0.55rem 0.65rem;
+  text-align: left;
+  text-decoration: none;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.app-user-menu-link:hover,
+.app-user-menu-button:hover {
+  background: #fff3ea;
+  color: #8f2410;
+}
+
 .app-hamburger {
   width: 16px;
   display: inline-flex;
@@ -386,6 +462,15 @@ body {
   .app-auth-btn {
     padding: 0.3rem 0.55rem;
     font-size: 0.78rem;
+  }
+
+  .app-user-avatar-btn {
+    width: 36px;
+    height: 36px;
+  }
+
+  .app-user-menu {
+    right: -0.2rem;
   }
 
   .app-main {

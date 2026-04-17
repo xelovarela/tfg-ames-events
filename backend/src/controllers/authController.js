@@ -8,7 +8,7 @@ const JWT_SECRET = process.env.JWT_SECRET || 'cambiar-esto-en-produccion';
 const JWT_EXPIRES_IN = '8h';
 const SALT_ROUNDS = 10;
 const MIN_PASSWORD_LENGTH = 8;
-const MAX_NAME_LENGTH = 50;
+const MAX_USERNAME_LENGTH = 50;
 const MAX_EMAIL_LENGTH = 150;
 const VERIFICATION_TOKEN_BYTES = 32;
 const VERIFICATION_EXPIRY_HOURS = 24;
@@ -37,12 +37,12 @@ function generatePasswordResetToken() {
 }
 
 async function register(req, res) {
-  const name = typeof req.body.name === 'string' ? req.body.name.trim() : '';
+  const username = typeof req.body.username === 'string' ? req.body.username.trim() : '';
   const email = typeof req.body.email === 'string' ? req.body.email.trim().toLowerCase() : '';
   const password = typeof req.body.password === 'string' ? req.body.password : '';
 
-  if (!name || name.length > MAX_NAME_LENGTH) {
-    return res.status(400).json({ error: `El nombre es obligatorio y debe tener entre 1 y ${MAX_NAME_LENGTH} caracteres.` });
+  if (!username || username.length > MAX_USERNAME_LENGTH) {
+    return res.status(400).json({ error: `El nombre de usuario es obligatorio y debe tener entre 1 y ${MAX_USERNAME_LENGTH} caracteres.` });
   }
 
   if (!email || email.length > MAX_EMAIL_LENGTH || !isValidEmail(email)) {
@@ -54,13 +54,14 @@ async function register(req, res) {
   }
 
   try {
-    const [existingUser, defaultRole] = await Promise.all([
+    const [existingUserByEmail, existingUserByUsername, defaultRole] = await Promise.all([
       authService.getUserByEmail(email),
+      authService.getUserByLogin(username),
       authService.getRoleByName('user')
     ]);
 
-    if (existingUser) {
-      return res.status(409).json({ error: 'Ya existe una cuenta registrada con ese email.' });
+    if (existingUserByEmail || existingUserByUsername) {
+      return res.status(409).json({ error: 'Ya existe una cuenta registrada con ese email o nombre de usuario.' });
     }
 
     if (!defaultRole) {
@@ -72,7 +73,7 @@ async function register(req, res) {
     const verificationExpiresAt = buildVerificationExpiryDate();
 
     await authService.createRegisteredUser({
-      name,
+      username,
       email,
       passwordHash,
       roleId: defaultRole.id,
@@ -83,7 +84,7 @@ async function register(req, res) {
 
     await emailService.sendVerificationEmail({
       to: email,
-      name,
+      name: username,
       token: verificationToken
     });
 
@@ -279,7 +280,7 @@ async function me(req, res) {
     return res.json({
       user: {
         id: user.id,
-        name: user.name,
+        username: user.username,
         email: user.email,
         role: user.role,
         email_verified: Number(user.email_verified) === 1

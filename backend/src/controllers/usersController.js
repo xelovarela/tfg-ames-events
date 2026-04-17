@@ -3,11 +3,17 @@
  * Expone solo operaciones seguras para admin: listar, consultar,
  * cambiar rol y activar/desactivar cuentas.
  */
+const bcrypt = require('bcrypt');
 const usersService = require('../services/usersService');
 const rolesService = require('../services/rolesService');
 const { toBooleanFlag, toPositiveIntParam } = require('../utils/validation');
 
 const ALLOWED_ROLE_NAMES = ['admin', 'content_manager', 'user'];
+const MIN_PASSWORD_LENGTH = 8;
+const MAX_USERNAME_LENGTH = 100;
+const SALT_ROUNDS = 10;
+const OWN_PROFILE_ALLOWED_FIELDS = ['username'];
+const OWN_PASSWORD_ALLOWED_FIELDS = ['currentPassword', 'newPassword'];
 
 function getRequestedRoleName(body) {
   const roleName = typeof body.role === 'string'
@@ -17,6 +23,14 @@ function getRequestedRoleName(body) {
       : '';
 
   return roleName;
+}
+
+function getUnexpectedFields(body, allowedFields) {
+  if (!body || typeof body !== 'object' || Array.isArray(body)) {
+    return [];
+  }
+
+  return Object.keys(body).filter((field) => !allowedFields.includes(field));
 }
 
 async function getAll(req, res) {
@@ -132,7 +146,83 @@ async function updateStatus(req, res) {
   }
 }
 
+async function updateMe(req, res) {
+  const userId = Number(req.user?.id);
+  const unexpectedFields = getUnexpectedFields(req.body, OWN_PROFILE_ALLOWED_FIELDS);
+  if (unexpectedFields.length > 0) {
+    return res.status(400).json({ error: 'Solo se permite actualizar el nombre de usuario desde este endpoint.' });
+  }
+
+  const username = typeof req.body.username === 'string' ? req.body.username.trim() : '';
+
+  if (!username || username.length > MAX_USERNAME_LENGTH) {
+    return res.status(400).json({ error: `El nombre de usuario es obligatorio y debe tener entre 1 y ${MAX_USERNAME_LENGTH} caracteres.` });
+  }
+
+  try {
+    const existingUserWithUsername = await usersService.getUserByUsernameExcludingId(username, userId);
+    if (existingUserWithUsername) {
+      return res.status(409).json({ error: 'Ya existe otro usuario con ese nombre de usuario.' });
+    }
+
+    const updated = await usersService.updateOwnUsername(userId, username);
+    if (!updated) {
+      return res.status(404).json({ error: 'Usuario no encontrado.' });
+    }
+
+    const user = await usersService.getUserById(userId);
+    return res.json({
+      message: 'Perfil actualizado correctamente.',
+      user
+    });
+  } catch (error) {
+    console.error('Error updating own profile:', error);
+    return res.status(500).json({ error: 'Error interno al actualizar perfil.' });
+  }
+}
+
+async function updateMyPassword(req, res) {
+  const userId = Number(req.user?.id);
+  const unexpectedFields = getUnexpectedFields(req.body, OWN_PASSWORD_ALLOWED_FIELDS);
+  if (unexpectedFields.length > 0) {
+    return res.status(400).json({ error: 'Solo se permite enviar la contrasena actual y la nueva contrasena.' });
+  }
+
+  const currentPassword = typeof req.body.currentPassword === 'string' ? req.body.currentPassword : '';
+  const newPassword = typeof req.body.newPassword === 'string' ? req.body.newPassword : '';
+
+  if (!currentPassword.trim() || !newPassword.trim()) {
+    return res.status(400).json({ error: 'Debes indicar la contrasena actual y la nueva contrasena.' });
+  }
+
+  if (newPassword.length < MIN_PASSWORD_LENGTH) {
+    return res.status(400).json({ error: `La nueva contrasena debe tener al menos ${MIN_PASSWORD_LENGTH} caracteres.` });
+  }
+
+  try {
+    const credentials = await usersService.getUserCredentialsById(userId);
+    if (!credentials) {
+      return res.status(404).json({ error: 'Usuario no encontrado.' });
+    }
+
+    const passwordOk = await bcrypt.compare(currentPassword, credentials.password_hash);
+    if (!passwordOk) {
+      return res.status(400).json({ error: 'La contrasena actual no es correcta.' });
+    }
+
+    const passwordHash = await bcrypt.hash(newPassword, SALT_ROUNDS);
+    await usersService.updateOwnPassword(userId, passwordHash);
+
+    return res.json({ message: 'Contrasena actualizada correctamente.' });
+  } catch (error) {
+    console.error('Error updating own password:', error);
+    return res.status(500).json({ error: 'Error interno al cambiar contrasena.' });
+  }
+}
+
 module.exports = {
+  updateMe,
+  updateMyPassword,
   getAll,
   getById,
   updateRole,

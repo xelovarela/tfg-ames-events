@@ -8,7 +8,7 @@ function isValidEmail(email) {
 }
 
 function RegisterPage() {
-  const [name, setName] = useState('');
+  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -22,10 +22,10 @@ function RegisterPage() {
       return;
     }
 
-    const trimmedName = name.trim();
+    const trimmedUsername = username.trim();
     const trimmedEmail = email.trim().toLowerCase();
 
-    if (!trimmedName || !trimmedEmail || !password || !confirmPassword) {
+    if (!trimmedUsername || !trimmedEmail || !password || !confirmPassword) {
       setMessage('Todos los campos son obligatorios.');
       return;
     }
@@ -56,7 +56,7 @@ function RegisterPage() {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          name: trimmedName,
+          username: trimmedUsername,
           email: trimmedEmail,
           password
         })
@@ -69,7 +69,7 @@ function RegisterPage() {
 
       setMessage(data.message || 'Tu cuenta ha sido creada. Revisa tu correo para verificarla.');
       setIsSuccess(true);
-      setName('');
+      setUsername('');
       setEmail('');
       setPassword('');
       setConfirmPassword('');
@@ -88,14 +88,15 @@ function RegisterPage() {
 
       <section className="register-card">
         <form className="register-form" onSubmit={handleSubmit}>
-          <label htmlFor="name">Nombre</label>
+          <label htmlFor="username">Nombre de usuario</label>
           <input
-            id="name"
+            id="username"
             type="text"
             className="register-input"
-            value={name}
-            onChange={(event) => setName(event.target.value)}
+            value={username}
+            onChange={(event) => setUsername(event.target.value)}
             maxLength={50}
+            autoComplete="username"
           />
 
           <label htmlFor="email">Email</label>

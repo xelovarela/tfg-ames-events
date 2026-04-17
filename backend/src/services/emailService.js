@@ -117,7 +117,7 @@ async function sendPasswordResetEmail(user, token) {
   const transporter = createTransporterIfConfigured();
   const from = process.env.MAIL_FROM || process.env.SMTP_USER || 'no-reply@ames-events.local';
   const to = user.email;
-  const name = user.username || user.name || 'usuario';
+  const name = user.username || 'usuario';
   const subject = 'Restablece tu contrasena - Ames Events';
   const safeName = escapeHtml(name);
   const safeResetUrl = escapeHtml(resetUrl);

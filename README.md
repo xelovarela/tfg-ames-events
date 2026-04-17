@@ -135,7 +135,6 @@ Los endpoints de lectura devuelven datos seguros del usuario:
 ```json
 {
   "id": 1,
-  "name": "admin",
   "username": "admin",
   "email": "admin@tfg.local",
   "role": "admin",
@@ -161,7 +160,6 @@ La respuesta incluye el rol actualizado de forma explicita y el usuario recargad
   "role": "content_manager",
   "user": {
     "id": 2,
-    "name": "gestor",
     "username": "gestor",
     "email": "gestor@example.com",
     "role": "content_manager",
@@ -185,6 +183,34 @@ Defensas implementadas:
 - un admin no puede desactivar su propia cuenta
 - no se asignan roles inexistentes
 - no se devuelven `password_hash`, tokens de verificacion ni fechas de expiracion de token
+
+### Perfil propio
+Endpoints protegidos con JWT para el usuario autenticado.
+
+- `GET /auth/me`
+- `PATCH /users/me`
+- `PATCH /users/me/password`
+
+`PATCH /users/me` solo acepta el campo `username`:
+
+```json
+{
+  "username": "nuevo_usuario"
+}
+```
+
+No permite modificar email, rol, estado de verificacion ni `is_active`.
+
+`PATCH /users/me/password` exige la contrasena actual y una nueva contrasena de al menos 8 caracteres:
+
+```json
+{
+  "currentPassword": "contrasena_actual",
+  "newPassword": "nueva_contrasena"
+}
+```
+
+Nota de consistencia: la tabla `users` usa la columna `username` y la API/frontend mantienen ese mismo nombre para evitar confusiones entre capas. En la interfaz se muestra como "Nombre de usuario".
 
 ### Favorites
 Endpoints protegidos con JWT y rol `user`.
@@ -225,6 +251,7 @@ Cuando se crea un evento nuevo, el backend evalua las alertas activas. Si una al
 - `/events`: listado y gestion de eventos segun rol
 - `/favorites`: favoritos del usuario registrado
 - `/alerts`: alertas de eventos del usuario autenticado
+- `/profile`: perfil propio del usuario autenticado
 - `/admin/users`: gestion de usuarios para administradores
 
 ## Notas de Validacion (Events v4)
