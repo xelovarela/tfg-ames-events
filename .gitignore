@@ -9,6 +9,9 @@ frontend/build/
 # Local documentation drafts
 /docs/
 
+# Private hosting backups
+/database/backup_hosting.sql
+
 # Env files
 .env
 backend/.env
