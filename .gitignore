@@ -6,6 +6,9 @@ node_modules/
 # React build
 frontend/build/
 
+# Local documentation drafts
+/docs/
+
 # Env files
 .env
 backend/.env
