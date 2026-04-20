@@ -15,6 +15,7 @@ const VERIFICATION_EXPIRY_HOURS = 24;
 const PASSWORD_RESET_TOKEN_BYTES = 32;
 const PASSWORD_RESET_EXPIRY_HOURS = 1;
 const PASSWORD_RESET_GENERIC_MESSAGE = 'Si el email existe, recibiras instrucciones para restablecer la contrasena.';
+const VERIFICATION_EMAIL_FAILED_MESSAGE = 'Cuenta creada correctamente, pero no se pudo enviar el correo de verificacion. Puedes solicitar un nuevo correo desde la pantalla de inicio de sesion.';
 
 function isValidEmail(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -82,14 +83,30 @@ async function register(req, res) {
       verificationExpiresAt
     });
 
-    await emailService.sendVerificationEmail({
-      to: email,
-      name: username,
-      token: verificationToken
-    });
+    try {
+      const delivery = await emailService.sendVerificationEmail({
+        to: email,
+        name: username,
+        token: verificationToken
+      });
+
+      if (delivery?.delivered === false) {
+        return res.status(201).json({
+          message: VERIFICATION_EMAIL_FAILED_MESSAGE,
+          verification_email_sent: false
+        });
+      }
+    } catch (emailError) {
+      console.error('Error sending verification email after register:', emailError);
+      return res.status(201).json({
+        message: VERIFICATION_EMAIL_FAILED_MESSAGE,
+        verification_email_sent: false
+      });
+    }
 
     return res.status(201).json({
-      message: 'Cuenta creada correctamente. Revisa tu correo para verificarla antes de iniciar sesion.'
+      message: 'Cuenta creada correctamente. Revisa tu correo para verificarla antes de iniciar sesion.',
+      verification_email_sent: true
     });
   } catch (error) {
     console.error('Error en register:', error);
