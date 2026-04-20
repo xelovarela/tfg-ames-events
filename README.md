@@ -54,9 +54,19 @@ PORT=3001
 ```
 
 ## Base de Datos
-Ejecuta:
-- `database/schema.sql`
-- `database/seed.sql`
+Los scripts SQL no incluyen un nombre de base de datos fijo. Ejecutalos indicando la base objetivo desde el cliente MySQL:
+
+```powershell
+mysql -u root -p ames_events < database/schema.sql
+mysql -u root -p ames_events < database/seed.sql
+```
+
+En hosting, usa el nombre real de la base configurado en `DB_NAME`:
+
+```powershell
+mysql -u usuario -p nombre_base_hosting < database/schema.sql
+mysql -u usuario -p nombre_base_hosting < database/seed.sql
+```
 
 ## Ejecucion
 ### Backend

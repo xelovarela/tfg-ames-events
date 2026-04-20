@@ -1,8 +1,7 @@
 -- Este archivo inserta datos de ejemplo para poder probar la aplicacion.
 -- Limpia las tablas en un orden seguro y despues vuelve a poblar los catalogos
 -- y varios eventos de demostracion relacionados entre si.
--- Se selecciona la base de datos sobre la que se van a cargar los datos iniciales.
-USE ames_events;
+-- Ejecutalo sobre la base de datos objetivo ya seleccionada.
 
 -- Se desactivan temporalmente las claves foraneas para vaciar las tablas sin errores.
 SET FOREIGN_KEY_CHECKS = 0;

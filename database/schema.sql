@@ -1,7 +1,6 @@
 -- Este archivo define la estructura completa de la base de datos del proyecto.
 -- Compatible con MySQL/MariaDB (incluyendo MariaDB 10.6).
-CREATE DATABASE IF NOT EXISTS ames_events;
-USE ames_events;
+-- Ejecutalo sobre la base de datos objetivo ya seleccionada.
 
 -- =========================
 -- Seguridad: roles y users
