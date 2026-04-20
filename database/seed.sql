@@ -5,12 +5,21 @@
 
 -- Se desactivan temporalmente las claves foraneas para vaciar las tablas sin errores.
 SET FOREIGN_KEY_CHECKS = 0;
-TRUNCATE TABLE events;
-TRUNCATE TABLE organizers;
-TRUNCATE TABLE audiences;
-TRUNCATE TABLE locations;
-TRUNCATE TABLE categories;
+
+DELETE FROM favorites;
+DELETE FROM events;
+DELETE FROM organizers;
+DELETE FROM audiences;
+DELETE FROM locations;
+DELETE FROM categories;
+
 SET FOREIGN_KEY_CHECKS = 1;
+
+ALTER TABLE categories AUTO_INCREMENT = 1;
+ALTER TABLE locations AUTO_INCREMENT = 1;
+ALTER TABLE audiences AUTO_INCREMENT = 1;
+ALTER TABLE organizers AUTO_INCREMENT = 1;
+ALTER TABLE events AUTO_INCREMENT = 1;
 
 -- Roles base para el sistema de autorizacion.
 -- No se truncan roles/users para no romper datos de seguridad ya existentes.
