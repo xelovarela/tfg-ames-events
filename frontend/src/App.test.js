@@ -6,9 +6,26 @@
 import { render, screen } from '@testing-library/react';
 import App from './App';
 
-// Esta prueba intenta comprobar que la aplicacion principal se monta sin errores.
-test('renders learn react link', () => {
+jest.mock('./AmesMap', () => function MockAmesMap() {
+  return require('react').createElement('div', { 'data-testid': 'ames-map' });
+});
+
+beforeEach(() => {
+  global.fetch = jest.fn(() => Promise.resolve({
+    ok: true,
+    json: () => Promise.resolve([])
+  }));
+});
+
+afterEach(() => {
+  jest.restoreAllMocks();
+});
+
+// Esta prueba comprueba que la aplicacion principal se monta en la ruta inicial real.
+test('renders the map page by default', async () => {
   render(<App />);
-  const linkElement = screen.getByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
+
+  expect(await screen.findByRole('heading', { name: /mapa de eventos/i })).toBeInTheDocument();
+  expect(screen.getByTestId('ames-map')).toBeInTheDocument();
+  expect(screen.getByRole('link', { name: /eventos/i })).toBeInTheDocument();
 });
