@@ -8,7 +8,7 @@ const alertsService = require('../services/alertsService');
 const {
   toPositiveInt,
   toNullablePositiveInt,
-  toNullableDate,
+  toNullableMysqlDateTime,
   toBooleanFlag,
   toNullableMoney
 } = require('../utils/validation');
@@ -25,7 +25,7 @@ function parseEventPayload(body) {
   const locationId = toPositiveInt(body.location_id);
   const audienceId = toNullablePositiveInt(body.audience_id);
   const organizerId = toNullablePositiveInt(body.organizer_id);
-  const parsedDate = toNullableDate(body.event_date);
+  const eventDate = toNullableMysqlDateTime(body.event_date);
   const isFree = toBooleanFlag(body.is_free);
   let price = toNullableMoney(body.price);
   const minAge = toNullablePositiveInt(body.min_age);
@@ -55,7 +55,7 @@ function parseEventPayload(body) {
     return { error: 'is_free must be a boolean value (true/false or 1/0).' };
   }
 
-  if (body.event_date !== null && body.event_date !== undefined && body.event_date !== '' && !parsedDate) {
+  if (body.event_date !== null && body.event_date !== undefined && body.event_date !== '' && !eventDate) {
     return { error: 'event_date has an invalid format.' };
   }
 
@@ -82,7 +82,7 @@ function parseEventPayload(body) {
     locationId,
     audienceId,
     organizerId,
-    eventDate: parsedDate ? parsedDate.toISOString().slice(0, 19).replace('T', ' ') : null,
+    eventDate,
     isFree,
     price,
     minAge,

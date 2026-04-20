@@ -3,6 +3,8 @@
  * Sirve para transformar valores recibidos desde peticiones HTTP a formatos seguros
  * antes de que los controladores los utilicen o los persistan en base de datos.
  */
+const LOCAL_DATE_TIME_PATTERN = /^(\d{4})-(\d{2})-(\d{2})(?:[ T](\d{2}):(\d{2})(?::(\d{2}))?)$/;
+
 // Convierte un valor a entero positivo o devuelve null si no cumple la regla.
 function toPositiveInt(value) {
   const parsed = Number(value);
@@ -47,10 +49,62 @@ function toLongitude(value) {
   return parsed;
 }
 
-// Convierte una fecha opcional a objeto Date solo cuando el valor es valido.
-function toNullableDate(value) {
+function padDatePart(value) {
+  return String(value).padStart(2, '0');
+}
+
+function formatMysqlDateTime(date) {
+  return [
+    date.getFullYear(),
+    padDatePart(date.getMonth() + 1),
+    padDatePart(date.getDate())
+  ].join('-') + ' ' + [
+    padDatePart(date.getHours()),
+    padDatePart(date.getMinutes()),
+    padDatePart(date.getSeconds())
+  ].join(':');
+}
+
+function parseLocalDateTimeString(value) {
+  const match = value.match(LOCAL_DATE_TIME_PATTERN);
+  if (!match) {
+    return null;
+  }
+
+  const [, yearValue, monthValue, dayValue, hourValue, minuteValue, secondValue] = match;
+  const year = Number(yearValue);
+  const month = Number(monthValue);
+  const day = Number(dayValue);
+  const hour = hourValue === undefined ? 0 : Number(hourValue);
+  const minute = minuteValue === undefined ? 0 : Number(minuteValue);
+  const second = secondValue === undefined ? 0 : Number(secondValue);
+
+  const date = new Date(year, month - 1, day, hour, minute, second);
+  if (
+    date.getFullYear() !== year ||
+    date.getMonth() !== month - 1 ||
+    date.getDate() !== day ||
+    date.getHours() !== hour ||
+    date.getMinutes() !== minute ||
+    date.getSeconds() !== second
+  ) {
+    return null;
+  }
+
+  return formatMysqlDateTime(date);
+}
+
+// Convierte una fecha opcional al formato DATETIME de MySQL sin desplazar la hora local.
+function toNullableMysqlDateTime(value) {
   if (value === null || value === undefined || value === '') {
     return null;
+  }
+
+  if (typeof value === 'string') {
+    const trimmedValue = value.trim();
+    if (LOCAL_DATE_TIME_PATTERN.test(trimmedValue)) {
+      return parseLocalDateTimeString(trimmedValue);
+    }
   }
 
   const parsed = new Date(value);
@@ -58,7 +112,7 @@ function toNullableDate(value) {
     return null;
   }
 
-  return parsed;
+  return formatMysqlDateTime(parsed);
 }
 
 // Normaliza distintos formatos de booleano al convenio numerico usado en MySQL.
@@ -93,7 +147,7 @@ module.exports = {
   toNullablePositiveInt,
   toLatitude,
   toLongitude,
-  toNullableDate,
+  toNullableMysqlDateTime,
   toBooleanFlag,
   toNullableMoney
 };
