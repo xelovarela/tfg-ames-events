@@ -76,6 +76,8 @@ async function sendVerificationEmail({ to, name, token }) {
   const transporter = createTransporterIfConfigured();
   const from = process.env.MAIL_FROM || process.env.SMTP_USER || 'no-reply@ames-events.local';
   const subject = 'Verifica tu correo - Ames Events';
+  const safeName = escapeHtml(name || 'usuario');
+  const safeVerificationUrl = escapeHtml(verificationUrl);
   const text = [
     `Hola ${name || 'usuario'},`,
     '',
@@ -86,11 +88,11 @@ async function sendVerificationEmail({ to, name, token }) {
     'Si no solicitaste esta cuenta, ignora este mensaje.'
   ].join('\n');
   const html = `
-    <p>Hola ${name || 'usuario'},</p>
+    <p>Hola ${safeName},</p>
     <p>Gracias por registrarte en Ames Events.</p>
     <p>
       Para activar tu cuenta, verifica tu correo en este enlace:
-      <a href="${verificationUrl}">${verificationUrl}</a>
+      <a href="${safeVerificationUrl}">${safeVerificationUrl}</a>
     </p>
     <p>Si no solicitaste esta cuenta, ignora este mensaje.</p>
   `;
