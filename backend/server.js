@@ -17,6 +17,7 @@ const usersRoutes = require('./src/routes/users');
 const rolesRoutes = require('./src/routes/roles');
 const favoritesRoutes = require('./src/routes/favorites');
 const alertsRoutes = require('./src/routes/alerts');
+const { startFavoriteReminderJob } = require('./src/jobs/favoriteReminderJob');
 
 const app = express();
 
@@ -69,4 +70,5 @@ const PORT = process.env.PORT || 3001;
 
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en puerto ${PORT}`);
+  startFavoriteReminderJob();
 });

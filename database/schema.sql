@@ -50,7 +50,7 @@ DEALLOCATE PREPARE roles_add_created_at_stmt;
 -- Tabla de usuarios registrados.
 -- BOOLEAN en MariaDB/MySQL es alias de TINYINT(1), por eso se usa sin perder compatibilidad.
 CREATE TABLE IF NOT EXISTS users (
-  id INT AUTO_INCREMENT PRIMARY KEY,
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
   username VARCHAR(100) NOT NULL UNIQUE,
   email VARCHAR(100) NOT NULL UNIQUE,
   password_hash VARCHAR(255) NOT NULL,
@@ -259,9 +259,9 @@ CREATE TABLE IF NOT EXISTS events (
 );
 
 -- Tabla de favoritos: relacion N:M entre usuarios y eventos.
--- Usa INT porque users.id y events.id se declaran explicitamente como INT AUTO_INCREMENT.
+-- user_id sigue el tipo UNSIGNED de users.id; event_id sigue el tipo de events.id.
 CREATE TABLE IF NOT EXISTS favorites (
-  user_id INT NOT NULL,
+  user_id INT UNSIGNED NOT NULL,
   event_id INT NOT NULL,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (user_id, event_id),
@@ -275,11 +275,28 @@ CREATE TABLE IF NOT EXISTS favorites (
     ON UPDATE CASCADE
 );
 
+-- Controla los recordatorios enviados para favoritos y evita duplicados diarios.
+CREATE TABLE IF NOT EXISTS favorite_event_reminders (
+  user_id INT UNSIGNED NOT NULL,
+  event_id INT NOT NULL,
+  reminder_for DATE NOT NULL,
+  sent_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (user_id, event_id, reminder_for),
+  CONSTRAINT fk_favorite_reminders_user
+    FOREIGN KEY (user_id) REFERENCES users(id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+  CONSTRAINT fk_favorite_reminders_event
+    FOREIGN KEY (event_id) REFERENCES events(id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE
+);
+
 -- Tabla de alertas guardadas por usuarios registrados.
 -- Cada alerta contiene filtros opcionales que se evaluan al crear eventos nuevos.
 CREATE TABLE IF NOT EXISTS alerts (
   id INT AUTO_INCREMENT PRIMARY KEY,
-  user_id INT NOT NULL,
+  user_id INT UNSIGNED NOT NULL,
   name VARCHAR(100) NOT NULL,
   category_id INT NULL,
   location_id INT NULL,

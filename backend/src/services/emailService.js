@@ -211,10 +211,65 @@ async function sendEventAlertEmail({ to, name, alertName, event }) {
   return { delivered: true, eventUrl };
 }
 
+async function sendFavoriteReminderEmail({ to, name, event }) {
+  const eventUrl = getEventUrl(event.id);
+  const transporter = createTransporterIfConfigured();
+  const from = process.env.MAIL_FROM || process.env.SMTP_USER || 'no-reply@ames-events.local';
+  const subject = `Recordatorio: ${event.title} es manana`;
+  const eventDate = formatEventDate(event.event_date);
+  const location = event.location || 'Ubicacion no especificada';
+  const organizer = event.organizer || 'Organizador no especificado';
+  const safeName = escapeHtml(name || 'usuario');
+  const safeEventTitle = escapeHtml(event.title);
+  const safeEventDate = escapeHtml(eventDate);
+  const safeLocation = escapeHtml(location);
+  const safeOrganizer = escapeHtml(organizer);
+  const safeEventUrl = escapeHtml(eventUrl);
+  const text = [
+    `Hola ${name || 'usuario'},`,
+    '',
+    `Te recordamos que manana empieza este evento que tienes marcado como favorito:`,
+    '',
+    `Evento: ${event.title}`,
+    `Fecha: ${eventDate}`,
+    `Ubicacion: ${location}`,
+    `Organizador: ${organizer}`,
+    '',
+    `Puedes ver el detalle aqui: ${eventUrl}`
+  ].join('\n');
+  const html = `
+    <p>Hola ${safeName},</p>
+    <p>Te recordamos que manana empieza este evento que tienes marcado como favorito:</p>
+    <ul>
+      <li><strong>Evento:</strong> ${safeEventTitle}</li>
+      <li><strong>Fecha:</strong> ${safeEventDate}</li>
+      <li><strong>Ubicacion:</strong> ${safeLocation}</li>
+      <li><strong>Organizador:</strong> ${safeOrganizer}</li>
+    </ul>
+    <p><a href="${safeEventUrl}">Ver detalle del evento</a></p>
+  `;
+
+  if (!transporter) {
+    console.warn(`[emailService] SMTP no configurado. Recordatorio de favorito para ${to}: ${eventUrl}`);
+    return { delivered: false, eventUrl };
+  }
+
+  await transporter.sendMail({
+    from,
+    to,
+    subject,
+    text,
+    html
+  });
+
+  return { delivered: true, eventUrl };
+}
+
 module.exports = {
   sendVerificationEmail,
   sendPasswordResetEmail,
   sendEventAlertEmail,
+  sendFavoriteReminderEmail,
   getVerificationUrl,
   getPasswordResetUrl,
   getEventUrl
