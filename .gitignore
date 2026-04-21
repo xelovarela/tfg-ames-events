@@ -13,6 +13,9 @@ frontend/build/
 /database/backup_hosting.sql
 /database/backups/
 
+# Runtime logs
+/backend/logs/
+
 # Env files
 .env
 backend/.env
