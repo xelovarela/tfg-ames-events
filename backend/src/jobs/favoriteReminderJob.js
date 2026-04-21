@@ -46,6 +46,7 @@ function startFavoriteReminderJob() {
   }
 
   const runTime = parseRunTime(process.env.FAVORITE_REMINDERS_RUN_TIME || DEFAULT_RUN_TIME);
+  const runOnStart = parseBoolean(process.env.FAVORITE_REMINDERS_RUN_ON_START || 'true');
 
   const scheduleNextRun = () => {
     const delay = getDelayUntilNextRun(runTime);
@@ -64,6 +65,16 @@ function startFavoriteReminderJob() {
   console.log(
     `[favoriteReminderJob] Recordatorios de favoritos activos. Hora diaria: ${String(runTime.hour).padStart(2, '0')}:${String(runTime.minute).padStart(2, '0')}.`
   );
+
+  if (runOnStart) {
+    setTimeout(async () => {
+      try {
+        await runFavoriteReminderJob();
+      } catch (error) {
+        console.error('[favoriteReminderJob] Error ejecutando recordatorios al arrancar:', error);
+      }
+    }, 0);
+  }
 
   return scheduleNextRun();
 }

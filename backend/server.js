@@ -23,9 +23,22 @@ const app = express();
 
 // Se inicializa la aplicacion principal de Express antes de registrar cualquier ruta.
 
+const allowedCorsOrigins = (process.env.CORS_ORIGINS || '')
+  .split(',')
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
 // Middlewares
 // Se habilita CORS para permitir peticiones desde el frontend y se activa el parseo de JSON.
-app.use(cors());
+app.use(cors({
+  origin(origin, callback) {
+    if (!origin || allowedCorsOrigins.length === 0 || allowedCorsOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+
+    return callback(new Error('Not allowed by CORS'));
+  }
+}));
 app.use(express.json());
 app.use('/auth', authRoutes);
 
