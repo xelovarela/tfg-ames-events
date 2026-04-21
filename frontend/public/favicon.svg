@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Ames Events">
+  <defs>
+    <linearGradient id="red" x1="15" y1="58" x2="50" y2="7" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#b70725"/>
+      <stop offset="1" stop-color="#d30b32"/>
+    </linearGradient>
+    <linearGradient id="yellow" x1="27" y1="12" x2="44" y2="54" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#ffe03a"/>
+      <stop offset="1" stop-color="#f7b800"/>
+    </linearGradient>
+  </defs>
+
+  <path
+    fill="url(#red)"
+    d="M8 56 23.5 17.5C26.1 11.1 31.2 8 37 8c6.7 0 11.5 3.7 13.6 10.4L58 42.2 47.4 51 43.6 38.5C39.2 43.3 32.3 46 24.6 46H19.1L15 56H8Z"
+  />
+  <path fill="url(#red)" d="M39.6 45.5 48.9 38.2 56 56H44.1l-4.5-10.5Z"/>
+
+  <circle cx="36" cy="19" r="8.4" fill="url(#yellow)"/>
+  <path fill="#4f4f4f" d="m36 13.2 1.7 3.7 4 .5-2.9 2.8.8 4-3.6-2-3.6 2 .8-4-2.9-2.8 4-.5L36 13.2Z"/>
+  <path
+    fill="none"
+    stroke="#4f4f4f"
+    stroke-width="2.2"
+    stroke-linecap="round"
+    d="M31.7 26c1.2 1.7 2.8 2.6 4.7 2.6 1.8 0 3.4-.9 4.6-2.6"
+  />
+
+  <path
+    fill="none"
+    stroke="url(#yellow)"
+    stroke-width="5"
+    stroke-linejoin="round"
+    stroke-linecap="round"
+    d="M28 36 34 23.2 40 36H28Z"
+  />
+  <path fill="url(#yellow)" d="m39.6 45.7 7.8-6.1L52.8 56h-9.6l-3.6-10.3Z"/>
+</svg>
