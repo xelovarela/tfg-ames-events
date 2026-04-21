@@ -11,6 +11,7 @@ frontend/build/
 
 # Private hosting backups
 /database/backup_hosting.sql
+/database/backups/
 
 # Env files
 .env

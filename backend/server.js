@@ -47,16 +47,20 @@ app.use('/alerts', alertsRoutes);
 
 const pool = require('./src/config/db');
 
-// Verificar el charset de la base de datos al iniciar
+// Verificar el charset y collation de la base de datos al iniciar.
 (async () => {
   try {
-    const [rows] = await pool.execute('SHOW VARIABLES LIKE "character_set_database"');
-    console.log('Charset de la BD:', rows[0].Value);
-    if (rows[0].Value !== 'utf8mb4') {
-      console.warn('Advertencia: El charset de la BD no es utf8mb4. Puede causar problemas con caracteres especiales.');
+    const [rows] = await pool.execute(
+      'SELECT @@character_set_database AS charset, @@collation_database AS collation'
+    );
+    const { charset, collation } = rows[0];
+
+    console.log(`Charset de la BD: ${charset}; collation: ${collation}`);
+    if (charset !== 'utf8mb4' || collation !== 'utf8mb4_unicode_ci') {
+      console.warn('Advertencia: La BD deberia usar utf8mb4 con utf8mb4_unicode_ci para evitar problemas de caracteres.');
     }
   } catch (err) {
-    console.error('Error verificando charset:', err);
+    console.error('Error verificando charset/collation:', err);
   }
 })();
 
