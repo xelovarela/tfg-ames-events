@@ -45,6 +45,21 @@ app.use('/roles', rolesRoutes);
 app.use('/favorites', favoritesRoutes);
 app.use('/alerts', alertsRoutes);
 
+const pool = require('./src/config/db');
+
+// Verificar el charset de la base de datos al iniciar
+(async () => {
+  try {
+    const [rows] = await pool.execute('SHOW VARIABLES LIKE "character_set_database"');
+    console.log('Charset de la BD:', rows[0].Value);
+    if (rows[0].Value !== 'utf8mb4') {
+      console.warn('Advertencia: El charset de la BD no es utf8mb4. Puede causar problemas con caracteres especiales.');
+    }
+  } catch (err) {
+    console.error('Error verificando charset:', err);
+  }
+})();
+
 // El puerto puede llegar desde variables de entorno o usar el valor local por defecto.
 const PORT = process.env.PORT || 3001;
 
