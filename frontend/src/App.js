@@ -1,7 +1,7 @@
 /**
  * Este archivo define el contenedor principal del frontend.
  * Configura el enrutado de React Router, el menu lateral, la cabecera comun y
- * la distribucion general de la aplicacion de Ames Events.
+ * la distribucion general de la aplicacion de Eventos en Ames.
  */
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { BrowserRouter, Link, Navigate, NavLink, Route, Routes, useLocation, useSearchParams } from 'react-router-dom';
@@ -131,10 +131,18 @@ function AppShell({ session, onLogout, onSessionChange }) {
             </span>
           </button>
 
+          <Link to="/map" className="app-brand" aria-label="Ir al mapa de Eventos en Ames">
+            <img className="app-brand-mark" src="/favicon.svg" alt="" aria-hidden="true" />
+            <span className="app-brand-copy">
+              <strong>Eventos en Ames</strong>
+              <span>Agenda municipal y familiar</span>
+            </span>
+          </Link>
+
           <div className="app-search-wrap">
             <input
               type="text"
-              placeholder="Buscar eventos..."
+              placeholder="Buscar eventos, lugares o categorias..."
               className="app-search"
               value={searchValue}
               onChange={handleSearchChange}
@@ -189,7 +197,10 @@ function AppShell({ session, onLogout, onSessionChange }) {
       {isMenuOpen && <button type="button" className="app-menu-backdrop" onClick={() => setIsMenuOpen(false)} aria-label="Cerrar menu" />}
 
       <nav className={`app-drawer${isMenuOpen ? ' open' : ''}`}>
-        <h1 className="app-title">Ames Events</h1>
+        <div className="app-drawer-brand">
+          <img className="app-brand-mark" src="/favicon.svg" alt="" aria-hidden="true" />
+          <h1 className="app-title">Eventos en Ames</h1>
+        </div>
         {visibleNavItems.map((item) => (
           <NavLink
             key={item.to}
@@ -303,7 +314,18 @@ function AppShell({ session, onLogout, onSessionChange }) {
       </main>
 
       <footer className="app-footer">
-        <p>Angel Varela - 2026</p>
+        <div className="app-footer-inner">
+          <div>
+            <strong>Eventos en Ames</strong>
+            <p>Proyecto TFG - Angel Varela - 2026</p>
+          </div>
+          <nav className="app-footer-links" aria-label="Enlaces del pie">
+            <Link to="/events">Eventos</Link>
+            <Link to="/map">Mapa</Link>
+            {isAuthenticated && <Link to="/alerts">Alertas</Link>}
+            {userRole === 'user' && <Link to="/favorites">Favoritos</Link>}
+          </nav>
+        </div>
       </footer>
     </div>
   );

@@ -42,7 +42,40 @@ function formatAgeRange(event) {
   if (event.min_age === null || event.max_age === null) {
     return 'Todas las edades';
   }
-  return `${event.min_age}-${event.max_age} anios`;
+  return `${event.min_age}-${event.max_age} a\u00f1os`;
+}
+
+function formatShortDate(value) {
+  if (!value) {
+    return {
+      day: '--',
+      month: 'Sin fecha',
+      time: ''
+    };
+  }
+
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) {
+    return {
+      day: '--',
+      month: 'Sin fecha',
+      time: ''
+    };
+  }
+
+  return {
+    day: date.toLocaleDateString('es-ES', { day: '2-digit' }),
+    month: date.toLocaleDateString('es-ES', { month: 'short' }).replace('.', ''),
+    time: date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })
+  };
+}
+
+function buildDescriptionPreview(description) {
+  if (!description) {
+    return 'Sin descripcion ampliada por ahora.';
+  }
+
+  return description.length > 150 ? `${description.slice(0, 147)}...` : description;
 }
 
 // El componente admite modo controlado para reutilizarlo con eventos ya filtrados.
@@ -145,84 +178,111 @@ const EventList = ({
   };
 
   return (
-    <div style={{ padding: '1rem', background: '#f9f9f9', borderRadius: '8px', marginBottom: '1rem' }}>
-      <h3>Lista de eventos</h3>
+    <section className="event-list-panel">
+      <div className="event-list-header">
+        <div>
+          <p className="event-list-kicker">Agenda</p>
+          <h3>Lista de eventos</h3>
+        </div>
+        <span className="event-list-count">{events.length} eventos</span>
+      </div>
 
       {loadError && (
-        <p style={{ color: '#a94442', marginBottom: '0.75rem' }}>
+        <p className="event-list-error">
           {loadError}
         </p>
       )}
 
       {/* Estado vacio y renderizado de tarjetas individuales de evento. */}
       {events.length === 0 && showEmptyState ? (
-        <p>{emptyMessage}</p>
+        <div className="event-list-empty">
+          <strong>No hay eventos para mostrar</strong>
+          <span>{emptyMessage}</span>
+        </div>
       ) : events.length > 0 ? (
-        events.map(event => (
-          <div
-            key={event.id}
-            style={{
-              border: '1px solid #ddd',
-              borderRadius: '6px',
-              padding: '0.75rem',
-              marginBottom: '0.75rem',
-              background: '#fff'
-            }}
-          >
-            <strong>{event.title}</strong>
-            <br />
-            Descripcion: {event.description || 'Sin descripcion'}
-            <br />
-            Categoria: {event.category}
-            <br />
-            Audiencia: {event.audience || 'General'}
-            <br />
-            Organizador: {event.organizer || 'No especificado'}
-            <br />
-            Ubicacion: {event.location}
-            <br />
-            Fecha: {formatDate(event.event_date)}
-            <br />
-            Precio: {formatPrice(event)}
-            <br />
-            Edad: {formatAgeRange(event)}
-            <br />
-            <div style={{ marginTop: '0.5rem' }}>
-              {showFavoriteButton && (
-                <button
-                  type="button"
-                  onClick={() => handleToggleFavorite(event.id, favoriteIdsSet.has(Number(event.id)))}
-                  style={{ padding: '0.4rem 0.8rem', cursor: 'pointer', marginRight: '0.5rem' }}
-                >
-                  {favoriteIdsSet.has(Number(event.id)) ? 'Quitar favorito' : 'Favorito'}
-                </button>
-              )}
+        <div className="event-list-grid">
+          {events.map(event => {
+            const shortDate = formatShortDate(event.event_date);
+            const isFavorite = favoriteIdsSet.has(Number(event.id));
 
-              {canManageEvents && (
-                <>
-                  <Link to={`/events/${event.id}/edit`} style={{ marginRight: '0.5rem' }}>
-                    <button
-                      type="button"
-                      style={{ padding: '0.4rem 0.8rem', cursor: 'pointer' }}
-                    >
-                      Editar
-                    </button>
-                  </Link>
+            return (
+              <article key={event.id} className="event-list-card">
+                <div className="event-list-date" aria-label={`Fecha: ${formatDate(event.event_date)}`}>
+                  <strong>{shortDate.day}</strong>
+                  <span>{shortDate.month}</span>
+                  {shortDate.time && <small>{shortDate.time}</small>}
+                </div>
 
-                  <button
-                    onClick={() => handleDelete(event.id)}
-                    style={{ padding: '0.4rem 0.8rem', cursor: 'pointer' }}
-                  >
-                    Borrar
-                  </button>
-                </>
-              )}
-            </div>
-          </div>
-        ))
+                <div className="event-list-card-body">
+                  <div className="event-list-card-top">
+                    <span className="event-list-chip">{event.category || 'Sin categoria'}</span>
+                    <span className="event-list-chip event-list-chip-soft">{formatPrice(event)}</span>
+                  </div>
+
+                  <h4>
+                    <Link to={`/events/${event.id}`}>{event.title}</Link>
+                  </h4>
+
+                  <p className="event-list-description">{buildDescriptionPreview(event.description)}</p>
+
+                  <dl className="event-list-meta">
+                    <div>
+                      <dt>Ubicacion</dt>
+                      <dd>{event.location || 'No especificada'}</dd>
+                    </div>
+                    <div>
+                      <dt>Organiza</dt>
+                      <dd>{event.organizer || 'No especificado'}</dd>
+                    </div>
+                    <div>
+                      <dt>Audiencia</dt>
+                      <dd>{event.audience || 'General'}</dd>
+                    </div>
+                    <div>
+                      <dt>Edad</dt>
+                      <dd>{formatAgeRange(event)}</dd>
+                    </div>
+                  </dl>
+
+                  <div className="event-list-actions">
+                    <Link to={`/events/${event.id}`} className="event-list-primary-link">
+                      Ver detalle
+                    </Link>
+
+                    {showFavoriteButton && (
+                      <button
+                        type="button"
+                        className={`event-list-action-btn${isFavorite ? ' active' : ''}`}
+                        onClick={() => handleToggleFavorite(event.id, isFavorite)}
+                      >
+                        {isFavorite ? 'Favorito guardado' : 'Guardar favorito'}
+                      </button>
+                    )}
+
+                    {canManageEvents && (
+                      <>
+                        <Link to={`/events/${event.id}/edit`} className="event-list-action-btn">
+                          Editar
+                        </Link>
+
+                        <button
+                          type="button"
+                          className="event-list-action-btn event-list-action-danger"
+                          onClick={() => handleDelete(event.id)}
+                        >
+                          Borrar
+                        </button>
+                      </>
+                    )}
+                  </div>
+                </div>
+              </article>
+            );
+          })}
+        </div>
       ) : null
       }
-    </div>
+    </section>
   );
 };
 

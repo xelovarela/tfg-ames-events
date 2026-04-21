@@ -8,6 +8,28 @@ import { Link, useParams } from 'react-router-dom';
 import { API_BASE_URL } from '../config';
 import { addFavorite, listFavoriteIds, removeFavorite } from '../utils/favoritesApi';
 
+const DETAIL_TEXT = {
+  title: 'Detalle del evento',
+  backMap: 'Volver al mapa',
+  backEvents: 'Ver todos los eventos',
+  loading: 'Cargando evento...',
+  when: 'Cu\u00e1ndo',
+  where: 'D\u00f3nde',
+  forWho: 'Para qui\u00e9n',
+  organizer: 'Organiza',
+  description: 'Descripci\u00f3n',
+  location: 'Ubicaci\u00f3n',
+  categoryFallback: 'Sin categor\u00eda',
+  locationFallback: 'Ubicaci\u00f3n no especificada',
+  organizerFallback: 'Organizador no especificado',
+  audienceFallback: 'Audiencia general',
+  favoriteSaved: 'Guardado en favoritos',
+  favoriteSave: 'Guardar en favoritos',
+  favoriteLoading: 'Actualizando...',
+  viewOnMap: 'Ver esta ubicaci\u00f3n en el mapa',
+  quickSummary: 'Resumen r\u00e1pido'
+};
+
 // Convierte la fecha almacenada en base de datos a un formato legible para el usuario.
 function formatDate(value) {
   if (!value) {
@@ -26,6 +48,37 @@ function formatDate(value) {
     hour: '2-digit',
     minute: '2-digit'
   });
+}
+
+// Separa dia y hora para que la cabecera pueda destacar mejor la fecha.
+function formatDateParts(value) {
+  if (!value) {
+    return {
+      day: 'Sin fecha',
+      time: 'Hora no indicada'
+    };
+  }
+
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) {
+    return {
+      day: 'Sin fecha',
+      time: 'Hora no indicada'
+    };
+  }
+
+  return {
+    day: date.toLocaleDateString('es-ES', {
+      weekday: 'long',
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric'
+    }),
+    time: date.toLocaleTimeString('es-ES', {
+      hour: '2-digit',
+      minute: '2-digit'
+    })
+  };
 }
 
 // Presenta el precio respetando si el evento es gratuito o de pago.
@@ -47,7 +100,19 @@ function formatAgeRange(event) {
     return 'Todas las edades';
   }
 
-  return `${event.min_age}-${event.max_age} anios`;
+  return `${event.min_age}-${event.max_age} a\u00f1os`;
+}
+
+function buildMapLocationUrl(event) {
+  const params = new URLSearchParams();
+  if (event?.location) {
+    params.set('location', event.location);
+  } else if (event?.title) {
+    params.set('search', event.title);
+  }
+
+  const query = params.toString();
+  return query ? `/map?${query}` : '/map';
 }
 
 // Este componente carga el evento indicado en la ruta y muestra su detalle.
@@ -61,6 +126,7 @@ function EventDetailPage({ session }) {
   const [isFavoriteLoading, setIsFavoriteLoading] = useState(false);
   const isAuthenticated = Boolean(session?.token);
   const canUseFavorites = session?.user?.role === 'user';
+  const dateParts = event ? formatDateParts(event.event_date) : null;
 
   // Al cambiar el id de la URL se vuelve a pedir el evento correspondiente.
   useEffect(() => {
@@ -155,20 +221,16 @@ function EventDetailPage({ session }) {
   };
 
   return (
-    <main>
-      <h2>Detalle del Evento</h2>
-
-      {/* Navegacion secundaria para volver rapidamente a mapa o listado. */}
+    <main className="event-detail-page">
       <div className="event-detail-nav">
-        <Link to="/map" className="app-inline-link">Volver al mapa</Link>
-        <span>·</span>
-        <Link to="/events" className="app-inline-link">Volver a eventos</Link>
+        <Link to="/map" className="event-detail-back-link">{DETAIL_TEXT.backMap}</Link>
+        <Link to="/events" className="event-detail-back-link">{DETAIL_TEXT.backEvents}</Link>
       </div>
 
-      {loading && <p>Cargando evento...</p>}
+      {loading && <p className="event-detail-loading">{DETAIL_TEXT.loading}</p>}
 
       {!loading && error && (
-        <div className="event-detail-card">
+        <div className="event-detail-card event-detail-error-card">
           <p>{error}</p>
         </div>
       )}
@@ -177,64 +239,91 @@ function EventDetailPage({ session }) {
         <section className="event-detail-card">
           {/* Tarjeta principal que agrupa la informacion relevante del evento. */}
           <div className="event-detail-hero">
-            <h3>{event.title}</h3>
-            <div className="event-detail-tags">
-              <span className="event-detail-tag">{event.category}</span>
-              <span className="event-detail-tag">{event.audience || 'Audiencia general'}</span>
-              <span className="event-detail-tag">{formatPrice(event)}</span>
+            <div className="event-detail-hero-copy">
+              <p className="event-detail-kicker">{DETAIL_TEXT.title}</p>
+              <h2>{event.title}</h2>
+              <div className="event-detail-tags">
+                <span className="event-detail-tag event-detail-tag-strong">{event.category || DETAIL_TEXT.categoryFallback}</span>
+                <span className="event-detail-tag">{event.audience || DETAIL_TEXT.audienceFallback}</span>
+                <span className="event-detail-tag">{formatPrice(event)}</span>
+              </div>
             </div>
+
+            <aside className="event-detail-date-card" aria-label={DETAIL_TEXT.when}>
+              <span>{dateParts.day}</span>
+              <strong>{dateParts.time}</strong>
+            </aside>
           </div>
 
-          <div className="event-detail-grid">
-            <article className="event-detail-block">
-              <h4>Cuando</h4>
-              <p>{formatDate(event.event_date)}</p>
-            </article>
+          <div className="event-detail-action-row">
+            <div>
+              <span className="event-detail-action-label">{DETAIL_TEXT.location}</span>
+              <strong>{event.location || DETAIL_TEXT.locationFallback}</strong>
+            </div>
 
-            <article className="event-detail-block">
-              <h4>Donde</h4>
-              <p>{event.location || 'Ubicacion no especificada'}</p>
-            </article>
-
-            <article className="event-detail-block">
-              <h4>Para quien</h4>
-              <p>{formatAgeRange(event)}</p>
-            </article>
-
-            <article className="event-detail-block">
-              <h4>Organiza</h4>
-              <p>{event.organizer || 'No especificado'}</p>
-            </article>
-          </div>
-
-          {event.description && (
-            <article className="event-detail-block">
-              <h4>Descripcion</h4>
-              <p>{event.description}</p>
-            </article>
-          )}
-
-          {canUseFavorites && (
-            <div style={{ marginTop: '0.75rem' }}>
+            {canUseFavorites && (
               <button
                 type="button"
-                className="event-btn event-btn-primary"
+                className={`event-detail-favorite-btn${isFavorite ? ' active' : ''}`}
                 onClick={handleToggleFavorite}
                 disabled={isFavoriteLoading}
               >
                 {isFavoriteLoading
-                  ? 'Actualizando...'
+                  ? DETAIL_TEXT.favoriteLoading
                   : isFavorite
-                    ? 'Quitar de favoritos'
-                    : 'Guardar en favoritos'}
+                    ? DETAIL_TEXT.favoriteSaved
+                    : DETAIL_TEXT.favoriteSave}
               </button>
-              {favoriteMessage && <p style={{ marginTop: '0.5rem' }}>{favoriteMessage}</p>}
-            </div>
-          )}
+            )}
+          </div>
 
-          <p className="event-detail-note">
-            Informacion de ubicacion: latitud {event.lat}, longitud {event.lng}.
-          </p>
+          {favoriteMessage && <p className="event-detail-message">{favoriteMessage}</p>}
+
+          <div className="event-detail-content-grid">
+            <article className="event-detail-description">
+              <h3>{DETAIL_TEXT.description}</h3>
+              <p>{event.description || 'Este evento todavia no tiene una descripcion ampliada.'}</p>
+            </article>
+
+            <aside className="event-detail-summary" aria-label={DETAIL_TEXT.quickSummary}>
+              <h3>{DETAIL_TEXT.quickSummary}</h3>
+              <div className="event-detail-grid">
+                <article className="event-detail-block">
+                  <h4>{DETAIL_TEXT.when}</h4>
+                  <p>{formatDate(event.event_date)}</p>
+                </article>
+
+                <article className="event-detail-block">
+                  <h4>{DETAIL_TEXT.where}</h4>
+                  <p>{event.location || DETAIL_TEXT.locationFallback}</p>
+                </article>
+
+                <article className="event-detail-block">
+                  <h4>{DETAIL_TEXT.forWho}</h4>
+                  <p>{formatAgeRange(event)}</p>
+                </article>
+
+                <article className="event-detail-block">
+                  <h4>{DETAIL_TEXT.organizer}</h4>
+                  <p>{event.organizer || DETAIL_TEXT.organizerFallback}</p>
+                </article>
+              </div>
+            </aside>
+          </div>
+
+          <div className="event-detail-map-cta">
+            <div>
+              <strong>{event.location || DETAIL_TEXT.locationFallback}</strong>
+              <span>
+                {event.lat && event.lng
+                  ? `Coordenadas: ${event.lat}, ${event.lng}`
+                  : 'Consulta el mapa para ver los eventos cercanos.'}
+              </span>
+            </div>
+            <Link to={buildMapLocationUrl(event)} className="event-detail-map-link">
+              {DETAIL_TEXT.viewOnMap}
+            </Link>
+          </div>
         </section>
       )}
     </main>

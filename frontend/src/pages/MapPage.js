@@ -122,7 +122,7 @@ function MapPage() {
 
   return (
     <main>
-      <h2>Mapa de Eventos</h2>
+      <h2>Mapa de eventos</h2>
 
       {/* Panel de filtros reutilizable compartido con la pagina de listado. */}
       <EventFilters

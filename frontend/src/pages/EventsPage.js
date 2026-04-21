@@ -176,7 +176,7 @@ function EventsPage({ session }) {
 
   return (
     <main>
-      <h2>Gestion de Eventos</h2>
+      <h2>Gestion de eventos</h2>
 
       {/* Mismo panel de filtros que en el mapa para mantener una experiencia coherente. */}
       <EventFilters
