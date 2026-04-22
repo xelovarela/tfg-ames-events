@@ -6,6 +6,7 @@
 import React, { useEffect, useState } from 'react';
 import { API_BASE_URL } from './config';
 import { withAuthHeaders } from './utils/authFetch';
+import { getEventImageUrl } from './utils/eventImages';
 import './EventForm.css';
 
 // Estado inicial del formulario para altas o reseteos.
@@ -60,6 +61,8 @@ const EventForm = ({
   const [organizers, setOrganizers] = useState([]);
   const [message, setMessage] = useState('');
   const [isSaving, setIsSaving] = useState(false);
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState('');
 
   // Al montar o refrescar catalogos se cargan las opciones de selects auxiliares.
   useEffect(() => {
@@ -97,6 +100,8 @@ const EventForm = ({
       category_id: eventToEdit.category_id ? String(eventToEdit.category_id) : '',
       location_id: eventToEdit.location_id ? String(eventToEdit.location_id) : ''
     });
+    setImageFile(null);
+    setImagePreview(getEventImageUrl(eventToEdit));
     setMessage('');
   }, [eventToEdit]);
 
@@ -106,9 +111,17 @@ const EventForm = ({
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
+  const handleImageChange = (e) => {
+    const file = e.target.files?.[0] || null;
+    setImageFile(file);
+    setImagePreview(file ? URL.createObjectURL(file) : (eventToEdit ? getEventImageUrl(eventToEdit) : ''));
+  };
+
   // Devuelve el formulario a su estado base despues de guardar o cancelar.
   const resetForm = () => {
     setFormData(initialFormData);
+    setImageFile(null);
+    setImagePreview('');
   };
 
   // Valida, construye el payload final y lo envia al endpoint adecuado.
@@ -149,19 +162,22 @@ const EventForm = ({
     setIsSaving(true);
     setMessage('');
 
-    const payload = {
-      title: trimmedTitle,
-      description: formData.description.trim() || null,
-      event_date: formData.event_date || null,
-      is_free: isFree ? 1 : 0,
-      price: isFree ? null : price,
-      min_age: minAge,
-      max_age: maxAge,
-      audience_id: formData.audience_id === '' ? null : Number(formData.audience_id),
-      organizer_id: formData.organizer_id === '' ? null : Number(formData.organizer_id),
-      category_id: Number(formData.category_id),
-      location_id: Number(formData.location_id)
-    };
+    const payload = new FormData();
+    payload.append('title', trimmedTitle);
+    payload.append('description', formData.description.trim() || '');
+    payload.append('event_date', formData.event_date || '');
+    payload.append('is_free', isFree ? '1' : '0');
+    payload.append('price', isFree || price === null ? '' : String(price));
+    payload.append('min_age', minAge === null ? '' : String(minAge));
+    payload.append('max_age', maxAge === null ? '' : String(maxAge));
+    payload.append('audience_id', formData.audience_id === '' ? '' : String(Number(formData.audience_id)));
+    payload.append('organizer_id', formData.organizer_id === '' ? '' : String(Number(formData.organizer_id)));
+    payload.append('category_id', String(Number(formData.category_id)));
+    payload.append('location_id', String(Number(formData.location_id)));
+
+    if (imageFile) {
+      payload.append('image', imageFile);
+    }
 
     try {
       const endpoint = eventToEdit
@@ -172,10 +188,8 @@ const EventForm = ({
 
       const response = await fetch(endpoint, {
         method,
-        headers: withAuthHeaders({
-          'Content-Type': 'application/json'
-        }),
-        body: JSON.stringify(payload)
+        headers: withAuthHeaders(),
+        body: payload
       });
 
       const data = await response.json();
@@ -243,6 +257,23 @@ const EventForm = ({
           rows={4}
           maxLength={2000}
         />
+
+        <label className="event-form-label" htmlFor="image">Imagen del evento (opcional)</label>
+        <input
+          id="image"
+          className="event-form-input"
+          type="file"
+          name="image"
+          accept="image/jpeg,image/png,image/webp,image/gif"
+          onChange={handleImageChange}
+        />
+        <p className="event-form-help">Si no subes una imagen, se mostrara una imagen por defecto.</p>
+
+        {imagePreview && (
+          <div className="event-form-image-preview">
+            <img src={imagePreview} alt="Vista previa del evento" />
+          </div>
+        )}
 
         <label className="event-form-label" htmlFor="is_free">Tipo</label>
         <select

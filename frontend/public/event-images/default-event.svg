@@ -1,0 +1,21 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" role="img" aria-label="Imagen por defecto de evento">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fff7ea"/>
+      <stop offset="1" stop-color="#f2d2bd"/>
+    </linearGradient>
+    <linearGradient id="red" x1="290" y1="560" x2="790" y2="120" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#b83114"/>
+      <stop offset="1" stop-color="#d30b32"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="675" fill="url(#bg)"/>
+  <circle cx="1040" cy="115" r="96" fill="#f4c430" opacity="0.55"/>
+  <circle cx="130" cy="555" r="150" fill="#b83114" opacity="0.08"/>
+  <path fill="url(#red)" d="M310 540 462 170c25-60 75-92 136-92 70 0 121 38 145 106l96 278-112 91-52-156c-49 60-132 95-224 95h-54l-38 48H310Z"/>
+  <circle cx="598" cy="202" r="82" fill="#f4c430"/>
+  <path fill="#504940" d="m598 145 18 39 43 6-31 30 8 43-38-21-38 21 8-43-31-30 43-6 18-39Z"/>
+  <path fill="none" stroke="#504940" stroke-width="18" stroke-linecap="round" d="M548 270c24 30 77 30 101 0"/>
+  <path fill="none" stroke="#f4c430" stroke-width="42" stroke-linecap="round" stroke-linejoin="round" d="M517 420 600 260l83 160H517Z"/>
+  <text x="600" y="620" text-anchor="middle" fill="#5e2412" font-family="Trebuchet MS, Segoe UI, sans-serif" font-size="42" font-weight="700">Eventos en Ames</text>
+</svg>

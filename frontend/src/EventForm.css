@@ -41,6 +41,27 @@
   border-color: #b30000;
 }
 
+.event-form-help {
+  margin: -0.15rem 0 0.25rem;
+  color: #6f5a4d;
+  font-size: 0.86rem;
+}
+
+.event-form-image-preview {
+  overflow: hidden;
+  width: min(360px, 100%);
+  border: 1px solid #ead8ca;
+  border-radius: 12px;
+  background: #fffaf6;
+}
+
+.event-form-image-preview img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+}
+
 /* Rejilla para mostrar edad minima y maxima en paralelo. */
 .event-form-age-grid {
   display: grid;

@@ -7,6 +7,7 @@ import React, { useEffect, useState } from 'react';
 import { API_BASE_URL } from './config';
 import { Link } from 'react-router-dom';
 import { withAuthHeaders } from './utils/authFetch';
+import { getEventImageUrl } from './utils/eventImages';
 
 // Convierte la fecha tecnica del backend a un formato legible.
 function formatDate(value) {
@@ -207,6 +208,10 @@ const EventList = ({
 
             return (
               <article key={event.id} className="event-list-card">
+                <Link to={`/events/${event.id}`} className="event-list-image-link" aria-label={`Ver detalle de ${event.title}`}>
+                  <img src={getEventImageUrl(event)} alt="" className="event-list-image" loading="lazy" />
+                </Link>
+
                 <div className="event-list-date" aria-label={`Fecha: ${formatDate(event.event_date)}`}>
                   <strong>{shortDate.day}</strong>
                   <span>{shortDate.month}</span>

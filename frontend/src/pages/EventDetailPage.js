@@ -7,6 +7,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { API_BASE_URL } from '../config';
 import { addFavorite, listFavoriteIds, removeFavorite } from '../utils/favoritesApi';
+import { getEventImageUrl } from '../utils/eventImages';
 
 const DETAIL_TEXT = {
   title: 'Detalle del evento',
@@ -253,6 +254,10 @@ function EventDetailPage({ session }) {
               <span>{dateParts.day}</span>
               <strong>{dateParts.time}</strong>
             </aside>
+          </div>
+
+          <div className="event-detail-image-wrap">
+            <img src={getEventImageUrl(event)} alt="" className="event-detail-image" />
           </div>
 
           <div className="event-detail-action-row">

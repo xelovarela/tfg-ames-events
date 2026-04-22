@@ -9,6 +9,7 @@ import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import { useNavigate } from 'react-router-dom';
 import { API_BASE_URL } from './config';
+import { getEventImageUrl } from './utils/eventImages';
 
 const categoryMarkerClass = (category = '') => {
   const normalized = category
@@ -109,7 +110,8 @@ const AmesMap = ({ refreshTrigger, events: externalEvents }) => {
         is_free: event.is_free,
         price: event.price,
         min_age: event.min_age,
-        max_age: event.max_age
+        max_age: event.max_age,
+        image_url: event.image_url
       });
     });
 
@@ -189,6 +191,7 @@ const AmesMap = ({ refreshTrigger, events: externalEvents }) => {
                         className="map-event-card"
                         onClick={() => navigate(`/events/${event.id}`)}
                       >
+                        <img src={getEventImageUrl(event)} alt="" className="map-event-image" loading="lazy" />
                         <span className="map-event-card-topline">
                           <span className="map-event-date">{formatDate(event.event_date)}</span>
                           <span className="map-event-price">{formatPrice(event)}</span>
