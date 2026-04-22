@@ -11,6 +11,7 @@ async function listFavoritesByUserId(userId) {
       e.id,
       e.title,
       e.description,
+      e.image_url,
       e.event_date,
       e.is_free,
       e.price,

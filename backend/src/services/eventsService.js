@@ -12,6 +12,7 @@ async function listEvents() {
       e.id,
       e.title,
       e.description,
+      e.image_url,
       e.event_date,
       e.is_free,
       e.price,
@@ -43,6 +44,7 @@ async function getEventById(id) {
       e.id,
       e.title,
       e.description,
+      e.image_url,
       e.event_date,
       e.is_free,
       e.price,
@@ -106,13 +108,14 @@ async function createEvent({
   isFree,
   price,
   minAge,
-  maxAge
+  maxAge,
+  imageUrl
 }) {
   const [result] = await db.query(
     `INSERT INTO events 
-      (title, description, category_id, location_id, audience_id, organizer_id, event_date, is_free, price, min_age, max_age)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-    [title, description, categoryId, locationId, audienceId, organizerId, eventDate, isFree, price, minAge, maxAge]
+      (title, description, image_url, category_id, location_id, audience_id, organizer_id, event_date, is_free, price, min_age, max_age)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    [title, description, imageUrl, categoryId, locationId, audienceId, organizerId, eventDate, isFree, price, minAge, maxAge]
   );
 
   return result.insertId;
@@ -121,14 +124,14 @@ async function createEvent({
 // Actualiza el registro de un evento existente usando una sentencia parametrizada.
 async function updateEvent(
   id,
-  { title, description, categoryId, locationId, audienceId, organizerId, eventDate, isFree, price, minAge, maxAge }
+  { title, description, categoryId, locationId, audienceId, organizerId, eventDate, isFree, price, minAge, maxAge, imageUrl }
 ) {
   const [result] = await db.query(
     `UPDATE events 
-      SET title = ?, description = ?, category_id = ?, location_id = ?, audience_id = ?, organizer_id = ?, event_date = ?, is_free = ?, 
+      SET title = ?, description = ?, image_url = ?, category_id = ?, location_id = ?, audience_id = ?, organizer_id = ?, event_date = ?, is_free = ?,
           price = ?, min_age = ?, max_age = ?
      WHERE id = ?`,
-    [title, description, categoryId, locationId, audienceId, organizerId, eventDate, isFree, price, minAge, maxAge, id]
+    [title, description, imageUrl, categoryId, locationId, audienceId, organizerId, eventDate, isFree, price, minAge, maxAge, id]
   );
 
   return result.affectedRows > 0;

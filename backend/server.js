@@ -3,7 +3,8 @@
  * Crea la aplicacion Express, registra los middlewares globales y monta las rutas REST
  * que permiten gestionar eventos, categorias, ubicaciones, audiencias y organizadores.
  */
-﻿const express = require('express');
+const path = require('path');
+const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 
@@ -40,6 +41,7 @@ app.use(cors({
   }
 }));
 app.use(express.json());
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/auth', authRoutes);
 
 // Ruta de prueba para comprobar rapidamente que la API esta levantada.
@@ -58,6 +60,15 @@ app.use('/users', usersRoutes);
 app.use('/roles', rolesRoutes);
 app.use('/favorites', favoritesRoutes);
 app.use('/alerts', alertsRoutes);
+
+app.use((err, req, res, next) => {
+  if (err) {
+    console.error('Error en middleware:', err);
+    return res.status(400).json({ error: err.message || 'Error procesando la peticion' });
+  }
+
+  return next();
+});
 
 const pool = require('./src/config/db');
 

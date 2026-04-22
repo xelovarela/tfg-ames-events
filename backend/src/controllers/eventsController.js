@@ -6,6 +6,10 @@
 const eventsService = require('../services/eventsService');
 const alertsService = require('../services/alertsService');
 const {
+  getUploadedEventImageUrl,
+  deleteEventImageFile
+} = require('../middleware/eventImageUpload');
+const {
   toPositiveInt,
   toNullablePositiveInt,
   toNullableMysqlDateTime,
@@ -86,7 +90,8 @@ function parseEventPayload(body) {
     isFree,
     price,
     minAge,
-    maxAge
+    maxAge,
+    imageUrl: null
   };
 }
 
@@ -124,9 +129,14 @@ async function getById(req, res) {
 // Crea un nuevo evento despues de validar datos y comprobar relaciones existentes.
 async function create(req, res) {
   const payload = parseEventPayload(req.body);
+  const uploadedImageUrl = getUploadedEventImageUrl(req.file);
+
   if (payload.error) {
+    deleteEventImageFile(uploadedImageUrl);
     return res.status(400).json({ error: payload.error });
   }
+
+  payload.imageUrl = uploadedImageUrl;
 
   try {
     const [hasCategory, hasLocation, hasAudience, hasOrganizer] = await Promise.all([
@@ -137,18 +147,22 @@ async function create(req, res) {
     ]);
 
     if (!hasCategory) {
+      deleteEventImageFile(uploadedImageUrl);
       return res.status(400).json({ error: 'category_id does not exist' });
     }
 
     if (!hasLocation) {
+      deleteEventImageFile(uploadedImageUrl);
       return res.status(400).json({ error: 'location_id does not exist' });
     }
 
     if (!hasAudience) {
+      deleteEventImageFile(uploadedImageUrl);
       return res.status(400).json({ error: 'audience_id does not exist' });
     }
 
     if (!hasOrganizer) {
+      deleteEventImageFile(uploadedImageUrl);
       return res.status(400).json({ error: 'organizer_id does not exist' });
     }
 
@@ -163,6 +177,7 @@ async function create(req, res) {
 
     return res.status(201).json({ message: 'Event created successfully', id });
   } catch (error) {
+    deleteEventImageFile(uploadedImageUrl);
     console.error('Error creating event:', error);
     return res.status(500).json({ error: 'Error creating event in database' });
   }
@@ -171,12 +186,16 @@ async function create(req, res) {
 // Actualiza un evento existente manteniendo las mismas reglas de validacion que en alta.
 async function update(req, res) {
   const id = toPositiveInt(req.params.id);
+  const uploadedImageUrl = getUploadedEventImageUrl(req.file);
+
   if (!id) {
+    deleteEventImageFile(uploadedImageUrl);
     return res.status(400).json({ error: 'Invalid event id' });
   }
 
   const payload = parseEventPayload(req.body);
   if (payload.error) {
+    deleteEventImageFile(uploadedImageUrl);
     return res.status(400).json({ error: payload.error });
   }
 
@@ -190,28 +209,39 @@ async function update(req, res) {
     ]);
 
     if (!existingEvent) {
+      deleteEventImageFile(uploadedImageUrl);
       return res.status(404).json({ error: 'Event not found' });
     }
 
+    payload.imageUrl = uploadedImageUrl || existingEvent.image_url || null;
+
     if (!hasCategory) {
+      deleteEventImageFile(uploadedImageUrl);
       return res.status(400).json({ error: 'category_id does not exist' });
     }
 
     if (!hasLocation) {
+      deleteEventImageFile(uploadedImageUrl);
       return res.status(400).json({ error: 'location_id does not exist' });
     }
 
     if (!hasAudience) {
+      deleteEventImageFile(uploadedImageUrl);
       return res.status(400).json({ error: 'audience_id does not exist' });
     }
 
     if (!hasOrganizer) {
+      deleteEventImageFile(uploadedImageUrl);
       return res.status(400).json({ error: 'organizer_id does not exist' });
     }
 
     await eventsService.updateEvent(id, payload);
+    if (uploadedImageUrl && existingEvent.image_url !== uploadedImageUrl) {
+      deleteEventImageFile(existingEvent.image_url);
+    }
     return res.json({ message: 'Event updated successfully' });
   } catch (error) {
+    deleteEventImageFile(uploadedImageUrl);
     console.error('Error updating event:', error);
     return res.status(500).json({ error: 'Error updating event in database' });
   }
@@ -225,11 +255,13 @@ async function remove(req, res) {
   }
 
   try {
+    const existingEvent = await eventsService.getEventById(id);
     const wasDeleted = await eventsService.deleteEvent(id);
     if (!wasDeleted) {
       return res.status(404).json({ error: 'Event not found' });
     }
 
+    deleteEventImageFile(existingEvent?.image_url);
     return res.json({ message: 'Event deleted successfully' });
   } catch (error) {
     console.error('Error deleting event:', error);

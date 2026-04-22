@@ -6,6 +6,7 @@
 const express = require('express');
 const eventsController = require('../controllers/eventsController');
 const { requireAuth, requireAdmin, requireAnyRole } = require('../middleware/authMiddleware');
+const { eventImageUpload } = require('../middleware/eventImageUpload');
 
 const router = express.Router();
 
@@ -13,8 +14,7 @@ const router = express.Router();
 router.get('/', eventsController.getAll);
 router.get('/:id', eventsController.getById);
 
-router.post('/', requireAuth, requireAnyRole(['admin', 'content_manager']), eventsController.create);
-router.put('/:id', requireAuth, requireAnyRole(['admin', 'content_manager']), eventsController.update);
+router.post('/', requireAuth, requireAnyRole(['admin', 'content_manager']), eventImageUpload.single('image'), eventsController.create);
+router.put('/:id', requireAuth, requireAnyRole(['admin', 'content_manager']), eventImageUpload.single('image'), eventsController.update);
 router.delete('/:id', requireAuth, requireAdmin, eventsController.remove);
 module.exports = router;
-
