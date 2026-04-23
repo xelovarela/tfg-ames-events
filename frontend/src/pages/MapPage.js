@@ -95,20 +95,22 @@ function MapPage() {
   // Cada cambio en los filtros actualiza tanto el estado como la query string.
   const handleFilterChange = (event) => {
     const { name, type, value, checked } = event.target;
-
-    const nextFilters = {
-      ...filters,
+    const patch = {
       [name]: type === 'checkbox' ? checked : value
     };
-
-    setFilters(nextFilters);
-    setSearchParams(buildSearchParamsFromFilters(nextFilters));
+    applyFilterPatch(patch);
   };
 
-  // Este manejador restablece los filtros a su estado inicial.
-  const handleClearFilters = () => {
-    setFilters({ ...initialEventFilters });
-    setSearchParams({});
+  // Permite actualizar varios filtros de una vez manteniendo URL y estado sincronizados.
+  const applyFilterPatch = (patch) => {
+    setFilters((currentFilters) => {
+      const nextFilters = {
+        ...currentFilters,
+        ...patch
+      };
+      setSearchParams(buildSearchParamsFromFilters(nextFilters));
+      return nextFilters;
+    });
   };
 
   // Se memoriza el resultado del filtrado para evitar calculos innecesarios en cada render.
@@ -134,7 +136,7 @@ function MapPage() {
         totalCount={events.length}
         filteredCount={filteredEvents.length}
         onChange={handleFilterChange}
-        onClear={handleClearFilters}
+        onPatch={applyFilterPatch}
       />
 
       {loadError && <p className="event-filters-feedback event-filters-feedback-error">{loadError}</p>}

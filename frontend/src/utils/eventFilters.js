@@ -6,9 +6,10 @@
 // Estado base usado al inicializar o limpiar el formulario de filtros.
 const initialEventFilters = {
   search: '',
+  datePreset: '',
   category: '',
   audienceId: '',
-  location: '',
+  locality: '',
   organizerId: '',
   freeOnly: false,
   compatibleAge: ''
@@ -48,6 +49,47 @@ function isAgeCompatible(event, ageFilter) {
   return age >= minAge && age <= maxAge;
 }
 
+// Comprueba si un evento encaja en el preset temporal seleccionado.
+function isDatePresetMatch(eventDateValue, datePreset) {
+  if (!datePreset) {
+    return true;
+  }
+
+  const eventDate = new Date(eventDateValue);
+  if (Number.isNaN(eventDate.getTime())) {
+    return false;
+  }
+
+  const now = new Date();
+  const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const tomorrowStart = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+  const weekEnd = new Date(now.getFullYear(), now.getMonth(), now.getDate() + (7 - now.getDay()));
+
+  if (datePreset === 'today') {
+    return eventDate >= todayStart && eventDate < tomorrowStart;
+  }
+
+  if (datePreset === 'tomorrow') {
+    const dayAfterTomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 2);
+    return eventDate >= tomorrowStart && eventDate < dayAfterTomorrow;
+  }
+
+  if (datePreset === 'weekend') {
+    const day = eventDate.getDay();
+    return (day === 0 || day === 6) && eventDate >= todayStart && eventDate < weekEnd;
+  }
+
+  if (datePreset === 'week') {
+    return eventDate >= todayStart && eventDate < weekEnd;
+  }
+
+  if (datePreset === 'month') {
+    return eventDate.getMonth() === now.getMonth() && eventDate.getFullYear() === now.getFullYear();
+  }
+
+  return true;
+}
+
 // Aplica todos los criterios activos y devuelve solo los eventos compatibles.
 function filterEvents(events, filters) {
   if (!Array.isArray(events)) {
@@ -62,6 +104,7 @@ function filterEvents(events, filters) {
         event.description,
         event.category,
         event.location,
+        event.location_locality,
         event.audience,
         event.organizer
       ]
@@ -82,7 +125,7 @@ function filterEvents(events, filters) {
       return false;
     }
 
-    if (filters.location && event.location !== filters.location) {
+    if (filters.locality && event.location_locality !== filters.locality) {
       return false;
     }
 
@@ -98,17 +141,24 @@ function filterEvents(events, filters) {
       return false;
     }
 
+    if (!isDatePresetMatch(event.event_date, filters.datePreset)) {
+      return false;
+    }
+
     return true;
   });
 }
 
 // Convierte la query string de la URL en un objeto de filtros utilizable por React.
 function filtersFromSearchParams(searchParams) {
+  const localityFromUrl = searchParams.get('locality') || searchParams.get('location') || '';
+
   return {
     search: searchParams.get('search') || '',
+    datePreset: searchParams.get('datePreset') || '',
     category: searchParams.get('category') || '',
     audienceId: searchParams.get('audienceId') || '',
-    location: searchParams.get('location') || '',
+    locality: localityFromUrl,
     organizerId: searchParams.get('organizerId') || '',
     freeOnly: searchParams.get('freeOnly') === 'true',
     compatibleAge: searchParams.get('compatibleAge') || ''
@@ -123,6 +173,10 @@ function buildSearchParamsFromFilters(filters) {
     params.set('search', filters.search);
   }
 
+  if (filters.datePreset) {
+    params.set('datePreset', filters.datePreset);
+  }
+
   if (filters.category) {
     params.set('category', filters.category);
   }
@@ -131,8 +185,8 @@ function buildSearchParamsFromFilters(filters) {
     params.set('audienceId', filters.audienceId);
   }
 
-  if (filters.location) {
-    params.set('location', filters.location);
+  if (filters.locality) {
+    params.set('locality', filters.locality);
   }
 
   if (filters.organizerId) {

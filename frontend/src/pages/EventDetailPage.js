@@ -106,8 +106,10 @@ function formatAgeRange(event) {
 
 function buildMapLocationUrl(event) {
   const params = new URLSearchParams();
-  if (event?.location) {
-    params.set('location', event.location);
+  if (event?.location_locality) {
+    params.set('locality', event.location_locality);
+  } else if (event?.location) {
+    params.set('search', event.location);
   } else if (event?.title) {
     params.set('search', event.title);
   }

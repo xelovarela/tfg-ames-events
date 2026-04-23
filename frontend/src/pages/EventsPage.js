@@ -105,20 +105,22 @@ function EventsPage({ session }) {
   // Cada cambio del formulario se refleja en estado y en la URL.
   const handleFilterChange = (event) => {
     const { name, type, value, checked } = event.target;
-
-    const nextFilters = {
-      ...filters,
+    const patch = {
       [name]: type === 'checkbox' ? checked : value
     };
-
-    setFilters(nextFilters);
-    setSearchParams(buildSearchParamsFromFilters(nextFilters));
+    applyFilterPatch(patch);
   };
 
-  // Restablece el estado inicial de filtros y limpia los parametros de busqueda.
-  const handleClearFilters = () => {
-    setFilters({ ...initialEventFilters });
-    setSearchParams({});
+  // Permite actualizaciones atomicas de varios chips en un solo paso.
+  const applyFilterPatch = (patch) => {
+    setFilters((currentFilters) => {
+      const nextFilters = {
+        ...currentFilters,
+        ...patch
+      };
+      setSearchParams(buildSearchParamsFromFilters(nextFilters));
+      return nextFilters;
+    });
   };
 
   // El listado final se calcula solo cuando cambian los eventos o los filtros.
@@ -188,7 +190,7 @@ function EventsPage({ session }) {
         totalCount={events.length}
         filteredCount={filteredEvents.length}
         onChange={handleFilterChange}
-        onClear={handleClearFilters}
+        onPatch={applyFilterPatch}
       />
 
       {loadError && <p className="event-filters-feedback event-filters-feedback-error">{loadError}</p>}
