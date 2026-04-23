@@ -31,26 +31,6 @@ const DETAIL_TEXT = {
   quickSummary: 'Resumen r\u00e1pido'
 };
 
-// Convierte la fecha almacenada en base de datos a un formato legible para el usuario.
-function formatDate(value) {
-  if (!value) {
-    return 'Sin fecha';
-  }
-
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) {
-    return 'Sin fecha';
-  }
-
-  return date.toLocaleString('es-ES', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-  });
-}
-
 // Separa dia y hora para que la cabecera pueda destacar mejor la fecha.
 function formatDateParts(value) {
   if (!value) {
@@ -82,6 +62,31 @@ function formatDateParts(value) {
   };
 }
 
+function formatDateBadgeParts(value) {
+  if (!value) {
+    return {
+      day: '--',
+      month: 'SIN FECHA',
+      time: '--:--'
+    };
+  }
+
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) {
+    return {
+      day: '--',
+      month: 'SIN FECHA',
+      time: '--:--'
+    };
+  }
+
+  return {
+    day: date.toLocaleDateString('es-ES', { day: '2-digit' }),
+    month: date.toLocaleDateString('es-ES', { month: 'short' }).replace('.', '').toUpperCase(),
+    time: date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })
+  };
+}
+
 // Presenta el precio respetando si el evento es gratuito o de pago.
 function formatPrice(event) {
   if (Number(event.is_free) === 1) {
@@ -102,6 +107,46 @@ function formatAgeRange(event) {
   }
 
   return `${event.min_age}-${event.max_age} a\u00f1os`;
+}
+
+function IconCalendarClock() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <rect x="3.5" y="4.5" width="17" height="16" rx="2.5" />
+      <path d="M7 2.8v3.4M17 2.8v3.4M3.5 8.8h17" />
+      <circle cx="12" cy="14.2" r="3.3" />
+      <path d="M12 12.7v1.8l1.3.9" />
+    </svg>
+  );
+}
+
+function IconLocation() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path d="M12 21s6-5.8 6-11a6 6 0 1 0-12 0c0 5.2 6 11 6 11Z" />
+      <circle cx="12" cy="10" r="2.3" />
+    </svg>
+  );
+}
+
+function IconAudience() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <circle cx="9" cy="9" r="2.4" />
+      <circle cx="15.3" cy="9.8" r="2" />
+      <path d="M5.3 17.5a3.7 3.7 0 0 1 7.4 0M12 17.5a3.5 3.5 0 0 1 6 0" />
+    </svg>
+  );
+}
+
+function IconOrganizer() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <circle cx="12" cy="8.2" r="2.8" />
+      <path d="M6.3 18a5.7 5.7 0 0 1 11.4 0" />
+      <path d="M18.5 9.3h2.8M19.9 7.9v2.8" />
+    </svg>
+  );
 }
 
 function buildMapLocationUrl(event) {
@@ -130,6 +175,7 @@ function EventDetailPage({ session }) {
   const isAuthenticated = Boolean(session?.token);
   const canUseFavorites = session?.user?.role === 'user';
   const dateParts = event ? formatDateParts(event.event_date) : null;
+  const dateBadge = event ? formatDateBadgeParts(event.event_date) : null;
 
   // Al cambiar el id de la URL se vuelve a pedir el evento correspondiente.
   useEffect(() => {
@@ -240,83 +286,82 @@ function EventDetailPage({ session }) {
 
       {!loading && !error && event && (
         <section className="event-detail-card">
-          {/* Tarjeta principal que agrupa la informacion relevante del evento. */}
-          <div className="event-detail-hero">
-            <div className="event-detail-hero-copy">
-              <p className="event-detail-kicker">{DETAIL_TEXT.title}</p>
-              <h2>{event.title}</h2>
-              <div className="event-detail-tags">
-                <span className="event-detail-tag event-detail-tag-strong">{event.category || DETAIL_TEXT.categoryFallback}</span>
-                <span className="event-detail-tag">{event.audience || DETAIL_TEXT.audienceFallback}</span>
-                <span className="event-detail-tag">{formatPrice(event)}</span>
+          <div className="event-detail-layout">
+            <div className="event-detail-media">
+              <img src={getEventImageUrl(event)} alt="" className="event-detail-image" />
+
+              <aside className="event-detail-date-overlay" aria-label={DETAIL_TEXT.when}>
+                <span className="event-detail-date-icon"><IconCalendarClock /></span>
+                <strong>{dateBadge.day}</strong>
+                <span>{dateBadge.month}</span>
+                <small>{dateBadge.time}</small>
+              </aside>
+            </div>
+
+            <div className="event-detail-side">
+              <div className="event-detail-head">
+                <p className="event-detail-kicker">{DETAIL_TEXT.title}</p>
+                <h2>{event.title}</h2>
+
+                <div className="event-detail-tags">
+                  <span className="event-detail-tag event-detail-tag-strong">{event.category || DETAIL_TEXT.categoryFallback}</span>
+                  <span className="event-detail-tag">{event.audience || DETAIL_TEXT.audienceFallback}</span>
+                  <span className="event-detail-tag">{formatPrice(event)}</span>
+                  {event.location_locality && <span className="event-detail-tag">{event.location_locality}</span>}
+                </div>
+
+                {canUseFavorites && (
+                  <button
+                    type="button"
+                    className={`event-detail-favorite-btn${isFavorite ? ' active' : ''}`}
+                    onClick={handleToggleFavorite}
+                    disabled={isFavoriteLoading}
+                  >
+                    {isFavoriteLoading
+                      ? DETAIL_TEXT.favoriteLoading
+                      : isFavorite
+                        ? DETAIL_TEXT.favoriteSaved
+                        : DETAIL_TEXT.favoriteSave}
+                  </button>
+                )}
+              </div>
+
+              <div className="event-detail-panels">
+                <aside className="event-detail-summary" aria-label={DETAIL_TEXT.quickSummary}>
+                  <h3>{DETAIL_TEXT.quickSummary}</h3>
+                  <div className="event-detail-grid">
+                    <article className="event-detail-block">
+                      <h4><span className="event-detail-block-icon"><IconCalendarClock /></span>{DETAIL_TEXT.when}</h4>
+                      <p>{dateParts.day}</p>
+                      <p>{dateParts.time}</p>
+                    </article>
+
+                    <article className="event-detail-block">
+                      <h4><span className="event-detail-block-icon"><IconLocation /></span>{DETAIL_TEXT.where}</h4>
+                      <p>{event.location || DETAIL_TEXT.locationFallback}</p>
+                    </article>
+
+                    <article className="event-detail-block">
+                      <h4><span className="event-detail-block-icon"><IconOrganizer /></span>{DETAIL_TEXT.organizer}</h4>
+                      <p>{event.organizer || DETAIL_TEXT.organizerFallback}</p>
+                    </article>
+
+                    <article className="event-detail-block">
+                      <h4><span className="event-detail-block-icon"><IconAudience /></span>{DETAIL_TEXT.forWho}</h4>
+                      <p>{formatAgeRange(event)}</p>
+                    </article>
+                  </div>
+                </aside>
+
+                <article className="event-detail-description">
+                  <h3>{DETAIL_TEXT.description}</h3>
+                  <p>{event.description || 'Este evento todavia no tiene una descripcion ampliada.'}</p>
+                </article>
               </div>
             </div>
-
-            <aside className="event-detail-date-card" aria-label={DETAIL_TEXT.when}>
-              <span>{dateParts.day}</span>
-              <strong>{dateParts.time}</strong>
-            </aside>
-          </div>
-
-          <div className="event-detail-image-wrap">
-            <img src={getEventImageUrl(event)} alt="" className="event-detail-image" />
-          </div>
-
-          <div className="event-detail-action-row">
-            <div>
-              <span className="event-detail-action-label">{DETAIL_TEXT.location}</span>
-              <strong>{event.location || DETAIL_TEXT.locationFallback}</strong>
-            </div>
-
-            {canUseFavorites && (
-              <button
-                type="button"
-                className={`event-detail-favorite-btn${isFavorite ? ' active' : ''}`}
-                onClick={handleToggleFavorite}
-                disabled={isFavoriteLoading}
-              >
-                {isFavoriteLoading
-                  ? DETAIL_TEXT.favoriteLoading
-                  : isFavorite
-                    ? DETAIL_TEXT.favoriteSaved
-                    : DETAIL_TEXT.favoriteSave}
-              </button>
-            )}
           </div>
 
           {favoriteMessage && <p className="event-detail-message">{favoriteMessage}</p>}
-
-          <div className="event-detail-content-grid">
-            <article className="event-detail-description">
-              <h3>{DETAIL_TEXT.description}</h3>
-              <p>{event.description || 'Este evento todavia no tiene una descripcion ampliada.'}</p>
-            </article>
-
-            <aside className="event-detail-summary" aria-label={DETAIL_TEXT.quickSummary}>
-              <h3>{DETAIL_TEXT.quickSummary}</h3>
-              <div className="event-detail-grid">
-                <article className="event-detail-block">
-                  <h4>{DETAIL_TEXT.when}</h4>
-                  <p>{formatDate(event.event_date)}</p>
-                </article>
-
-                <article className="event-detail-block">
-                  <h4>{DETAIL_TEXT.where}</h4>
-                  <p>{event.location || DETAIL_TEXT.locationFallback}</p>
-                </article>
-
-                <article className="event-detail-block">
-                  <h4>{DETAIL_TEXT.forWho}</h4>
-                  <p>{formatAgeRange(event)}</p>
-                </article>
-
-                <article className="event-detail-block">
-                  <h4>{DETAIL_TEXT.organizer}</h4>
-                  <p>{event.organizer || DETAIL_TEXT.organizerFallback}</p>
-                </article>
-              </div>
-            </aside>
-          </div>
 
           <div className="event-detail-map-cta">
             <div>
