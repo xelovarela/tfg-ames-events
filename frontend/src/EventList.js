@@ -5,7 +5,7 @@
  */
 import React, { useEffect, useState } from 'react';
 import { API_BASE_URL } from './config';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { withAuthHeaders } from './utils/authFetch';
 import { getEventImageUrl } from './utils/eventImages';
 
@@ -43,7 +43,7 @@ function formatAgeRange(event) {
   if (event.min_age === null || event.max_age === null) {
     return 'Todas las edades';
   }
-  return `${event.min_age}-${event.max_age} a\u00f1os`;
+  return `${event.min_age}-${event.max_age} anos`;
 }
 
 function formatShortDate(value) {
@@ -79,6 +79,44 @@ function buildDescriptionPreview(description) {
   return description.length > 150 ? `${description.slice(0, 147)}...` : description;
 }
 
+function IconLocation() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path d="M12 21s6-5.8 6-11a6 6 0 1 0-12 0c0 5.2 6 11 6 11Z" />
+      <circle cx="12" cy="10" r="2.3" />
+    </svg>
+  );
+}
+
+function IconOrganizer() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <circle cx="12" cy="8.2" r="2.8" />
+      <path d="M6.3 18a5.7 5.7 0 0 1 11.4 0" />
+      <path d="M18.5 9.3h2.8M19.9 7.9v2.8" />
+    </svg>
+  );
+}
+
+function IconAudience() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <circle cx="9" cy="9" r="2.4" />
+      <circle cx="15.3" cy="9.8" r="2" />
+      <path d="M5.3 17.5a3.7 3.7 0 0 1 7.4 0M12 17.5a3.5 3.5 0 0 1 6 0" />
+    </svg>
+  );
+}
+
+function IconAge() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <circle cx="12" cy="12" r="8.5" />
+      <path d="M12 7.5v5l3 2" />
+    </svg>
+  );
+}
+
 // El componente admite modo controlado para reutilizarlo con eventos ya filtrados.
 const EventList = ({
   refreshTrigger,
@@ -92,6 +130,7 @@ const EventList = ({
   emptyMessage = 'No hay eventos registrados.',
   showEmptyState = true
 }) => {
+  const navigate = useNavigate();
   const [events, setEvents] = useState([]);
   const [loadError, setLoadError] = useState('');
   const favoriteIdsSet = new Set((favoriteEventIds || []).map((id) => Number(id)));
@@ -100,8 +139,8 @@ const EventList = ({
   // En modo no controlado el propio componente recupera los eventos desde la API.
   const loadEvents = () => {
     fetch(`${API_BASE_URL}/events`)
-      .then(res => res.json())
-      .then(data => {
+      .then((res) => res.json())
+      .then((data) => {
         if (Array.isArray(data)) {
           setEvents(data);
           setLoadError('');
@@ -112,7 +151,7 @@ const EventList = ({
         setEvents([]);
         setLoadError(data?.error || 'No se pudieron cargar los eventos.');
       })
-      .catch(err => {
+      .catch((err) => {
         console.error('Error loading events:', err);
         setEvents([]);
         setLoadError('No se pudieron cargar los eventos.');
@@ -178,6 +217,19 @@ const EventList = ({
     }
   };
 
+  const handleOpenDetails = (eventId) => {
+    navigate(`/events/${eventId}`);
+  };
+
+  const handleCardKeyDown = (keyboardEvent, eventId) => {
+    if (keyboardEvent.key === 'Enter' || keyboardEvent.key === ' ') {
+      keyboardEvent.preventDefault();
+      handleOpenDetails(eventId);
+    }
+  };
+
+  void onEditEvent;
+
   return (
     <section className="event-list-panel">
       <div className="event-list-header">
@@ -202,21 +254,28 @@ const EventList = ({
         </div>
       ) : events.length > 0 ? (
         <div className="event-list-grid">
-          {events.map(event => {
+          {events.map((event) => {
             const shortDate = formatShortDate(event.event_date);
             const isFavorite = favoriteIdsSet.has(Number(event.id));
 
             return (
-              <article key={event.id} className="event-list-card">
+              <article
+                key={event.id}
+                className="event-list-card"
+                role="link"
+                tabIndex={0}
+                onClick={() => handleOpenDetails(event.id)}
+                onKeyDown={(keyboardEvent) => handleCardKeyDown(keyboardEvent, event.id)}
+                aria-label={`Ver detalle de ${event.title}`}
+              >
                 <Link to={`/events/${event.id}`} className="event-list-image-link" aria-label={`Ver detalle de ${event.title}`}>
                   <img src={getEventImageUrl(event)} alt="" className="event-list-image" loading="lazy" />
+                  <div className="event-list-date event-list-date-overlay" aria-label={`Fecha: ${formatDate(event.event_date)}`}>
+                    <strong>{shortDate.day}</strong>
+                    <span>{shortDate.month}</span>
+                    {shortDate.time && <small>{shortDate.time}</small>}
+                  </div>
                 </Link>
-
-                <div className="event-list-date" aria-label={`Fecha: ${formatDate(event.event_date)}`}>
-                  <strong>{shortDate.day}</strong>
-                  <span>{shortDate.month}</span>
-                  {shortDate.time && <small>{shortDate.time}</small>}
-                </div>
 
                 <div className="event-list-card-body">
                   <div className="event-list-card-top">
@@ -232,19 +291,19 @@ const EventList = ({
 
                   <dl className="event-list-meta">
                     <div>
-                      <dt>Ubicacion</dt>
+                      <dt><span className="event-list-meta-title-icon" title="Ubicacion"><IconLocation /></span></dt>
                       <dd>{event.location || 'No especificada'}</dd>
                     </div>
                     <div>
-                      <dt>Organiza</dt>
+                      <dt><span className="event-list-meta-title-icon" title="Organiza"><IconOrganizer /></span></dt>
                       <dd>{event.organizer || 'No especificado'}</dd>
                     </div>
                     <div>
-                      <dt>Audiencia</dt>
+                      <dt><span className="event-list-meta-title-icon" title="Audiencia"><IconAudience /></span></dt>
                       <dd>{event.audience || 'General'}</dd>
                     </div>
                     <div>
-                      <dt>Edad</dt>
+                      <dt><span className="event-list-meta-title-icon" title="Edad"><IconAge /></span></dt>
                       <dd>{formatAgeRange(event)}</dd>
                     </div>
                   </dl>
@@ -258,7 +317,10 @@ const EventList = ({
                       <button
                         type="button"
                         className={`event-list-action-btn${isFavorite ? ' active' : ''}`}
-                        onClick={() => handleToggleFavorite(event.id, isFavorite)}
+                        onClick={(clickEvent) => {
+                          clickEvent.stopPropagation();
+                          handleToggleFavorite(event.id, isFavorite);
+                        }}
                       >
                         {isFavorite ? 'Favorito guardado' : 'Guardar favorito'}
                       </button>
@@ -266,14 +328,21 @@ const EventList = ({
 
                     {canManageEvents && (
                       <>
-                        <Link to={`/events/${event.id}/edit`} className="event-list-action-btn">
+                        <Link
+                          to={`/events/${event.id}/edit`}
+                          className="event-list-action-btn"
+                          onClick={(clickEvent) => clickEvent.stopPropagation()}
+                        >
                           Editar
                         </Link>
 
                         <button
                           type="button"
                           className="event-list-action-btn event-list-action-danger"
-                          onClick={() => handleDelete(event.id)}
+                          onClick={(clickEvent) => {
+                            clickEvent.stopPropagation();
+                            handleDelete(event.id);
+                          }}
                         >
                           Borrar
                         </button>
@@ -285,8 +354,7 @@ const EventList = ({
             );
           })}
         </div>
-      ) : null
-      }
+      ) : null}
     </section>
   );
 };
