@@ -49,3 +49,6 @@ yarn-error.log*
 
 .vscode/
 .DS_Store
+
+# Local agent instructions
+/WORKING_INSTRUCTIONS.md

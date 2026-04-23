@@ -59,9 +59,9 @@ function IconAudience() {
 function IconOrganizer() {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-      <circle cx="12" cy="8.2" r="2.8" />
-      <path d="M6.3 18a5.7 5.7 0 0 1 11.4 0" />
-      <path d="M18.5 9.3h2.8M19.9 7.9v2.8" />
+      <path d="M4.5 20.5h15" />
+      <path d="M6.5 20.5v-8h3v8M10.5 20.5v-8h3v8M14.5 20.5v-8h3v8" />
+      <path d="M4.5 12.5h15L12 7.5l-7.5 5Z" />
     </svg>
   );
 }
@@ -69,8 +69,9 @@ function IconOrganizer() {
 function IconAge() {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-      <circle cx="12" cy="12" r="8.5" />
-      <path d="M12 7.5v5l3 2" />
+      <circle cx="12" cy="8.3" r="2.6" />
+      <path d="M7.2 18.8a4.8 4.8 0 0 1 9.6 0" />
+      <path d="M5.3 15.6h13.4" />
     </svg>
   );
 }
