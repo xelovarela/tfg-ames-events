@@ -9,7 +9,6 @@ import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import { useNavigate } from 'react-router-dom';
 import { API_BASE_URL } from './config';
-import { getEventImageUrl } from './utils/eventImages';
 
 const categoryMarkerClass = (category = '') => {
   const normalized = category
@@ -37,6 +36,44 @@ const createLocationIcon = (locationGroup) => {
     popupAnchor: [0, -38]
   });
 };
+
+function IconCalendar() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <rect x="3.5" y="5.5" width="17" height="15" rx="2.5" />
+      <path d="M7 3.5v4M17 3.5v4M3.5 9.5h17" />
+    </svg>
+  );
+}
+
+function IconAudience() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <circle cx="9" cy="9" r="2.4" />
+      <circle cx="15.3" cy="9.8" r="2" />
+      <path d="M5.3 17.5a3.7 3.7 0 0 1 7.4 0M12 17.5a3.5 3.5 0 0 1 6 0" />
+    </svg>
+  );
+}
+
+function IconOrganizer() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <circle cx="12" cy="8.2" r="2.8" />
+      <path d="M6.3 18a5.7 5.7 0 0 1 11.4 0" />
+      <path d="M18.5 9.3h2.8M19.9 7.9v2.8" />
+    </svg>
+  );
+}
+
+function IconAge() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <circle cx="12" cy="12" r="8.5" />
+      <path d="M12 7.5v5l3 2" />
+    </svg>
+  );
+}
 
 // El componente admite modo controlado y no controlado para reutilizarlo en distintas paginas.
 const AmesMap = ({ refreshTrigger, events: externalEvents }) => {
@@ -110,8 +147,7 @@ const AmesMap = ({ refreshTrigger, events: externalEvents }) => {
         is_free: event.is_free,
         price: event.price,
         min_age: event.min_age,
-        max_age: event.max_age,
-        image_url: event.image_url
+        max_age: event.max_age
       });
     });
 
@@ -191,15 +227,26 @@ const AmesMap = ({ refreshTrigger, events: externalEvents }) => {
                         className="map-event-card"
                         onClick={() => navigate(`/events/${event.id}`)}
                       >
-                        <img src={getEventImageUrl(event)} alt="" className="map-event-image" loading="lazy" />
                         <span className="map-event-card-topline">
-                          <span className="map-event-date">{formatDate(event.event_date)}</span>
+                          <span className="map-event-icon-text">
+                            <span className="map-event-icon"><IconCalendar /></span>
+                            <span className="map-event-date">{formatDate(event.event_date)}</span>
+                          </span>
                           <span className="map-event-price">{formatPrice(event)}</span>
                         </span>
                         <strong>{event.title}</strong>
-                        <span className="map-event-meta">{event.category || 'Sin categoria'} / {event.audience || 'General'}</span>
-                        <span className="map-event-meta">{event.organizer || 'Organizador no especificado'}</span>
-                        <span className="map-event-meta map-event-age">{formatAgeRange(event)}</span>
+                        <span className="map-event-meta">
+                          <span className="map-event-icon"><IconAudience /></span>
+                          {event.category || 'Sin categoria'} / {event.audience || 'General'}
+                        </span>
+                        <span className="map-event-meta">
+                          <span className="map-event-icon"><IconOrganizer /></span>
+                          {event.organizer || 'Organizador no especificado'}
+                        </span>
+                        <span className="map-event-meta map-event-age">
+                          <span className="map-event-icon"><IconAge /></span>
+                          {formatAgeRange(event)}
+                        </span>
                         <span className="map-event-link">Ver detalle</span>
                       </button>
                     ))}
