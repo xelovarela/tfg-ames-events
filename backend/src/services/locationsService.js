@@ -8,7 +8,7 @@ const db = require('../config/db');
 // Devuelve todas las ubicaciones disponibles para el frontend.
 async function listLocations() {
   const [rows] = await db.query(
-    'SELECT id, name, lat, lng FROM locations ORDER BY name'
+    'SELECT id, name, locality, lat, lng FROM locations ORDER BY locality, name'
   );
   return rows;
 }
@@ -16,26 +16,26 @@ async function listLocations() {
 // Recupera una ubicacion concreta por id.
 async function getLocationById(id) {
   const [rows] = await db.query(
-    'SELECT id, name, lat, lng FROM locations WHERE id = ?',
+    'SELECT id, name, locality, lat, lng FROM locations WHERE id = ?',
     [id]
   );
   return rows[0] || null;
 }
 
 // Inserta una nueva ubicacion con nombre y coordenadas.
-async function createLocation({ name, lat, lng }) {
+async function createLocation({ name, locality, lat, lng }) {
   const [result] = await db.query(
-    'INSERT INTO locations (name, lat, lng) VALUES (?, ?, ?)',
-    [name, lat, lng]
+    'INSERT INTO locations (name, locality, lat, lng) VALUES (?, ?, ?, ?)',
+    [name, locality, lat, lng]
   );
   return result.insertId;
 }
 
 // Actualiza los datos de una ubicacion ya existente.
-async function updateLocation(id, { name, lat, lng }) {
+async function updateLocation(id, { name, locality, lat, lng }) {
   const [result] = await db.query(
-    'UPDATE locations SET name = ?, lat = ?, lng = ? WHERE id = ?',
-    [name, lat, lng, id]
+    'UPDATE locations SET name = ?, locality = ?, lat = ?, lng = ? WHERE id = ?',
+    [name, locality, lat, lng, id]
   );
   return result.affectedRows > 0;
 }

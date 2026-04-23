@@ -11,9 +11,12 @@ import './LocationManager.css';
 // Estado base del formulario de ubicaciones.
 const initialForm = {
   name: '',
+  locality: 'Bertamiráns',
   lat: '',
   lng: ''
 };
+
+const LOCALITY_OPTIONS = ['Bertamiráns', 'Milladoiro', 'Otras parroquias'];
 
 // Valida nombre y coordenadas antes de persistir una ubicacion.
 function validateLocation(form) {
@@ -23,6 +26,10 @@ function validateLocation(form) {
 
   if (!name || name.length > 150) {
     return 'El nombre es obligatorio y debe tener entre 1 y 150 caracteres.';
+  }
+
+  if (!LOCALITY_OPTIONS.includes(form.locality)) {
+    return 'La localidad es obligatoria.';
   }
 
   if (!Number.isFinite(lat) || lat < -90 || lat > 90) {
@@ -94,6 +101,7 @@ function LocationManager({ onLocationsChanged }) {
 
     const payload = {
       name: formData.name.trim(),
+      locality: formData.locality,
       lat: Number(formData.lat),
       lng: Number(formData.lng)
     };
@@ -133,6 +141,7 @@ function LocationManager({ onLocationsChanged }) {
     setEditingId(location.id);
     setFormData({
       name: location.name,
+      locality: location.locality,
       lat: String(location.lat),
       lng: String(location.lng)
     });
@@ -184,6 +193,20 @@ function LocationManager({ onLocationsChanged }) {
           required
         />
 
+        <select
+          className="locations-input"
+          name="locality"
+          value={formData.locality}
+          onChange={handleChange}
+          required
+        >
+          {LOCALITY_OPTIONS.map((locality) => (
+            <option key={locality} value={locality}>
+              {locality}
+            </option>
+          ))}
+        </select>
+
         <input
           className="locations-input"
           type="number"
@@ -228,6 +251,7 @@ function LocationManager({ onLocationsChanged }) {
           locations.map((location) => (
             <article className="locations-item" key={location.id}>
               <strong>{location.name}</strong>
+              <p>Localidad: {location.locality}</p>
               <p>Lat: {location.lat}</p>
               <p>Lng: {location.lng}</p>
               <div className="locations-item-actions">

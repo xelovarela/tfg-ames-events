@@ -28,6 +28,7 @@ async function listPendingFavoriteReminders(targetDate = getTomorrowDateOnly()) 
       e.description,
       e.event_date,
       l.name AS location,
+      l.locality AS location_locality,
       o.name AS organizer
      FROM favorites f
      JOIN users u ON u.id = f.user_id

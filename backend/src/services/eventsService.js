@@ -24,6 +24,7 @@ async function listEvents() {
       a.name AS audience,
       o.name AS organizer,
       l.name AS location,
+      l.locality AS location_locality,
       l.lat,
       l.lng
     FROM events e
@@ -56,6 +57,7 @@ async function getEventById(id) {
       a.name AS audience,
       o.name AS organizer,
       l.name AS location,
+      l.locality AS location_locality,
       l.lat,
       l.lng,
       e.category_id,

@@ -8,10 +8,12 @@ const { toPositiveInt, toLatitude, toLongitude } = require('../utils/validation'
 
 // Limite maximo permitido para el nombre descriptivo de una ubicacion.
 const MAX_LOCATION_NAME_LENGTH = 150;
+const ALLOWED_LOCALITIES = ['Bertamiráns', 'Milladoiro', 'Otras parroquias'];
 
 // Valida y convierte los datos de una ubicacion antes de persistirlos.
 function parseLocationPayload(body) {
   const name = typeof body.name === 'string' ? body.name.trim() : '';
+  const locality = typeof body.locality === 'string' ? body.locality.trim() : '';
   const lat = toLatitude(body.lat);
   const lng = toLongitude(body.lng);
 
@@ -19,11 +21,15 @@ function parseLocationPayload(body) {
     return { error: 'Invalid name. Must be between 1 and 150 characters.' };
   }
 
+  if (!ALLOWED_LOCALITIES.includes(locality)) {
+    return { error: 'Invalid locality. Allowed values: Bertamiráns, Milladoiro, Otras parroquias.' };
+  }
+
   if (lat === null || lng === null) {
     return { error: 'Invalid coordinates. lat must be [-90,90], lng must be [-180,180].' };
   }
 
-  return { name, lat, lng };
+  return { name, locality, lat, lng };
 }
 
 // Devuelve todas las ubicaciones registradas.

@@ -158,15 +158,15 @@ INSERT INTO categories (name) VALUES
   ('Ciencia');
 
 -- Conjunto inicial de ubicaciones reales o de ejemplo dentro de Ames.
-INSERT INTO locations (name, lat, lng) VALUES
-  ('Casa da Cultura de Ames', 42.8569900, -8.6568200),
-  ('Biblioteca Municipal de Bertamirans', 42.8618100, -8.6547800),
-  ('Pabellon Municipal do Milladoiro', 42.8472500, -8.5898600),
-  ('Parque da Peregrina', 42.8489900, -8.5909700),
-  ('Auditorio Milladoiro', 42.8478100, -8.5931600),
-  ('Centro Xuvenil de Bertamirans', 42.8598600, -8.6519800),
-  ('Area Verde de Agro do Medio', 42.8508400, -8.5966200),
-  ('CEIP A Maia', 42.8613900, -8.6525300);
+INSERT INTO locations (name, locality, lat, lng) VALUES
+  ('Casa da Cultura de Ames', 'Bertamiráns', 42.8569900, -8.6568200),
+  ('Biblioteca Municipal de Bertamirans', 'Bertamiráns', 42.8618100, -8.6547800),
+  ('Pabellon Municipal do Milladoiro', 'Milladoiro', 42.8472500, -8.5898600),
+  ('Parque da Peregrina', 'Milladoiro', 42.8489900, -8.5909700),
+  ('Auditorio Milladoiro', 'Milladoiro', 42.8478100, -8.5931600),
+  ('Centro Xuvenil de Bertamirans', 'Bertamiráns', 42.8598600, -8.6519800),
+  ('Area Verde de Agro do Medio', 'Otras parroquias', 42.8508400, -8.5966200),
+  ('CEIP A Maia', 'Bertamiráns', 42.8613900, -8.6525300);
 
 -- Audiencias con sus rangos de edad orientativos.
 INSERT INTO audiences (name, age_min, age_max) VALUES

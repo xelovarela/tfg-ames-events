@@ -23,6 +23,7 @@ async function listFavoritesByUserId(userId) {
       a.name AS audience,
       o.name AS organizer,
       l.name AS location,
+      l.locality AS location_locality,
       l.lat,
       l.lng,
       f.created_at AS favorited_at
