@@ -14,23 +14,11 @@ html, body, #root {
   box-sizing: border-box;
 }
 
-:root {
-  --color-ink: #1f1b16;
-  --color-brown: #4a3124;
-  --color-brand: #b83114;
-  --color-brand-dark: #8f2410;
-  --color-gold: #f4c430;
-  --color-cream: #fffaf6;
-  --color-paper: #fff;
-  --color-line: #e6dfd3;
-  --shadow-soft: 0 14px 34px rgba(73, 44, 25, 0.12);
-}
-
 /* Estilo general de tipografia y fondo de toda la aplicacion. */
 body {
-  font-family: 'Trebuchet MS', 'Segoe UI', sans-serif;
+  font-family: var(--font-family-base);
   background: linear-gradient(180deg, #f7f4ef 0%, #efe7da 100%);
-  color: #1f1b16;
+  color: var(--color-ink);
 }
 
 /* Estructura principal del layout que apila cabecera, contenido y pie. */
@@ -39,241 +27,6 @@ body {
   display: flex;
   flex-direction: column;
   position: relative;
-}
-
-/* Cabecera fija con acciones rapidas y buscador visual. */
-.app-topbar {
-  position: sticky;
-  top: 0;
-  z-index: 30;
-  padding: 0.7rem 1rem;
-  background: #fff;
-  border-bottom: 1px solid #e6dfd3;
-  box-shadow: 0 8px 20px rgba(47, 34, 26, 0.05);
-}
-
-.app-topbar-inner {
-  width: min(1200px, 100%);
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: 48px auto minmax(220px, 460px) auto;
-  align-items: center;
-  gap: 0.8rem;
-}
-
-.app-brand,
-.app-drawer-brand {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.7rem;
-  min-width: 0;
-}
-
-.app-brand {
-  color: var(--color-brown);
-  text-decoration: none;
-}
-
-.app-brand-mark {
-  width: 42px;
-  height: 42px;
-  border-radius: 14px;
-  background: #fff8e7;
-  border: 1px solid rgba(184, 49, 20, 0.14);
-  padding: 0.18rem;
-  flex: 0 0 auto;
-  object-fit: contain;
-  box-shadow: 0 10px 22px rgba(184, 49, 20, 0.24);
-}
-
-.app-brand-copy {
-  display: grid;
-  gap: 0.05rem;
-  min-width: 0;
-}
-
-.app-brand-copy strong {
-  color: #5e2412;
-  font-size: 1.04rem;
-  line-height: 1.05;
-}
-
-.app-brand-copy span {
-  color: #7a665a;
-  font-size: 0.78rem;
-  white-space: nowrap;
-}
-
-.app-search-wrap {
-  width: 100%;
-}
-
-.app-search {
-  width: 100%;
-  height: 38px;
-  padding: 0 0.95rem;
-  border: 1px solid #d7cdc2;
-  border-radius: 999px;
-  background: var(--color-cream);
-  color: #2c221b;
-  font-size: 0.92rem;
-}
-
-.app-search:focus {
-  outline: none;
-  border-color: #b84a22;
-  box-shadow: 0 0 0 3px rgba(184, 74, 34, 0.16);
-}
-
-.app-icon-btn {
-  width: 40px;
-  height: 40px;
-  border: 1px solid #e7d9cb;
-  border-radius: 50%;
-  background: #fff;
-  color: #4a3124;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.app-icon-btn:hover {
-  background: #fff3ea;
-  border-color: #cf9e84;
-  transform: translateY(-1px);
-}
-
-.app-icon {
-  font-size: 1rem;
-  line-height: 1;
-  font-weight: 700;
-}
-
-.app-auth-wrap {
-  display: inline-flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 0.55rem;
-  min-width: 0;
-}
-
-.app-auth-user {
-  font-size: 0.86rem;
-  color: #4a3124;
-  font-weight: 700;
-  white-space: nowrap;
-}
-
-.app-auth-link,
-.app-auth-btn {
-  border: 1px solid #e7d9cb;
-  border-radius: 999px;
-  background: #fff;
-  color: #4a3124;
-  padding: 0.38rem 0.7rem;
-  font-size: 0.84rem;
-  font-weight: 600;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.app-auth-link:hover,
-.app-auth-btn:hover {
-  background: #fff3ea;
-  border-color: #cf9e84;
-}
-
-.app-user-menu-wrap {
-  position: relative;
-}
-
-.app-user-avatar-btn {
-  width: 40px;
-  height: 40px;
-  border: 1px solid #cf9e84;
-  border-radius: 50%;
-  background: #b84a22;
-  color: #fff;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 800;
-  cursor: pointer;
-  box-shadow: 0 6px 14px rgba(184, 74, 34, 0.18);
-}
-
-.app-user-avatar-btn:hover {
-  background: #9f3819;
-}
-
-.app-user-menu {
-  position: absolute;
-  top: calc(100% + 0.55rem);
-  right: 0;
-  z-index: 70;
-  min-width: 210px;
-  padding: 0.45rem;
-  background: #fff;
-  border: 1px solid #eadfd5;
-  border-radius: 10px;
-  box-shadow: 0 14px 30px rgba(47, 34, 26, 0.16);
-  display: grid;
-  gap: 0.2rem;
-}
-
-.app-user-menu-header {
-  padding: 0.55rem 0.65rem;
-  border-bottom: 1px solid #efe4da;
-  display: grid;
-  gap: 0.15rem;
-}
-
-.app-user-menu-header strong {
-  color: #4a3124;
-}
-
-.app-user-menu-header span {
-  color: #6f5a4d;
-  font-size: 0.82rem;
-  overflow-wrap: anywhere;
-}
-
-.app-user-menu-link,
-.app-user-menu-button {
-  width: 100%;
-  border: 0;
-  border-radius: 7px;
-  background: transparent;
-  color: #4a3124;
-  padding: 0.55rem 0.65rem;
-  text-align: left;
-  text-decoration: none;
-  font: inherit;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.app-user-menu-link:hover,
-.app-user-menu-button:hover {
-  background: #fff3ea;
-  color: #8f2410;
-}
-
-.app-hamburger {
-  width: 16px;
-  display: inline-flex;
-  flex-direction: column;
-  gap: 3px;
-}
-
-.app-hamburger span {
-  display: block;
-  width: 16px;
-  height: 2px;
-  border-radius: 2px;
-  background: #4a3124;
 }
 
 /* Menu lateral deslizante para la navegacion entre secciones. */
@@ -1330,7 +1083,7 @@ body {
   }
 
   .app-topbar-inner {
-    grid-template-columns: 42px minmax(0, 1fr) auto;
+    grid-template-columns: 42px minmax(0, 1fr) auto auto;
     gap: 0.55rem;
   }
 
@@ -1347,6 +1100,14 @@ body {
   .app-search-wrap {
     grid-column: 1 / -1;
     grid-row: 2;
+  }
+
+  .app-topbar-links {
+    gap: 0.45rem;
+  }
+
+  .app-topbar-link {
+    font-size: 0.82rem;
   }
 
   .app-icon-btn {

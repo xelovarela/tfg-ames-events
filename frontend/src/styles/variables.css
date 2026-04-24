@@ -1,0 +1,47 @@
+:root {
+  --font-family-base: 'Trebuchet MS', 'Segoe UI', sans-serif;
+
+  --color-ink: #1f1b16;
+  --color-brown: #4a3124;
+  --color-brand: #b83114;
+  --color-brand-dark: #8f2410;
+  --color-gold: #f4c430;
+  --color-cream: #fffaf6;
+  --color-paper: #fff;
+  --color-line: #e6dfd3;
+
+  --shadow-soft: 0 14px 34px rgba(73, 44, 25, 0.12);
+  --shadow-topbar: 0 8px 20px rgba(47, 34, 26, 0.05);
+  --shadow-brand-mark: 0 10px 22px rgba(184, 49, 20, 0.24);
+  --shadow-avatar: 0 6px 14px rgba(184, 74, 34, 0.18);
+  --shadow-user-menu: 0 14px 30px rgba(47, 34, 26, 0.16);
+
+  --topbar-bg: #fff;
+  --topbar-border: #e6dfd3;
+
+  --brand-mark-bg: #fff8e7;
+  --brand-mark-border: rgba(184, 49, 20, 0.14);
+  --brand-title: #5e2412;
+  --brand-subtitle: #7a665a;
+
+  --search-border: #d7cdc2;
+  --search-text: #2c221b;
+  --search-focus-border: #b84a22;
+  --search-focus-ring: rgba(184, 74, 34, 0.16);
+
+  --topbar-link: #4a3124;
+  --topbar-link-hover: #8f2410;
+
+  --chip-border: #e7d9cb;
+  --chip-hover-bg: #fff3ea;
+  --chip-hover-border: #cf9e84;
+
+  --avatar-bg: #b84a22;
+  --avatar-bg-hover: #9f3819;
+  --avatar-border: #cf9e84;
+  --avatar-text: #fff;
+
+  --user-menu-border: #eadfd5;
+  --user-menu-divider: #efe4da;
+  --user-menu-secondary-text: #6f5a4d;
+}
