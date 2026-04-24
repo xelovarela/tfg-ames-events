@@ -20,7 +20,7 @@ function getCategoryIcon(categoryName) {
 
   if (normalized.includes('mus')) return <IconMusic />;
   if (normalized.includes('deport')) return <IconSport />;
-  if (normalized.includes('cultur')) return <IconCulture />;
+  if (normalized.includes('cultur')) return <IconBook />;
   if (normalized.includes('infant')) return <IconKids />;
   if (normalized.includes('educ')) return <IconEducation />;
   if (normalized.includes('mercad')) return <IconStore />;
@@ -107,6 +107,15 @@ function IconCulture() {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
       <path d="M12 4.5 14 10l6 .5-4.5 3.7 1.4 5.8L12 16.8 7.1 20l1.4-5.8L4 10.5 10 10Z" />
+    </svg>
+  );
+}
+
+function IconBook() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path d="M12 6.5c-1.7-1.3-3.8-2-6.5-2v13c2.7 0 4.8.7 6.5 2 1.7-1.3 3.8-2 6.5-2v-13c-2.7 0-4.8.7-6.5 2Z" />
+      <path d="M12 6.5v13M8 9h2.8M13.2 9H16M8 11.8h2.8M13.2 11.8H16" />
     </svg>
   );
 }
