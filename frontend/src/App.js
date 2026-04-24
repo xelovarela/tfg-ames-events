@@ -5,6 +5,7 @@
  */
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { BrowserRouter, Link, Navigate, NavLink, Route, Routes, useLocation, useSearchParams } from 'react-router-dom';
+import './styles/topbar.css';
 import './App.css';
 import MapPage from './pages/MapPage';
 import EventsPage from './pages/EventsPage';
@@ -31,7 +32,7 @@ import UsersPage from './pages/UsersPage';
 const NAV_ITEMS = [
   { to: '/map', label: 'Mapa' },
   { to: '/events', label: 'Eventos' },
-  { to: '/favorites', label: 'Mis favoritos', allowedRoles: ['user'] },
+  { to: '/favorites', label: 'Mis favoritos', allowedRoles: ['user', 'admin'] },
   { to: '/alerts', label: 'Alertas', authenticatedOnly: true },
   { to: '/audiences', label: 'Audiencias', adminOnly: true },
   { to: '/organizers', label: 'Organizadores', allowedRoles: ['admin', 'content_manager'] },
@@ -49,6 +50,15 @@ function getUserInitial(user) {
   return source.trim().charAt(0).toUpperCase() || 'U';
 }
 
+function IconUserLogin() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <circle cx="12" cy="8.2" r="3.2" />
+      <path d="M5.5 19a6.5 6.5 0 0 1 13 0" />
+    </svg>
+  );
+}
+
 // Este componente monta la interfaz comun compartida por todas las paginas.
 function AppShell({ session, onLogout, onSessionChange }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -60,6 +70,7 @@ function AppShell({ session, onLogout, onSessionChange }) {
   const isAuthenticated = Boolean(session?.token);
   const isAdmin = session?.user?.role === 'admin';
   const userRole = session?.user?.role;
+  const canAccessFavorites = userRole === 'user' || isAdmin;
   const visibleNavItems = NAV_ITEMS.filter((item) => {
     if (item.adminOnly) {
       return isAdmin;
@@ -68,7 +79,7 @@ function AppShell({ session, onLogout, onSessionChange }) {
       return isAuthenticated;
     }
     if (Array.isArray(item.allowedRoles) && item.allowedRoles.length > 0) {
-      return isAuthenticated && item.allowedRoles.includes(userRole);
+      return isAuthenticated && (isAdmin || item.allowedRoles.includes(userRole));
     }
     return true;
   });
@@ -149,6 +160,15 @@ function AppShell({ session, onLogout, onSessionChange }) {
             />
           </div>
 
+          <nav className="app-topbar-links" aria-label="Enlaces rapidos">
+            <NavLink to="/events" className={({ isActive }) => `app-topbar-link${isActive ? ' active' : ''}`}>
+              Agenda
+            </NavLink>
+            <NavLink to="/map" className={({ isActive }) => `app-topbar-link${isActive ? ' active' : ''}`}>
+              Mapa
+            </NavLink>
+          </nav>
+
           <div className="app-auth-wrap">
             {isAuthenticated ? (
               <div className="app-user-menu-wrap" ref={userMenuRef}>
@@ -171,7 +191,7 @@ function AppShell({ session, onLogout, onSessionChange }) {
                     <Link to="/profile" className="app-user-menu-link" onClick={() => setIsUserMenuOpen(false)}>
                       Mi perfil
                     </Link>
-                    {userRole === 'user' && (
+                    {canAccessFavorites && (
                       <Link to="/favorites" className="app-user-menu-link" onClick={() => setIsUserMenuOpen(false)}>
                         Mis favoritos
                       </Link>
@@ -187,6 +207,7 @@ function AppShell({ session, onLogout, onSessionChange }) {
               </div>
             ) : (
               <Link to="/login" className="app-auth-link">
+                <span className="app-auth-link-icon" aria-hidden="true"><IconUserLogin /></span>
                 Iniciar sesion
               </Link>
             )}
@@ -232,7 +253,7 @@ function AppShell({ session, onLogout, onSessionChange }) {
           <Route
             path="/favorites"
             element={(
-              <ProtectedRoute session={session} allowedRoles={['user']}>
+              <ProtectedRoute session={session} allowedRoles={['user', 'admin']}>
                 <FavoritesPage session={session} />
               </ProtectedRoute>
             )}
@@ -323,7 +344,7 @@ function AppShell({ session, onLogout, onSessionChange }) {
             <Link to="/events">Eventos</Link>
             <Link to="/map">Mapa</Link>
             {isAuthenticated && <Link to="/alerts">Alertas</Link>}
-            {userRole === 'user' && <Link to="/favorites">Favoritos</Link>}
+            {canAccessFavorites && <Link to="/favorites">Favoritos</Link>}
           </nav>
         </div>
       </footer>
