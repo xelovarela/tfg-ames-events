@@ -13,6 +13,7 @@ import EventsPage from './pages/EventsPage';
 import AudiencesPage from './pages/AudiencesPage';
 import OrganizersPage from './pages/OrganizersPage';
 import EventDetailPage from './pages/EventDetailPage';
+import HomePage from './pages/HomePage';
 import CategoriesPage from './pages/CategoriesPage';
 import LocationsPage from './pages/LocationsPage';
 import EventCreatePage from './pages/EventCreatePage';
@@ -134,7 +135,7 @@ function AppShell({ session, onLogout, onSessionChange }) {
             </span>
           </button>
 
-          <Link to="/map" className="app-brand" aria-label="Ir al mapa de Eventos en Ames">
+          <Link to="/" className="app-brand" aria-label="Ir a inicio de Eventos en Ames">
             <img className="app-brand-mark" src="/favicon.svg" alt="" aria-hidden="true" />
             <span className="app-brand-copy">
               <strong>Eventos en Ames</strong>
@@ -229,7 +230,7 @@ function AppShell({ session, onLogout, onSessionChange }) {
       {/* Zona principal donde React Router va renderizando cada pagina. */}
       <main className="app-main">
         <Routes>
-          <Route path="/" element={<Navigate to="/map" replace />} />
+          <Route path="/" element={<HomePage session={session} />} />
 
           <Route path="/map" element={<MapPage />} />
 
