@@ -4,6 +4,7 @@
  * la distribucion general de la aplicacion de Eventos en Ames.
  */
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { LogOut, UserRound } from 'lucide-react';
 import { BrowserRouter, Link, Navigate, NavLink, Route, Routes, useLocation, useSearchParams } from 'react-router-dom';
 import './styles/topbar.css';
 import './App.css';
@@ -48,15 +49,6 @@ function getUserDisplayName(user) {
 function getUserInitial(user) {
   const source = getUserDisplayName(user) || user?.email || 'U';
   return source.trim().charAt(0).toUpperCase() || 'U';
-}
-
-function IconUserLogin() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-      <circle cx="12" cy="8.2" r="3.2" />
-      <path d="M5.5 19a6.5 6.5 0 0 1 13 0" />
-    </svg>
-  );
 }
 
 // Este componente monta la interfaz comun compartida por todas las paginas.
@@ -200,6 +192,7 @@ function AppShell({ session, onLogout, onSessionChange }) {
                       Mis alertas
                     </Link>
                     <button type="button" className="app-user-menu-button" onClick={handleLogoutClick}>
+                      <span className="app-user-menu-item-icon" aria-hidden="true"><LogOut /></span>
                       Cerrar sesion
                     </button>
                   </div>
@@ -207,7 +200,7 @@ function AppShell({ session, onLogout, onSessionChange }) {
               </div>
             ) : (
               <Link to="/login" className="app-auth-link">
-                <span className="app-auth-link-icon" aria-hidden="true"><IconUserLogin /></span>
+                <span className="app-auth-link-icon" aria-hidden="true"><UserRound /></span>
                 Iniciar sesion
               </Link>
             )}

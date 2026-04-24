@@ -4,6 +4,20 @@
  * de chips compartida por mapa y listado.
  */
 import React from 'react';
+import {
+  Baby,
+  CalendarDays,
+  CircleDot,
+  GraduationCap,
+  Grid2x2,
+  MapPin,
+  Music2,
+  Palette,
+  ShoppingBasket,
+  Tag,
+  Trophy,
+  Users
+} from 'lucide-react';
 import './EventFilters.css';
 
 const DATE_OPTIONS = [
@@ -16,11 +30,14 @@ const DATE_OPTIONS = [
 ];
 
 function getCategoryIcon(categoryName) {
-  const normalized = String(categoryName || '').toLowerCase();
+  const normalized = String(categoryName || '')
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '');
 
   if (normalized.includes('mus')) return <IconMusic />;
   if (normalized.includes('deport')) return <IconSport />;
-  if (normalized.includes('cultur')) return <IconBook />;
+  if (normalized.includes('cultur')) return <IconCulture />;
   if (normalized.includes('infant')) return <IconKids />;
   if (normalized.includes('educ')) return <IconEducation />;
   if (normalized.includes('mercad')) return <IconStore />;
@@ -30,120 +47,51 @@ function getCategoryIcon(categoryName) {
 }
 
 function IconCalendar() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-      <rect x="3.5" y="5.5" width="17" height="15" rx="2.5" />
-      <path d="M7 3.5v4M17 3.5v4M3.5 9.5h17" />
-    </svg>
-  );
+  return <CalendarDays aria-hidden="true" focusable="false" />;
 }
 
 function IconLocation() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-      <path d="M12 21s6-5.8 6-11a6 6 0 1 0-12 0c0 5.2 6 11 6 11Z" />
-      <circle cx="12" cy="10" r="2.3" />
-    </svg>
-  );
+  return <MapPin aria-hidden="true" focusable="false" />;
 }
 
 function IconUsers() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-      <circle cx="9" cy="8.2" r="2.6" />
-      <path d="M4.5 17.5a4.5 4.5 0 0 1 9 0" />
-      <circle cx="16.8" cy="9.2" r="2.1" />
-      <path d="M14 17.5a3.6 3.6 0 0 1 6.2-2.3" />
-    </svg>
-  );
+  return <Users aria-hidden="true" focusable="false" />;
 }
 
 function IconGrid() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-      <rect x="4" y="4" width="6" height="6" rx="1.2" />
-      <rect x="14" y="4" width="6" height="6" rx="1.2" />
-      <rect x="4" y="14" width="6" height="6" rx="1.2" />
-      <rect x="14" y="14" width="6" height="6" rx="1.2" />
-    </svg>
-  );
+  return <Grid2x2 aria-hidden="true" focusable="false" />;
 }
 
 function IconTag() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-      <path d="M4 12V5a1 1 0 0 1 1-1h7l8 8-8 8-8-8Z" />
-      <circle cx="8.2" cy="8.2" r="1.2" />
-    </svg>
-  );
+  return <Tag aria-hidden="true" focusable="false" />;
 }
 
 function IconDot() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-      <circle cx="12" cy="12" r="2.5" />
-    </svg>
-  );
+  return <CircleDot aria-hidden="true" focusable="false" />;
 }
 
 function IconMusic() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-      <path d="M9 17a2 2 0 1 1-4 0 2 2 0 0 1 4 0Zm10-2a2 2 0 1 1-4 0 2 2 0 0 1 4 0ZM9 17V7l10-2v10" />
-    </svg>
-  );
+  return <Music2 aria-hidden="true" focusable="false" />;
 }
 
 function IconSport() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-      <circle cx="12" cy="12" r="7.5" />
-      <path d="M12 4.5a8.5 8.5 0 0 1 0 15M12 4.5a8.5 8.5 0 0 0 0 15M4.5 12h15" />
-    </svg>
-  );
+  return <Trophy aria-hidden="true" focusable="false" />;
 }
 
 function IconCulture() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-      <path d="M12 4.5 14 10l6 .5-4.5 3.7 1.4 5.8L12 16.8 7.1 20l1.4-5.8L4 10.5 10 10Z" />
-    </svg>
-  );
-}
-
-function IconBook() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-      <path d="M12 6.5c-1.7-1.3-3.8-2-6.5-2v13c2.7 0 4.8.7 6.5 2 1.7-1.3 3.8-2 6.5-2v-13c-2.7 0-4.8.7-6.5 2Z" />
-      <path d="M12 6.5v13M8 9h2.8M13.2 9H16M8 11.8h2.8M13.2 11.8H16" />
-    </svg>
-  );
+  return <Palette aria-hidden="true" focusable="false" />;
 }
 
 function IconEducation() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-      <path d="M3.5 9.5 12 5l8.5 4.5L12 14 3.5 9.5ZM6.5 11.2v4.8L12 19l5.5-3v-4.8" />
-    </svg>
-  );
+  return <GraduationCap aria-hidden="true" focusable="false" />;
 }
 
 function IconKids() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-      <circle cx="9" cy="9" r="2.3" />
-      <circle cx="15" cy="9" r="2.3" />
-      <path d="M5.3 17a3.7 3.7 0 0 1 7.4 0M11.3 17a3.7 3.7 0 0 1 7.4 0" />
-    </svg>
-  );
+  return <Baby aria-hidden="true" focusable="false" />;
 }
 
 function IconStore() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-      <path d="M4 9.5 5.5 5h13L20 9.5M5 9.5h14V19H5zM9 19v-5h6v5" />
-    </svg>
-  );
+  return <ShoppingBasket aria-hidden="true" focusable="false" />;
 }
 
 function EventFilters({

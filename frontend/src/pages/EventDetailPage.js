@@ -4,6 +4,7 @@
  * y muestra una ficha legible con su informacion principal.
  */
 import React, { useEffect, useState } from 'react';
+import { Baby, Building2, CalendarClock, Heart, MapPin } from 'lucide-react';
 import { Link, useParams } from 'react-router-dom';
 import { API_BASE_URL } from '../config';
 import { addFavorite, listFavoriteIds, removeFavorite } from '../utils/favoritesApi';
@@ -110,50 +111,23 @@ function formatAgeRange(event) {
 }
 
 function IconCalendarClock() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-      <rect x="3.5" y="5" width="17" height="15.5" rx="2.4" />
-      <path d="M7 3.2v3.6M17 3.2v3.6M3.5 9.2h17" />
-      <path d="M7.4 12.2h2.8M13.8 12.2h2.8M7.4 15.2h2.8M13.8 15.2h2.8" />
-    </svg>
-  );
+  return <CalendarClock aria-hidden="true" focusable="false" />;
 }
 
 function IconLocation() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-      <path d="M12 21s6-5.8 6-11a6 6 0 1 0-12 0c0 5.2 6 11 6 11Z" />
-      <circle cx="12" cy="10" r="2.3" />
-    </svg>
-  );
+  return <MapPin aria-hidden="true" focusable="false" />;
 }
 
 function IconAudience() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-      <circle cx="9" cy="9" r="2.4" />
-      <circle cx="15.3" cy="9.8" r="2" />
-      <path d="M5.3 17.5a3.7 3.7 0 0 1 7.4 0M12 17.5a3.5 3.5 0 0 1 6 0" />
-    </svg>
-  );
+  return <Baby aria-hidden="true" focusable="false" />;
 }
 
 function IconOrganizer() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-      <circle cx="12" cy="8.2" r="2.8" />
-      <path d="M6.3 18a5.7 5.7 0 0 1 11.4 0" />
-      <path d="M18.5 9.3h2.8M19.9 7.9v2.8" />
-    </svg>
-  );
+  return <Building2 aria-hidden="true" focusable="false" />;
 }
 
 function IconHeart() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-      <path d="M12 20.3s-6.7-4.3-8.7-8a5 5 0 0 1 8.7-4.9 5 5 0 0 1 8.7 4.9c-2 3.7-8.7 8-8.7 8Z" />
-    </svg>
-  );
+  return <Heart aria-hidden="true" focusable="false" />;
 }
 
 function buildMapLocationUrl(event) {

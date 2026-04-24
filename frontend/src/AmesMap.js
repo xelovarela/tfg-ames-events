@@ -4,6 +4,7 @@
  * los agrupa por ubicacion y crea marcadores con informacion resumida.
  */
 import React, { useEffect, useState } from 'react';
+import { Baby, Building2, CalendarDays, Tags } from 'lucide-react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
@@ -38,42 +39,19 @@ const createLocationIcon = (locationGroup) => {
 };
 
 function IconCalendar() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-      <rect x="3.5" y="5.5" width="17" height="15" rx="2.5" />
-      <path d="M7 3.5v4M17 3.5v4M3.5 9.5h17" />
-    </svg>
-  );
+  return <CalendarDays aria-hidden="true" focusable="false" />;
 }
 
 function IconAudience() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-      <circle cx="9" cy="9" r="2.4" />
-      <circle cx="15.3" cy="9.8" r="2" />
-      <path d="M5.3 17.5a3.7 3.7 0 0 1 7.4 0M12 17.5a3.5 3.5 0 0 1 6 0" />
-    </svg>
-  );
+  return <Tags aria-hidden="true" focusable="false" />;
 }
 
 function IconOrganizer() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-      <path d="M4.5 20.5h15" />
-      <path d="M6.5 20.5v-8h3v8M10.5 20.5v-8h3v8M14.5 20.5v-8h3v8" />
-      <path d="M4.5 12.5h15L12 7.5l-7.5 5Z" />
-    </svg>
-  );
+  return <Building2 aria-hidden="true" focusable="false" />;
 }
 
 function IconAge() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-      <circle cx="12" cy="8.3" r="2.6" />
-      <path d="M7.2 18.8a4.8 4.8 0 0 1 9.6 0" />
-      <path d="M5.3 15.6h13.4" />
-    </svg>
-  );
+  return <Baby aria-hidden="true" focusable="false" />;
 }
 
 // El componente admite modo controlado y no controlado para reutilizarlo en distintas paginas.

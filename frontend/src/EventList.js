@@ -4,6 +4,7 @@
  * para editar, borrar y navegar al detalle de cada evento.
  */
 import React, { useEffect, useState } from 'react';
+import { Baby, Building2, Heart, MapPin, Users } from 'lucide-react';
 import { API_BASE_URL } from './config';
 import { Link, useNavigate } from 'react-router-dom';
 import { withAuthHeaders } from './utils/authFetch';
@@ -80,49 +81,23 @@ function buildDescriptionPreview(description) {
 }
 
 function IconLocation() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-      <path d="M12 21s6-5.8 6-11a6 6 0 1 0-12 0c0 5.2 6 11 6 11Z" />
-      <circle cx="12" cy="10" r="2.3" />
-    </svg>
-  );
+  return <MapPin aria-hidden="true" focusable="false" />;
 }
 
 function IconOrganizer() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-      <circle cx="12" cy="8.2" r="2.8" />
-      <path d="M6.3 18a5.7 5.7 0 0 1 11.4 0" />
-      <path d="M18.5 9.3h2.8M19.9 7.9v2.8" />
-    </svg>
-  );
+  return <Building2 aria-hidden="true" focusable="false" />;
 }
 
 function IconAudience() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-      <circle cx="9" cy="9" r="2.4" />
-      <circle cx="15.3" cy="9.8" r="2" />
-      <path d="M5.3 17.5a3.7 3.7 0 0 1 7.4 0M12 17.5a3.5 3.5 0 0 1 6 0" />
-    </svg>
-  );
+  return <Users aria-hidden="true" focusable="false" />;
 }
 
 function IconAge() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-      <circle cx="12" cy="12" r="8.5" />
-      <path d="M12 7.5v5l3 2" />
-    </svg>
-  );
+  return <Baby aria-hidden="true" focusable="false" />;
 }
 
 function IconHeart() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-      <path d="M12 20.3s-6.7-4.3-8.7-8a5 5 0 0 1 8.7-4.9 5 5 0 0 1 8.7 4.9c-2 3.7-8.7 8-8.7 8Z" />
-    </svg>
-  );
+  return <Heart aria-hidden="true" focusable="false" />;
 }
 
 // El componente admite modo controlado para reutilizarlo con eventos ya filtrados.

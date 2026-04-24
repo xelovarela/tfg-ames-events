@@ -153,7 +153,7 @@ INSERT INTO categories (name) VALUES
   ('Taller'),
   ('Cuentacuentos'),
   ('Deporte'),
-  ('Musica'),
+  ('Música'),
   ('Teatro'),
   ('Ciencia');
 
