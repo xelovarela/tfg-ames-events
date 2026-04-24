@@ -29,6 +29,7 @@ const DETAIL_TEXT = {
   favoriteSave: 'A\u00f1adir a favoritos',
   favoriteLoading: 'Actualizando...',
   addToCalendar: 'A\u00f1adir al calendario',
+  editEvent: 'Editar evento',
   viewOnMap: 'Ver esta ubicaci\u00f3n en el mapa',
   quickSummary: 'Resumen r\u00e1pido'
 };
@@ -220,6 +221,7 @@ function EventDetailPage({ session }) {
   const [isFavoriteLoading, setIsFavoriteLoading] = useState(false);
   const isAuthenticated = Boolean(session?.token);
   const canUseFavorites = ['user', 'admin'].includes(session?.user?.role);
+  const canManageEvents = ['admin', 'content_manager'].includes(session?.user?.role);
   const dateParts = event ? formatDateParts(event.event_date) : null;
   const dateBadge = event ? formatDateBadgeParts(event.event_date) : null;
   const googleCalendarUrl = event ? buildGoogleCalendarUrl(event) : '';
@@ -353,6 +355,12 @@ function EventDetailPage({ session }) {
               <h2>{event.title}</h2>
 
               <div className="event-detail-head-actions">
+                {canManageEvents && (
+                  <Link to={`/events/${event.id}/edit`} className="event-detail-calendar-btn">
+                    {DETAIL_TEXT.editEvent}
+                  </Link>
+                )}
+
                 <button
                   type="button"
                   className="event-detail-calendar-btn"

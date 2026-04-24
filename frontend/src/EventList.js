@@ -291,49 +291,47 @@ const EventList = ({
                     </div>
                   </dl>
 
-                  <div className="event-list-actions">
-                    <Link to={`/events/${event.id}`} className="event-list-primary-link">
-                      Ver detalle
-                    </Link>
-
-                    {showFavoriteButton && (
-                      <button
-                        type="button"
-                        className={`event-list-favorite-btn${isFavorite ? ' active' : ''}`}
-                        onClick={(clickEvent) => {
-                          clickEvent.stopPropagation();
-                          handleToggleFavorite(event.id, isFavorite);
-                        }}
-                        aria-label={isFavorite ? 'Quitar de favoritos' : 'Anadir a favoritos'}
-                        title={isFavorite ? 'Quitar de favoritos' : 'Anadir a favoritos'}
-                      >
-                        <span className="event-list-favorite-icon" aria-hidden="true"><IconHeart /></span>
-                      </button>
-                    )}
-
-                    {canManageEvents && (
-                      <>
-                        <Link
-                          to={`/events/${event.id}/edit`}
-                          className="event-list-action-btn"
-                          onClick={(clickEvent) => clickEvent.stopPropagation()}
-                        >
-                          Editar
-                        </Link>
-
+                  {(showFavoriteButton || canManageEvents) && (
+                    <div className="event-list-actions">
+                      {showFavoriteButton && (
                         <button
                           type="button"
-                          className="event-list-action-btn event-list-action-danger"
+                          className={`event-list-favorite-btn${isFavorite ? ' active' : ''}`}
                           onClick={(clickEvent) => {
                             clickEvent.stopPropagation();
-                            handleDelete(event.id);
+                            handleToggleFavorite(event.id, isFavorite);
                           }}
+                          aria-label={isFavorite ? 'Quitar de favoritos' : 'Anadir a favoritos'}
+                          title={isFavorite ? 'Quitar de favoritos' : 'Anadir a favoritos'}
                         >
-                          Borrar
+                          <span className="event-list-favorite-icon" aria-hidden="true"><IconHeart /></span>
                         </button>
-                      </>
-                    )}
-                  </div>
+                      )}
+
+                      {canManageEvents && (
+                        <>
+                          <Link
+                            to={`/events/${event.id}/edit`}
+                            className="event-list-action-btn"
+                            onClick={(clickEvent) => clickEvent.stopPropagation()}
+                          >
+                            Editar
+                          </Link>
+
+                          <button
+                            type="button"
+                            className="event-list-action-btn event-list-action-danger"
+                            onClick={(clickEvent) => {
+                              clickEvent.stopPropagation();
+                              handleDelete(event.id);
+                            }}
+                          >
+                            Borrar
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  )}
                 </div>
               </article>
             );

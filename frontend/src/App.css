@@ -669,7 +669,6 @@ h1, h2, h3, h4, h5, h6 {
   min-height: 40px;
 }
 
-.event-list-primary-link,
 .event-list-action-btn {
   border: 1px solid #e5d4c6;
   border-radius: 999px;
@@ -681,16 +680,6 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: 900;
   text-decoration: none;
   cursor: pointer;
-}
-
-.event-list-primary-link {
-  border-color: var(--color-brand);
-  background: var(--color-brand);
-  color: #fff;
-}
-
-.event-list-primary-link:hover {
-  background: var(--color-brand-dark);
 }
 
 .event-list-action-btn:hover {
