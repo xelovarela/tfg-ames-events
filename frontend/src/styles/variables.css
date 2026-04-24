@@ -20,10 +20,8 @@
   --color-brown: var(--earth);
   --color-brand: var(--primary);
   --color-brand-dark: var(--primary-strong);
-  --color-gold: var(--accent);
   --color-cream: var(--surface-soft);
   --color-paper: var(--surface);
-  --color-line: var(--border-subtle);
 
   --shadow-soft: 0 14px 34px rgba(73, 44, 25, 0.12);
   --shadow-soft-sm: 0 8px 18px rgba(73, 44, 25, 0.1);

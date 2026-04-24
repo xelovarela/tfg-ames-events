@@ -4,7 +4,7 @@
  * y muestra una ficha legible con su informacion principal.
  */
 import React, { useEffect, useState } from 'react';
-import { Baby, Building2, CalendarClock, Heart, MapPin } from 'lucide-react';
+import { Baby, Building2, CalendarClock, CalendarPlus, Heart, MapPin } from 'lucide-react';
 import { Link, useParams } from 'react-router-dom';
 import { API_BASE_URL } from '../config';
 import { addFavorite, listFavoriteIds, removeFavorite } from '../utils/favoritesApi';
@@ -28,6 +28,7 @@ const DETAIL_TEXT = {
   favoriteSaved: 'A\u00f1adido a favoritos',
   favoriteSave: 'A\u00f1adir a favoritos',
   favoriteLoading: 'Actualizando...',
+  addToCalendar: 'A\u00f1adir al calendario',
   viewOnMap: 'Ver esta ubicaci\u00f3n en el mapa',
   quickSummary: 'Resumen r\u00e1pido'
 };
@@ -130,6 +131,70 @@ function IconHeart() {
   return <Heart aria-hidden="true" focusable="false" />;
 }
 
+function IconCalendarPlus() {
+  return <CalendarPlus aria-hidden="true" focusable="false" />;
+}
+
+function formatCalendarDateLocal(value) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) {
+    return '';
+  }
+
+  const year = String(date.getFullYear());
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  const seconds = String(date.getSeconds()).padStart(2, '0');
+  return `${year}${month}${day}T${hours}${minutes}${seconds}`;
+}
+
+function buildGoogleCalendarUrl(event) {
+  if (!event?.event_date) {
+    return '';
+  }
+
+  const startDate = new Date(event.event_date);
+  if (Number.isNaN(startDate.getTime())) {
+    return '';
+  }
+
+  // Duracion por defecto para eventos sin hora de fin almacenada.
+  const endDate = new Date(startDate.getTime() + 2 * 60 * 60 * 1000);
+  const start = formatCalendarDateLocal(startDate);
+  const end = formatCalendarDateLocal(endDate);
+  if (!start || !end) {
+    return '';
+  }
+
+  const params = new URLSearchParams({
+    action: 'TEMPLATE',
+    text: event.title || DETAIL_TEXT.title,
+    dates: `${start}/${end}`
+  });
+
+  const details = [
+    event.description ? event.description.trim() : '',
+    event.organizer ? `Organiza: ${event.organizer}` : ''
+  ].filter(Boolean).join('\n\n');
+
+  if (details) {
+    params.set('details', details);
+  }
+
+  if (event.location) {
+    params.set('location', event.location);
+  }
+
+  const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  if (timeZone) {
+    params.set('ctz', timeZone);
+  }
+
+  return `https://calendar.google.com/calendar/render?${params.toString()}`;
+}
+
 function buildMapLocationUrl(event) {
   const params = new URLSearchParams();
   if (event?.location_locality) {
@@ -157,6 +222,7 @@ function EventDetailPage({ session }) {
   const canUseFavorites = ['user', 'admin'].includes(session?.user?.role);
   const dateParts = event ? formatDateParts(event.event_date) : null;
   const dateBadge = event ? formatDateBadgeParts(event.event_date) : null;
+  const googleCalendarUrl = event ? buildGoogleCalendarUrl(event) : '';
 
   // Al cambiar el id de la URL se vuelve a pedir el evento correspondiente.
   useEffect(() => {
@@ -250,6 +316,13 @@ function EventDetailPage({ session }) {
     }
   };
 
+  const handleAddToCalendar = () => {
+    if (!googleCalendarUrl) {
+      return;
+    }
+    window.open(googleCalendarUrl, '_blank', 'noopener,noreferrer');
+  };
+
   return (
     <main className="event-detail-page">
       <div className="event-detail-nav">
@@ -279,21 +352,33 @@ function EventDetailPage({ session }) {
               <p className="event-detail-kicker">{DETAIL_TEXT.title}</p>
               <h2>{event.title}</h2>
 
-              {canUseFavorites && (
+              <div className="event-detail-head-actions">
                 <button
                   type="button"
-                  className={`event-detail-favorite-btn${isFavorite ? ' active' : ''}`}
-                  onClick={handleToggleFavorite}
-                  disabled={isFavoriteLoading}
+                  className="event-detail-calendar-btn"
+                  onClick={handleAddToCalendar}
+                  disabled={!googleCalendarUrl}
                 >
-                  <span className="event-detail-favorite-icon" aria-hidden="true"><IconHeart /></span>
-                  {isFavoriteLoading
-                    ? DETAIL_TEXT.favoriteLoading
-                    : isFavorite
-                      ? DETAIL_TEXT.favoriteSaved
-                      : DETAIL_TEXT.favoriteSave}
+                  <span className="event-detail-calendar-icon" aria-hidden="true"><IconCalendarPlus /></span>
+                  {DETAIL_TEXT.addToCalendar}
                 </button>
-              )}
+
+                {canUseFavorites && (
+                  <button
+                    type="button"
+                    className={`event-detail-favorite-btn${isFavorite ? ' active' : ''}`}
+                    onClick={handleToggleFavorite}
+                    disabled={isFavoriteLoading}
+                  >
+                    <span className="event-detail-favorite-icon" aria-hidden="true"><IconHeart /></span>
+                    {isFavoriteLoading
+                      ? DETAIL_TEXT.favoriteLoading
+                      : isFavorite
+                        ? DETAIL_TEXT.favoriteSaved
+                        : DETAIL_TEXT.favoriteSave}
+                  </button>
+                )}
+              </div>
 
               <div className="event-detail-tags">
                 <span className="event-detail-tag event-detail-tag-strong">{event.category || DETAIL_TEXT.categoryFallback}</span>

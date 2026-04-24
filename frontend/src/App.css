@@ -1033,6 +1033,60 @@ h1, h2, h3, h4, h5, h6 {
   align-self: start;
 }
 
+.event-detail-head-actions {
+  grid-column: 3;
+  grid-row: 3;
+  justify-self: end;
+  align-self: start;
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.event-detail-calendar-btn {
+  border: 1px solid #e5d4c6;
+  border-radius: 999px;
+  background: #fffaf6;
+  color: var(--color-brand-dark);
+  min-height: 42px;
+  padding: 0.5rem 0.85rem;
+  font: inherit;
+  font-size: 0.86rem;
+  font-weight: 900;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  cursor: pointer;
+}
+
+.event-detail-calendar-icon {
+  width: 20px;
+  height: 20px;
+  display: inline-flex;
+}
+
+.event-detail-calendar-icon svg {
+  width: 100%;
+  height: 100%;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.event-detail-calendar-btn:hover {
+  background: #fff0e5;
+  border-color: #d9a184;
+}
+
+.event-detail-calendar-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
 .event-detail-favorite-icon {
   width: 20px;
   height: 20px;
@@ -1444,6 +1498,7 @@ h1, h2, h3, h4, h5, h6 {
   .event-detail-kicker,
   .event-detail-head h2,
   .event-detail-tags,
+  .event-detail-head-actions,
   .event-detail-favorite-btn {
     grid-column: 1;
     grid-row: auto;
@@ -1482,7 +1537,9 @@ h1, h2, h3, h4, h5, h6 {
     flex-direction: column;
   }
 
+  .event-detail-head-actions,
   .event-detail-favorite-btn,
+  .event-detail-calendar-btn,
   .event-detail-map-link {
     text-align: center;
   }
