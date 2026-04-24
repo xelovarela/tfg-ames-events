@@ -799,7 +799,7 @@ body {
   grid-template-columns: minmax(280px, 0.9fr) minmax(0, 1.1fr);
   grid-template-rows: auto minmax(0, 1fr);
   gap: 1rem;
-  min-height: 520px;
+  min-height: auto;
 }
 
 .event-detail-media {
@@ -1063,7 +1063,7 @@ body {
 
 .event-detail-panels {
   display: grid;
-  grid-template-rows: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-rows: auto auto;
   gap: 0.9rem;
   min-height: 0;
 }
