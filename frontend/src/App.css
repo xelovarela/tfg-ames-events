@@ -14,11 +14,23 @@ html, body, #root {
   box-sizing: border-box;
 }
 
+.lucide {
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
 /* Estilo general de tipografia y fondo de toda la aplicacion. */
 body {
   font-family: var(--font-family-base);
-  background: linear-gradient(180deg, #f7f4ef 0%, #efe7da 100%);
+  background: linear-gradient(180deg, var(--background) 0%, #e9dfd1 100%);
   color: var(--color-ink);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-family-display);
+  letter-spacing: 0.005em;
+  line-height: 1.15;
 }
 
 /* Estructura principal del layout que apila cabecera, contenido y pie. */
@@ -34,7 +46,7 @@ body {
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 50;
+  z-index: 1300;
   width: min(290px, 86vw);
   height: 100vh;
   transform: translateX(-100%);
@@ -57,7 +69,7 @@ body {
 .app-menu-backdrop {
   position: fixed;
   inset: 0;
-  z-index: 40;
+  z-index: 1200;
   border: 0;
   padding: 0;
   background: rgba(20, 14, 11, 0.35);
@@ -231,7 +243,7 @@ body {
 
 .leaflet-popup-content-wrapper {
   border-radius: 16px;
-  box-shadow: 0 18px 40px rgba(47, 34, 26, 0.2);
+  box-shadow: var(--shadow-soft-lg);
 }
 
 .leaflet-popup-close-button {
@@ -244,7 +256,7 @@ body {
   line-height: 28px !important;
   right: 0.35rem !important;
   top: 0.35rem !important;
-  box-shadow: 0 4px 10px rgba(73, 44, 25, 0.16);
+  box-shadow: var(--shadow-soft-sm);
 }
 
 .leaflet-popup-close-button:hover {
@@ -357,7 +369,7 @@ body {
   height: 14px;
   stroke: currentColor;
   fill: none;
-  stroke-width: 1.8;
+  stroke-width: 2;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
@@ -564,15 +576,15 @@ body {
   min-height: 26px;
   padding: 0.22rem 0.55rem;
   border-radius: 999px;
-  background: var(--color-brand);
-  color: #fff;
+  background: var(--chip-solid-bg);
+  color: var(--chip-solid-fg);
   font-size: 0.76rem;
   font-weight: 900;
 }
 
 .event-list-chip-soft {
-  background: #ffe8b7;
-  color: #6c4100;
+  background: var(--chip-soft-bg);
+  color: var(--chip-soft-fg);
 }
 
 .event-list-card h4 {
@@ -854,7 +866,7 @@ body {
   height: 18px;
   stroke: currentColor;
   fill: none;
-  stroke-width: 1.8;
+  stroke-width: 2;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
@@ -974,17 +986,17 @@ body {
   min-height: 30px;
   padding: 0.3rem 0.7rem;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.74);
-  border: 1px solid #ead3c7;
-  color: #5c2a19;
+  background: var(--tag-bg);
+  border: 1px solid var(--tag-border);
+  color: var(--tag-text);
   font-size: 0.82rem;
   font-weight: 800;
 }
 
 .event-detail-tag-strong {
-  background: #b83114;
-  border-color: #b83114;
-  color: #fff;
+  background: var(--chip-solid-bg);
+  border-color: var(--chip-solid-bg);
+  color: var(--chip-solid-fg);
 }
 
 .event-detail-map-link {

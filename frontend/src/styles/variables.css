@@ -1,47 +1,78 @@
 :root {
   --font-family-base: 'Trebuchet MS', 'Segoe UI', sans-serif;
+  --font-family-display: 'DM Serif Display', 'Iowan Old Style', Georgia, serif;
 
-  --color-ink: #1f1b16;
-  --color-brown: #4a3124;
-  --color-brand: #b83114;
-  --color-brand-dark: #8f2410;
-  --color-gold: #f4c430;
-  --color-cream: #fffaf6;
-  --color-paper: #fff;
-  --color-line: #e6dfd3;
+  /* Semantic palette (phase 1) */
+  --background: #f3eee6;
+  --surface: #fffdf9;
+  --surface-soft: #fff8f0;
+  --text-primary: #1f1b16;
+  --text-secondary: #6f5a4d;
+  --border-subtle: #e7ddcf;
+
+  --primary: #b43a22;
+  --primary-strong: #902715;
+  --accent: #e7bc56;
+  --earth: #50382b;
+
+  /* Backward-compatible aliases */
+  --color-ink: var(--text-primary);
+  --color-brown: var(--earth);
+  --color-brand: var(--primary);
+  --color-brand-dark: var(--primary-strong);
+  --color-gold: var(--accent);
+  --color-cream: var(--surface-soft);
+  --color-paper: var(--surface);
+  --color-line: var(--border-subtle);
 
   --shadow-soft: 0 14px 34px rgba(73, 44, 25, 0.12);
+  --shadow-soft-sm: 0 8px 18px rgba(73, 44, 25, 0.1);
+  --shadow-soft-lg: 0 18px 40px rgba(47, 34, 26, 0.2);
   --shadow-topbar: 0 8px 20px rgba(47, 34, 26, 0.05);
   --shadow-brand-mark: 0 10px 22px rgba(184, 49, 20, 0.24);
   --shadow-avatar: 0 6px 14px rgba(184, 74, 34, 0.18);
   --shadow-user-menu: 0 14px 30px rgba(47, 34, 26, 0.16);
 
-  --topbar-bg: #fff;
-  --topbar-border: #e6dfd3;
+  --topbar-bg: rgba(255, 253, 249, 0.88);
+  --topbar-border: var(--border-subtle);
+  --topbar-blur: 8px;
+  --topbar-saturate: 120%;
 
-  --brand-mark-bg: #fff8e7;
+  --brand-mark-bg: #fff6de;
   --brand-mark-border: rgba(184, 49, 20, 0.14);
-  --brand-title: #5e2412;
-  --brand-subtitle: #7a665a;
+  --brand-title: #5a2617;
+  --brand-subtitle: #7a655a;
 
-  --search-border: #d7cdc2;
-  --search-text: #2c221b;
-  --search-focus-border: #b84a22;
-  --search-focus-ring: rgba(184, 74, 34, 0.16);
+  --search-border: #d9ccbc;
+  --search-text: #32271f;
+  --search-focus-border: var(--primary);
+  --search-focus-ring: rgba(180, 58, 34, 0.17);
 
-  --topbar-link: #4a3124;
-  --topbar-link-hover: #8f2410;
+  --topbar-link: var(--earth);
+  --topbar-link-hover: var(--primary-strong);
 
-  --chip-border: #e7d9cb;
-  --chip-hover-bg: #fff3ea;
-  --chip-hover-border: #cf9e84;
+  --chip-border: #e8d8c8;
+  --chip-hover-bg: #fff2e8;
+  --chip-hover-border: #d2a187;
+  --chip-text: #2f241e;
 
-  --avatar-bg: #b84a22;
-  --avatar-bg-hover: #9f3819;
+  --chip-solid-bg: var(--primary);
+  --chip-solid-fg: #ffffff;
+  --chip-soft-bg: #f3dfb2;
+  --chip-soft-fg: #6b4510;
+  --chip-active-bg: #b8351b;
+  --chip-active-border: #b8351b;
+  --chip-active-fg: #ffffff;
+  --tag-bg: rgba(255, 253, 249, 0.78);
+  --tag-border: #e9d5c7;
+  --tag-text: #5c2d1e;
+
+  --avatar-bg: var(--primary);
+  --avatar-bg-hover: var(--primary-strong);
   --avatar-border: #cf9e84;
-  --avatar-text: #fff;
+  --avatar-text: var(--surface);
 
   --user-menu-border: #eadfd5;
   --user-menu-divider: #efe4da;
-  --user-menu-secondary-text: #6f5a4d;
+  --user-menu-secondary-text: var(--text-secondary);
 }
