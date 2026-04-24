@@ -15,7 +15,8 @@ function ProtectedRoute({ session, requireAdmin = false, allowedRoles = null, ch
     return <Navigate to="/login" replace />;
   }
 
-  if (Array.isArray(allowedRoles) && allowedRoles.length > 0 && !allowedRoles.includes(userRole)) {
+  // El rol admin tiene acceso transversal a rutas con allowedRoles.
+  if (!isAdmin && Array.isArray(allowedRoles) && allowedRoles.length > 0 && !allowedRoles.includes(userRole)) {
     return (
       <main>
         <h2>Acceso restringido</h2>

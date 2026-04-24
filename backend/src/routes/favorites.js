@@ -4,7 +4,7 @@ const { requireAuth, requireAnyRole } = require('../middleware/authMiddleware');
 
 const router = express.Router();
 
-router.use(requireAuth, requireAnyRole(['user']));
+router.use(requireAuth, requireAnyRole(['user', 'admin']));
 
 router.get('/', favoritesController.getMyFavorites);
 router.get('/ids', favoritesController.getMyFavoriteIds);
