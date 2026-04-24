@@ -24,8 +24,8 @@ const DETAIL_TEXT = {
   locationFallback: 'Ubicaci\u00f3n no especificada',
   organizerFallback: 'Organizador no especificado',
   audienceFallback: 'Audiencia general',
-  favoriteSaved: 'Guardado en favoritos',
-  favoriteSave: 'Guardar en favoritos',
+  favoriteSaved: 'A\u00f1adido a favoritos',
+  favoriteSave: 'A\u00f1adir a favoritos',
   favoriteLoading: 'Actualizando...',
   viewOnMap: 'Ver esta ubicaci\u00f3n en el mapa',
   quickSummary: 'Resumen r\u00e1pido'
@@ -112,10 +112,9 @@ function formatAgeRange(event) {
 function IconCalendarClock() {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-      <rect x="3.5" y="4.5" width="17" height="16" rx="2.5" />
-      <path d="M7 2.8v3.4M17 2.8v3.4M3.5 8.8h17" />
-      <circle cx="12" cy="14.2" r="3.3" />
-      <path d="M12 12.7v1.8l1.3.9" />
+      <rect x="3.5" y="5" width="17" height="15.5" rx="2.4" />
+      <path d="M7 3.2v3.6M17 3.2v3.6M3.5 9.2h17" />
+      <path d="M7.4 12.2h2.8M13.8 12.2h2.8M7.4 15.2h2.8M13.8 15.2h2.8" />
     </svg>
   );
 }
@@ -149,6 +148,14 @@ function IconOrganizer() {
   );
 }
 
+function IconHeart() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path d="M12 20.3s-6.7-4.3-8.7-8a5 5 0 0 1 8.7-4.9 5 5 0 0 1 8.7 4.9c-2 3.7-8.7 8-8.7 8Z" />
+    </svg>
+  );
+}
+
 function buildMapLocationUrl(event) {
   const params = new URLSearchParams();
   if (event?.location_locality) {
@@ -173,7 +180,7 @@ function EventDetailPage({ session }) {
   const [favoriteMessage, setFavoriteMessage] = useState('');
   const [isFavoriteLoading, setIsFavoriteLoading] = useState(false);
   const isAuthenticated = Boolean(session?.token);
-  const canUseFavorites = session?.user?.role === 'user';
+  const canUseFavorites = ['user', 'admin'].includes(session?.user?.role);
   const dateParts = event ? formatDateParts(event.event_date) : null;
   const dateBadge = event ? formatDateBadgeParts(event.event_date) : null;
 
@@ -287,45 +294,46 @@ function EventDetailPage({ session }) {
       {!loading && !error && event && (
         <section className="event-detail-card">
           <div className="event-detail-layout">
-            <div className="event-detail-media">
-              <img src={getEventImageUrl(event)} alt="" className="event-detail-image" />
-
-              <aside className="event-detail-date-overlay" aria-label={DETAIL_TEXT.when}>
+            <div className="event-detail-head">
+              <aside className="event-detail-date-inline" aria-label={DETAIL_TEXT.when}>
                 <span className="event-detail-date-icon"><IconCalendarClock /></span>
                 <strong>{dateBadge.day}</strong>
                 <span>{dateBadge.month}</span>
                 <small>{dateBadge.time}</small>
               </aside>
+
+              <p className="event-detail-kicker">{DETAIL_TEXT.title}</p>
+              <h2>{event.title}</h2>
+
+              {canUseFavorites && (
+                <button
+                  type="button"
+                  className={`event-detail-favorite-btn${isFavorite ? ' active' : ''}`}
+                  onClick={handleToggleFavorite}
+                  disabled={isFavoriteLoading}
+                >
+                  <span className="event-detail-favorite-icon" aria-hidden="true"><IconHeart /></span>
+                  {isFavoriteLoading
+                    ? DETAIL_TEXT.favoriteLoading
+                    : isFavorite
+                      ? DETAIL_TEXT.favoriteSaved
+                      : DETAIL_TEXT.favoriteSave}
+                </button>
+              )}
+
+              <div className="event-detail-tags">
+                <span className="event-detail-tag event-detail-tag-strong">{event.category || DETAIL_TEXT.categoryFallback}</span>
+                <span className="event-detail-tag">{event.audience || DETAIL_TEXT.audienceFallback}</span>
+                <span className="event-detail-tag">{formatPrice(event)}</span>
+                {event.location_locality && <span className="event-detail-tag">{event.location_locality}</span>}
+              </div>
+            </div>
+
+            <div className="event-detail-media">
+              <img src={getEventImageUrl(event)} alt="" className="event-detail-image" />
             </div>
 
             <div className="event-detail-side">
-              <div className="event-detail-head">
-                <p className="event-detail-kicker">{DETAIL_TEXT.title}</p>
-                <h2>{event.title}</h2>
-
-                <div className="event-detail-tags">
-                  <span className="event-detail-tag event-detail-tag-strong">{event.category || DETAIL_TEXT.categoryFallback}</span>
-                  <span className="event-detail-tag">{event.audience || DETAIL_TEXT.audienceFallback}</span>
-                  <span className="event-detail-tag">{formatPrice(event)}</span>
-                  {event.location_locality && <span className="event-detail-tag">{event.location_locality}</span>}
-                </div>
-
-                {canUseFavorites && (
-                  <button
-                    type="button"
-                    className={`event-detail-favorite-btn${isFavorite ? ' active' : ''}`}
-                    onClick={handleToggleFavorite}
-                    disabled={isFavoriteLoading}
-                  >
-                    {isFavoriteLoading
-                      ? DETAIL_TEXT.favoriteLoading
-                      : isFavorite
-                        ? DETAIL_TEXT.favoriteSaved
-                        : DETAIL_TEXT.favoriteSave}
-                  </button>
-                )}
-              </div>
-
               <div className="event-detail-panels">
                 <aside className="event-detail-summary" aria-label={DETAIL_TEXT.quickSummary}>
                   <h3>{DETAIL_TEXT.quickSummary}</h3>

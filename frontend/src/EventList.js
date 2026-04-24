@@ -117,6 +117,14 @@ function IconAge() {
   );
 }
 
+function IconHeart() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <path d="M12 20.3s-6.7-4.3-8.7-8a5 5 0 0 1 8.7-4.9 5 5 0 0 1 8.7 4.9c-2 3.7-8.7 8-8.7 8Z" />
+    </svg>
+  );
+}
+
 // El componente admite modo controlado para reutilizarlo con eventos ya filtrados.
 const EventList = ({
   refreshTrigger,
@@ -316,13 +324,15 @@ const EventList = ({
                     {showFavoriteButton && (
                       <button
                         type="button"
-                        className={`event-list-action-btn${isFavorite ? ' active' : ''}`}
+                        className={`event-list-favorite-btn${isFavorite ? ' active' : ''}`}
                         onClick={(clickEvent) => {
                           clickEvent.stopPropagation();
                           handleToggleFavorite(event.id, isFavorite);
                         }}
+                        aria-label={isFavorite ? 'Quitar de favoritos' : 'Anadir a favoritos'}
+                        title={isFavorite ? 'Quitar de favoritos' : 'Anadir a favoritos'}
                       >
-                        {isFavorite ? 'Favorito guardado' : 'Guardar favorito'}
+                        <span className="event-list-favorite-icon" aria-hidden="true"><IconHeart /></span>
                       </button>
                     )}
 

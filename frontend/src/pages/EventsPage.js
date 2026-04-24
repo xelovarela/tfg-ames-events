@@ -32,7 +32,7 @@ function EventsPage({ session }) {
   const [loadError, setLoadError] = useState('');
   const [favoriteIds, setFavoriteIds] = useState([]);
   const isAuthenticated = Boolean(session?.token);
-  const canUseFavorites = session?.user?.role === 'user';
+  const canUseFavorites = ['user', 'admin'].includes(session?.user?.role);
   const canManageEvents = ['admin', 'content_manager'].includes(session?.user?.role);
 
   // La URL actua como fuente de verdad compartible para el estado de filtros.
