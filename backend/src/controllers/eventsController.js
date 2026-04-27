@@ -22,7 +22,7 @@ const MAX_TITLE_LENGTH = 150;
 const MAX_DESCRIPTION_LENGTH = 2000;
 
 // Esta funcion transforma y valida el cuerpo recibido antes de crear o actualizar un evento.
-function parseEventPayload(body) {
+function parseEventPayload(body = {}) {
   const title = typeof body.title === 'string' ? body.title.trim() : '';
   const description = typeof body.description === 'string' ? body.description.trim() : '';
   const categoryId = toPositiveInt(body.category_id);

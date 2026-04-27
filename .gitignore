@@ -17,6 +17,8 @@ frontend/build/
 /backend/logs/
 /backend/uploads/events/*
 !/backend/uploads/events/.gitkeep
+/frontend/public/uploads/events/*
+!/frontend/public/uploads/events/.gitkeep
 
 # Env files
 .env

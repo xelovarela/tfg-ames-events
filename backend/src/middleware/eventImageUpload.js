@@ -2,7 +2,12 @@ const fs = require('fs');
 const path = require('path');
 const multer = require('multer');
 
-const EVENT_IMAGES_DIR = path.join(__dirname, '../../uploads/events');
+// Las imagenes subidas se guardan en la carpeta que Express sirve como /uploads.
+const DEFAULT_EVENT_IMAGES_DIR = path.resolve(__dirname, '../../uploads/events');
+const EVENT_IMAGES_DIR = process.env.EVENT_IMAGES_DIR
+  ? path.resolve(process.env.EVENT_IMAGES_DIR)
+  : DEFAULT_EVENT_IMAGES_DIR;
+const EVENT_IMAGES_PUBLIC_BASE_URL = (process.env.EVENT_IMAGES_PUBLIC_BASE_URL || '').replace(/\/$/, '');
 const MAX_IMAGE_SIZE_BYTES = 3 * 1024 * 1024;
 const ALLOWED_MIME_TYPES = new Set([
   'image/jpeg',
@@ -40,15 +45,35 @@ const eventImageUpload = multer({
 });
 
 function getUploadedEventImageUrl(file) {
-  return file ? `/uploads/events/${file.filename}` : null;
+  if (!file) {
+    return null;
+  }
+
+  const relativeUrl = `/uploads/events/${file.filename}`;
+  return EVENT_IMAGES_PUBLIC_BASE_URL
+    ? `${EVENT_IMAGES_PUBLIC_BASE_URL}${relativeUrl}`
+    : relativeUrl;
 }
 
 function deleteEventImageFile(imageUrl) {
-  if (!imageUrl || !imageUrl.startsWith('/uploads/events/')) {
+  if (!imageUrl) {
     return;
   }
 
-  const filename = path.basename(imageUrl);
+  let imagePath = imageUrl;
+  if (/^https?:\/\//i.test(imageUrl)) {
+    try {
+      imagePath = new URL(imageUrl).pathname;
+    } catch (error) {
+      return;
+    }
+  }
+
+  if (!imagePath.startsWith('/uploads/events/')) {
+    return;
+  }
+
+  const filename = path.basename(imagePath);
   const targetPath = path.join(EVENT_IMAGES_DIR, filename);
 
   if (!targetPath.startsWith(EVENT_IMAGES_DIR)) {
