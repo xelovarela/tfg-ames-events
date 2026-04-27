@@ -53,13 +53,14 @@ Dependencias de testing y tooling incluidas por Create React App:
 
 - Pagina de inicio con accesos rapidos, eventos destacados y CTA para proponer eventos.
 - Mapa interactivo con Leaflet y agrupacion de eventos por ubicacion.
+- **Capas contextuales del mapa**: Límite del Concello de Ames (GeoJSON), zonas de Bertamiráns y O Milladoiro (círculos aprox.), con etiquetas legibles.
 - Listado, detalle, alta, edicion y borrado de eventos segun permisos.
 - Subida de imagenes para eventos mediante `multipart/form-data`.
 - Registro, verificacion de email, login JWT, recuperacion de contrasena y perfil propio.
 - Control de acceso por roles: `admin`, `content_manager` y `user`.
-- Gestion de usuarios y revision de solicitudes de gestor para administradores.
-- Flujo para que usuarios registrados propongan un evento y soliciten acceso como gestores de contenido.
-- Bandeja admin de solicitudes de propuestas con filtros por estado y notas de revision.
+- Gestion de usuarios y revision de solicitudes de acceso como creador de contenido.
+- Flujo para que usuarios registrados soliciten acceso como creadores de contenido.
+- Bandeja admin de solicitudes con filtros por estado y notas de revision.
 - Favoritos para usuarios registrados.
 - Alertas por email cuando se crean eventos que coinciden con criterios guardados.
 - Recordatorios por email de eventos favoritos.
@@ -230,7 +231,7 @@ npm test -- --runInBand
 ## Rutas frontend
 
 - `/`: home.
-- `/map`: mapa de eventos.
+- `/map`: mapa de eventos con capas contextuales (límite de Ames, Bertamiráns, O Milladoiro).
 - `/events`: listado y gestion de eventos.
 - `/events/new`: crear evento, solo `admin` o `content_manager`.
 - `/events/:id`: detalle de evento.
@@ -239,7 +240,7 @@ npm test -- --runInBand
 - `/alerts`: alertas del usuario autenticado.
 - `/profile`: perfil propio.
 - `/propose-event`: solicitud de acceso como creador de contenido.
-- `/admin/users`: gestion de usuarios y solicitudes de propuestas de evento, solo `admin`.
+- `/admin/users`: gestion de usuarios y solicitudes de acceso como creador de contenido, solo `admin`.
 - `/categories`, `/locations`, `/organizers`: catalogos para `admin` o `content_manager`.
 - `/audiences`: audiencias, solo `admin`.
 - `/login`, `/register`, `/verify-email`, `/forgot-password`, `/reset-password`: autenticacion.

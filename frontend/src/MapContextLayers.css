@@ -1,0 +1,40 @@
+/**
+ * Estilos para las capas contextuales del mapa (límites y zonas).
+ * Los estilos son suaves para no interferir con los marcadores de eventos.
+ */
+
+/* Tooltips de las zonas geográficas */
+.map-zone-tooltip {
+  background-color: rgba(255, 255, 255, 0.95);
+  border: 1.5px solid #95a5a6;
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #2c3e50;
+  box-shadow: 0 2px 8px rgba(44, 62, 80, 0.15);
+  white-space: nowrap;
+  pointer-events: none;
+  max-width: none;
+}
+
+.map-zone-tooltip strong {
+  display: block;
+  color: #2c3e50;
+  letter-spacing: 0.3px;
+}
+
+/* Asegurar que los tooltips estén encima de las zonas pero debajo de los marcadores */
+.map-zone-tooltip {
+  z-index: 400 !important;
+}
+
+/* Los marcadores de eventos tienen z-index más alto para quedar encima */
+/* Ver AmesMap.js y CSS del mapa para z-index de marcadores */
+
+@media (max-width: 640px) {
+  .map-zone-tooltip {
+    font-size: 12px;
+    padding: 5px 8px;
+  }
+}

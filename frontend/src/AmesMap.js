@@ -2,6 +2,7 @@
  * Este archivo implementa el componente del mapa interactivo con Leaflet.
  * Puede cargar los eventos por si mismo o recibirlos ya filtrados desde fuera,
  * los agrupa por ubicacion y crea marcadores con informacion resumida.
+ * Incluye capas contextuales de zonas geográficas (Bertamiráns, O Milladoiro, límite de Ames).
  */
 import React, { useEffect, useState } from 'react';
 import { Baby, Building2, CalendarDays, Tags } from 'lucide-react';
@@ -10,6 +11,7 @@ import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import { useNavigate } from 'react-router-dom';
 import { API_BASE_URL } from './config';
+import MapContextLayers from './MapContextLayers';
 
 const categoryMarkerClass = (category = '') => {
   const normalized = category
@@ -55,7 +57,8 @@ function IconAge() {
 }
 
 // El componente admite modo controlado y no controlado para reutilizarlo en distintas paginas.
-const AmesMap = ({ refreshTrigger, events: externalEvents }) => {
+// También admite props opcionales para controlar las capas contextuales.
+const AmesMap = ({ refreshTrigger, events: externalEvents, showContextLayers = true }) => {
   const amesCenter = [42.8595, -8.65];
   const [groupedLocations, setGroupedLocations] = useState([]);
   const navigate = useNavigate();
@@ -187,6 +190,9 @@ const AmesMap = ({ refreshTrigger, events: externalEvents }) => {
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           />
+
+          {/* Capas contextuales: límite de Ames, Bertamiráns, O Milladoiro */}
+          {showContextLayers && <MapContextLayers visible showBoundary showZones />}
 
           {groupedLocations.map((locationGroup) => (
             <Marker
