@@ -58,7 +58,8 @@ Dependencias de testing y tooling incluidas por Create React App:
 - Registro, verificacion de email, login JWT, recuperacion de contrasena y perfil propio.
 - Control de acceso por roles: `admin`, `content_manager` y `user`.
 - Gestion de usuarios y revision de solicitudes de gestor para administradores.
-- Flujo para que usuarios registrados soliciten acceso como gestores de contenido.
+- Flujo para que usuarios registrados propongan un evento y soliciten acceso como gestores de contenido.
+- Bandeja admin de solicitudes de propuestas con filtros por estado y notas de revision.
 - Favoritos para usuarios registrados.
 - Alertas por email cuando se crean eventos que coinciden con criterios guardados.
 - Recordatorios por email de eventos favoritos.
@@ -155,7 +156,7 @@ mysql -u usuario -p nombre_base_hosting < database/schema.sql
 mysql -u usuario -p nombre_base_hosting < database/seed.sql
 ```
 
-La tabla `content_manager_requests` tambien se crea automaticamente desde el backend la primera vez que se usa el flujo de solicitudes.
+La tabla `content_manager_requests` forma parte de `schema.sql`. El backend tambien ejecuta una comprobacion defensiva y la crea automaticamente si faltase.
 
 ## Ejecucion local
 
@@ -237,8 +238,8 @@ npm test -- --runInBand
 - `/favorites`: favoritos, solo `user` o `admin`.
 - `/alerts`: alertas del usuario autenticado.
 - `/profile`: perfil propio.
-- `/propose-event`: solicitud de acceso como gestor.
-- `/admin/users`: gestion de usuarios y solicitudes de gestor, solo `admin`.
+- `/propose-event`: solicitud de acceso como creador de contenido.
+- `/admin/users`: gestion de usuarios y solicitudes de propuestas de evento, solo `admin`.
 - `/categories`, `/locations`, `/organizers`: catalogos para `admin` o `content_manager`.
 - `/audiences`: audiencias, solo `admin`.
 - `/login`, `/register`, `/verify-email`, `/forgot-password`, `/reset-password`: autenticacion.
@@ -326,36 +327,65 @@ Defensas implementadas:
 - No se asignan roles inexistentes.
 - No se devuelven `password_hash`, tokens de verificacion ni fechas de expiracion de token.
 
-### Content manager requests
+### Content manager requests (Solicitudes de acceso como creador de contenido)
 
-Endpoints protegidos con JWT.
+Endpoints protegidos con JWT para solicitar y revisar permisos de creación de contenido.
 
-- `GET /content-manager-requests/me`
-- `POST /content-manager-requests`
-- `GET /content-manager-requests?status=pending` - `admin`
-- `PATCH /content-manager-requests/:id/review` - `admin`
+**Endpoints:**
 
-Ejemplo de solicitud:
+- `POST /content-manager-requests` - Crear solicitud (solo usuarios con rol `user`)
+- `GET /content-manager-requests/me` - Ver solicitudes del usuario autenticado
+- `GET /content-manager-requests?status=pending` - Listar solicitudes (solo `admin`, con filtros por estado)
+- `PATCH /content-manager-requests/:id/review` - Revisar y aprobar/rechazar solicitud (solo `admin`)
+
+**Ejemplo de solicitud (crear):**
 
 ```json
 {
   "phone": "+34 600 000 000",
   "organization_name": "Asociacion vecinal",
-  "proposal_title": "Taller familiar",
-  "proposal_description": "Actividad propuesta para familias del municipio."
+  "proposal_title": "Asunto de mi solicitud",
+  "proposal_description": "Por qué quiero publicar eventos y qué tipo de actividades."
 }
 ```
 
-Ejemplo de revision:
+**Ejemplo de revisión (aprobar o rechazar):**
 
 ```json
 {
   "status": "approved",
-  "admin_notes": "Solicitud validada."
+  "admin_notes": "Solicitud validada. Bienvenido como creador de contenido."
 }
 ```
 
-Si se aprueba, el usuario pasa a rol `content_manager`.
+**Flujo:**
+
+1. Un usuario normal (`user`) crea una solicitud de acceso como creador de contenido.
+2. La solicitud queda en estado `pending`.
+3. Un administrador (`admin`) revisa la solicitud en la sección "Solicitudes de acceso como creador de contenido".
+4. Si la aprueba:
+   - La solicitud cambia a estado `approved`.
+   - El usuario cambia automáticamente a rol `content_manager`.
+   - El usuario ya puede crear y editar eventos desde `/events/new`.
+5. Si la rechaza:
+   - La solicitud cambia a estado `rejected`.
+   - El usuario mantiene su rol `user`.
+   - El usuario puede ver las notas de rechazo.
+
+**Validaciones implementadas:**
+
+- Un usuario no puede crear dos solicitudes pendientes.
+- Un `content_manager` o `admin` no pueden crear solicitudes.
+- Una solicitud solo puede revisarse si está en estado `pending`.
+- Al aprobar, se registra quién revisó y cuándo.
+- La aprobación y el cambio de rol ocurren en transacción.
+
+La pantalla admin muestra una bandeja de solicitudes con filtros `Pendientes`, `Aprobadas`, `Rechazadas` y `Todas`. 
+En solicitudes pendientes, los administradores pueden:
+- Ver datos del solicitante.
+- Leer la motivación y datos de contacto.
+- Escribir notas de revisión.
+- Aprobar o rechazar con confirmación de acción.
 
 ### Favorites
 

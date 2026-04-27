@@ -106,11 +106,11 @@ function ProposeEventPage({ session }) {
   if (alreadyManager) {
     return (
       <main>
-        <h2>Proponer evento</h2>
+        <h2>Crear eventos</h2>
         <section className="proposal-card">
-          <h3>Tu cuenta ya tiene permisos de gestion</h3>
-          <p>Puedes crear un evento directamente desde el formulario de alta.</p>
-          <Link to="/events/new" className="proposal-inline-link">Crear evento</Link>
+          <h3>Tu cuenta ya tiene permisos de creación de contenido</h3>
+          <p>Puedes crear y editar eventos directamente desde la plataforma.</p>
+          <Link to="/events/new" className="proposal-inline-link">Crear evento nuevo</Link>
         </section>
       </main>
     );
@@ -118,13 +118,13 @@ function ProposeEventPage({ session }) {
 
   return (
     <main>
-      <h2>Proponer evento vecinal</h2>
+      <h2>Solicitar acceso como creador de contenido</h2>
 
       <section className="proposal-card">
-        <h3>Solicita acceso como gestor de contenido</h3>
+        <h3>Solicita permisos para crear y publicar eventos</h3>
         <p>
-          Envia una propuesta con tus datos. Administracion revisara la solicitud y,
-          si procede, activara tu cuenta como gestor para publicar eventos.
+          Comparte tu motivación y datos de contacto. El equipo de administración revisará tu solicitud y,
+          si procede, activará tu cuenta con permisos para publicar eventos.
         </p>
 
         {loadError && <p className="proposal-message proposal-message-error">{loadError}</p>}
@@ -132,17 +132,17 @@ function ProposeEventPage({ session }) {
 
         {latestRequest && (
           <article className="proposal-latest-status">
-            <h4>Estado de tu ultima solicitud</h4>
+            <h4>Estado de tu solicitud</h4>
             <p>
               <strong>{statusText(latestRequest.status)}</strong>
               {' '}({formatDateTime(latestRequest.created_at)})
             </p>
-            {latestRequest.admin_notes && <p>Notas de administracion: {latestRequest.admin_notes}</p>}
+            {latestRequest.admin_notes && <p>Notas del equipo de administración: {latestRequest.admin_notes}</p>}
           </article>
         )}
 
         <form className="proposal-form" onSubmit={handleSubmit}>
-          <label htmlFor="proposal-phone">Telefono de contacto (opcional)</label>
+          <label htmlFor="proposal-phone">Teléfono de contacto (opcional)</label>
           <input
             id="proposal-phone"
             name="phone"
@@ -152,7 +152,7 @@ function ProposeEventPage({ session }) {
             maxLength={30}
           />
 
-          <label htmlFor="proposal-organization">Asociacion o entidad (opcional)</label>
+          <label htmlFor="proposal-organization">Entidad u organización (opcional)</label>
           <input
             id="proposal-organization"
             name="organization_name"
@@ -162,7 +162,7 @@ function ProposeEventPage({ session }) {
             maxLength={150}
           />
 
-          <label htmlFor="proposal-title">Titulo de la propuesta</label>
+          <label htmlFor="proposal-title">Asunto de tu solicitud</label>
           <input
             id="proposal-title"
             name="proposal_title"
@@ -173,7 +173,7 @@ function ProposeEventPage({ session }) {
             required
           />
 
-          <label htmlFor="proposal-description">Descripcion</label>
+          <label htmlFor="proposal-description">¿Por qué quieres publicar eventos? ¿Qué tipo de actividades?</label>
           <textarea
             id="proposal-description"
             name="proposal_description"

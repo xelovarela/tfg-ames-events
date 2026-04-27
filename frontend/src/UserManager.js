@@ -34,6 +34,19 @@ function formatDate(value) {
   });
 }
 
+const REQUEST_FILTERS = [
+  { value: 'pending', label: 'Pendientes' },
+  { value: 'approved', label: 'Aprobadas' },
+  { value: 'rejected', label: 'Rechazadas' },
+  { value: '', label: 'Todas' }
+];
+
+const REQUEST_STATUS_LABELS = {
+  pending: 'Pendiente',
+  approved: 'Aprobada',
+  rejected: 'Rechazada'
+};
+
 async function readJsonOrThrow(response, fallbackMessage) {
   const data = await response.json();
   if (!response.ok) {
@@ -45,11 +58,13 @@ async function readJsonOrThrow(response, fallbackMessage) {
 function UserManager({ session }) {
   const [users, setUsers] = useState([]);
   const [managerRequests, setManagerRequests] = useState([]);
+  const [managerRequestStatus, setManagerRequestStatus] = useState('pending');
   const [roles, setRoles] = useState([]);
   const [message, setMessage] = useState('');
   const [loadError, setLoadError] = useState('');
   const [savingUserId, setSavingUserId] = useState(null);
   const [reviewingRequestId, setReviewingRequestId] = useState(null);
+  const [requestNotes, setRequestNotes] = useState({});
   const currentUserId = Number(session?.user?.id);
 
   const loadUsers = async () => {
@@ -83,18 +98,21 @@ function UserManager({ session }) {
   useEffect(() => {
     loadUsers();
     loadRoles();
-    loadManagerRequests();
   }, []);
 
   const loadManagerRequests = async () => {
     try {
-      const data = await listContentManagerRequests('pending');
+      const data = await listContentManagerRequests(managerRequestStatus);
       setManagerRequests(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error(error);
       setMessage(error.message || 'No se pudieron cargar las solicitudes de gestor.');
     }
   };
+
+  useEffect(() => {
+    loadManagerRequests();
+  }, [managerRequestStatus]);
 
   const updateUserInList = (updatedUser) => {
     setUsers((currentUsers) => currentUsers.map((user) => (
@@ -169,8 +187,16 @@ function UserManager({ session }) {
     setMessage('');
 
     try {
-      const data = await reviewContentManagerRequest(request.id, { status: nextStatus });
+      const data = await reviewContentManagerRequest(request.id, {
+        status: nextStatus,
+        admin_notes: requestNotes[request.id] || ''
+      });
       setManagerRequests((current) => current.filter((item) => Number(item.id) !== Number(request.id)));
+      setRequestNotes((current) => {
+        const nextNotes = { ...current };
+        delete nextNotes[request.id];
+        return nextNotes;
+      });
       setMessage(data?.message || 'Solicitud revisada correctamente.');
       await loadUsers();
     } catch (error) {
@@ -252,45 +278,92 @@ function UserManager({ session }) {
         </div>
       )}
 
-      <h3 className="users-title users-title-secondary">Solicitudes para gestor de contenido</h3>
+      <div className="users-title-row">
+        <h3 className="users-title users-title-secondary">Solicitudes de acceso como creador de contenido</h3>
+        <select
+          className="users-select users-request-filter"
+          value={managerRequestStatus}
+          onChange={(event) => setManagerRequestStatus(event.target.value)}
+          aria-label="Filtrar solicitudes"
+        >
+          {REQUEST_FILTERS.map((filter) => (
+            <option key={filter.value || 'all'} value={filter.value}>
+              {filter.label}
+            </option>
+          ))}
+        </select>
+      </div>
 
       {managerRequests.length === 0 ? (
-        <p>No hay solicitudes pendientes.</p>
+        <p>No hay solicitudes para el filtro seleccionado.</p>
       ) : (
         <div className="users-requests-list">
           {managerRequests.map((request) => {
             const isReviewing = Number(reviewingRequestId) === Number(request.id);
+            const isPending = request.status === 'pending';
 
             return (
               <article key={request.id} className="users-request-card">
                 <div className="users-request-head">
-                  <strong>{request.username || 'Usuario'}</strong>
-                  <span>{request.email}</span>
+                  <div>
+                    <strong>{request.username || 'Usuario'}</strong>
+                    <span>{request.email}</span>
+                  </div>
+                  <span className={`users-request-status users-request-status-${request.status || 'pending'}`}>
+                    {REQUEST_STATUS_LABELS[request.status] || request.status || 'Pendiente'}
+                  </span>
                 </div>
-                <p><strong>Propuesta:</strong> {request.proposal_title}</p>
-                <p>{request.proposal_description}</p>
-                {request.organization_name && <p><strong>Entidad:</strong> {request.organization_name}</p>}
-                {request.phone && <p><strong>Telefono:</strong> {request.phone}</p>}
-                <p><strong>Enviada:</strong> {formatDate(request.created_at)}</p>
+                <p><strong>Asunto:</strong> {request.proposal_title}</p>
+                <p><strong>Motivación:</strong> {request.proposal_description}</p>
+                {request.organization_name && <p><strong>Entidad/Organización:</strong> {request.organization_name}</p>}
+                {request.phone && <p><strong>Teléfono:</strong> {request.phone}</p>}
+                <p><strong>Solicitado:</strong> {formatDate(request.created_at)}</p>
+                {request.reviewed_by_username && (
+                  <p><strong>Revisado por:</strong> {request.reviewed_by_username} ({formatDate(request.reviewed_at)})</p>
+                )}
+                {request.admin_notes && <p><strong>Notas:</strong> {request.admin_notes}</p>}
 
-                <div className="users-request-actions">
-                  <button
-                    type="button"
-                    className="users-btn users-btn-approve"
-                    onClick={() => handleReviewRequest(request, 'approved')}
-                    disabled={isReviewing}
-                  >
-                    Aprobar
-                  </button>
-                  <button
-                    type="button"
-                    className="users-btn users-btn-secondary"
-                    onClick={() => handleReviewRequest(request, 'rejected')}
-                    disabled={isReviewing}
-                  >
-                    Rechazar
-                  </button>
-                </div>
+                {isPending && (
+                  <>
+                    <label className="users-request-note-label" htmlFor={`request-note-${request.id}`}>
+                      Notas de revisión
+                    </label>
+                    <textarea
+                      id={`request-note-${request.id}`}
+                      className="users-request-note"
+                      value={requestNotes[request.id] || ''}
+                      onChange={(event) => setRequestNotes((current) => ({
+                        ...current,
+                        [request.id]: event.target.value
+                      }))}
+                      rows={3}
+                      maxLength={500}
+                    />
+
+                    <div className="users-request-actions">
+                      <button
+                        type="button"
+                        className="users-btn users-btn-approve"
+                        onClick={() => {
+                          if (window.confirm('Al aprobar esta solicitud, el usuario obtendrá permisos para crear y editar eventos. ¿Continuar?')) {
+                            handleReviewRequest(request, 'approved');
+                          }
+                        }}
+                        disabled={isReviewing}
+                      >
+                        Aprobar
+                      </button>
+                      <button
+                        type="button"
+                        className="users-btn users-btn-secondary"
+                        onClick={() => handleReviewRequest(request, 'rejected')}
+                        disabled={isReviewing}
+                      >
+                        Rechazar
+                      </button>
+                    </div>
+                  </>
+                )}
               </article>
             );
           })}

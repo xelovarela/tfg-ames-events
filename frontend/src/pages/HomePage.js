@@ -168,20 +168,21 @@ function HomePage({ session }) {
         </div>
       </section>
 
-      <section className="home-proposal-cta" aria-label="Proponer evento">
+      <section className="home-proposal-cta" aria-label="Solicitar acceso como creador de contenido">
         <span className="home-proposal-icon" aria-hidden="true"><Megaphone /></span>
         <div>
-          <p className="home-kicker">¿Organizas algo?</p>
-          <h2>Publica tu evento vecinal en minutos</h2>
+          <p className="home-kicker">¿Quieres publicar eventos?</p>
+          <h2>Solicita acceso como creador de contenido</h2>
           <p>
-            Si eres usuario registrado, puedes solicitar acceso como gestor para publicar eventos.
+            Si eres usuario registrado, puedes solicitar permisos para crear y publicar eventos en la plataforma.
           </p>
         </div>
         <Link
           to={canCreateEventsDirectly ? '/events/new' : isAuthenticated ? '/propose-event' : '/login'}
+          state={!canCreateEventsDirectly && !isAuthenticated ? { from: { pathname: '/propose-event' } } : undefined}
           className="home-cta home-cta-primary"
         >
-          Proponer evento
+          Solicitar acceso
           <span aria-hidden="true"><ArrowRight /></span>
         </Link>
       </section>
