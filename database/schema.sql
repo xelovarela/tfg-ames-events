@@ -1,328 +1,183 @@
--- Este archivo define la estructura completa de la base de datos del proyecto.
--- Compatible con MySQL/MariaDB (incluyendo MariaDB 10.6).
--- Ejecutalo sobre la base de datos objetivo ya seleccionada.
 
--- =========================
--- Seguridad: roles y users
--- =========================
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!50503 SET NAMES utf8mb4 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+DROP TABLE IF EXISTS `alerts`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `alerts` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int unsigned NOT NULL,
+  `name` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `category_id` int DEFAULT NULL,
+  `location_id` int DEFAULT NULL,
+  `audience_id` int DEFAULT NULL,
+  `min_age` int DEFAULT NULL,
+  `max_age` int DEFAULT NULL,
+  `keyword` varchar(150) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `is_active` tinyint(1) NOT NULL DEFAULT '1',
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `fk_alerts_user` (`user_id`),
+  KEY `fk_alerts_category` (`category_id`),
+  KEY `fk_alerts_location` (`location_id`),
+  KEY `fk_alerts_audience` (`audience_id`),
+  CONSTRAINT `fk_alerts_audience` FOREIGN KEY (`audience_id`) REFERENCES `audiences` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `fk_alerts_category` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `fk_alerts_location` FOREIGN KEY (`location_id`) REFERENCES `locations` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `fk_alerts_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `audiences`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `audiences` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `age_min` int DEFAULT NULL,
+  `age_max` int DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `categories`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `categories` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `events`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `events` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `title` varchar(150) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `category_id` int NOT NULL,
+  `location_id` int NOT NULL,
+  `description` text COLLATE utf8mb4_unicode_ci,
+  `event_date` datetime DEFAULT NULL,
+  `price` decimal(5,2) DEFAULT NULL,
+  `is_free` tinyint(1) NOT NULL DEFAULT '1',
+  `min_age` int DEFAULT NULL,
+  `max_age` int DEFAULT NULL,
+  `image_url` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `audience_id` int DEFAULT NULL,
+  `organizer_id` int DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_category` (`category_id`),
+  KEY `fk_location` (`location_id`),
+  KEY `fk_audience` (`audience_id`),
+  KEY `fk_organizer` (`organizer_id`),
+  CONSTRAINT `fk_audience` FOREIGN KEY (`audience_id`) REFERENCES `audiences` (`id`),
+  CONSTRAINT `fk_category` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`),
+  CONSTRAINT `fk_location` FOREIGN KEY (`location_id`) REFERENCES `locations` (`id`),
+  CONSTRAINT `fk_organizer` FOREIGN KEY (`organizer_id`) REFERENCES `organizers` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `favorite_event_reminders`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `favorite_event_reminders` (
+  `user_id` int unsigned NOT NULL,
+  `event_id` int NOT NULL,
+  `reminder_for` date NOT NULL,
+  `sent_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`user_id`,`event_id`,`reminder_for`),
+  KEY `fk_favorite_reminders_event` (`event_id`),
+  CONSTRAINT `fk_favorite_reminders_event` FOREIGN KEY (`event_id`) REFERENCES `events` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_favorite_reminders_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `favorites`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `favorites` (
+  `user_id` int unsigned NOT NULL,
+  `event_id` int NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`user_id`,`event_id`),
+  KEY `fk_favorites_event` (`event_id`),
+  CONSTRAINT `fk_favorites_event` FOREIGN KEY (`event_id`) REFERENCES `events` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_favorites_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `locations`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `locations` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(150) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `locality` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'Otras parroquias',
+  `lat` decimal(10,7) NOT NULL,
+  `lng` decimal(10,7) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `organizers`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `organizers` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `email` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `phone` varchar(30) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `roles`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `roles` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uq_roles_name` (`name`)
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+DROP TABLE IF EXISTS `users`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `users` (
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `role_id` int unsigned NOT NULL,
+  `username` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `email` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `password_hash` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `is_active` tinyint(1) NOT NULL DEFAULT '1',
+  `email_verified` tinyint(1) NOT NULL DEFAULT '0',
+  `email_verification_token` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `verification_expires_at` datetime DEFAULT NULL,
+  `password_reset_token` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `password_reset_expires_at` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uq_users_username` (`username`),
+  UNIQUE KEY `uq_users_email` (`email`),
+  KEY `fk_users_role` (`role_id`),
+  CONSTRAINT `fk_users_role` FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`) ON DELETE RESTRICT ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
--- Tabla de roles para control de permisos.
--- Se mantiene separada de users para cumplir 3FN y facilitar evolucion futura.
-CREATE TABLE IF NOT EXISTS roles (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  name VARCHAR(50) NOT NULL UNIQUE,
-  description VARCHAR(255) NULL,
-  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Compatibilidad con BD ya existentes: si roles venia de una version antigua,
--- se anaden las columnas nuevas sin necesidad de script de migracion separado.
-SET @roles_add_description_sql = (
-  SELECT IF(
-    COUNT(*) = 0,
-    'ALTER TABLE roles ADD COLUMN description VARCHAR(255) NULL',
-    'SELECT 1'
-  )
-  FROM information_schema.COLUMNS
-  WHERE TABLE_SCHEMA = DATABASE()
-    AND TABLE_NAME = 'roles'
-    AND COLUMN_NAME = 'description'
-);
-PREPARE roles_add_description_stmt FROM @roles_add_description_sql;
-EXECUTE roles_add_description_stmt;
-DEALLOCATE PREPARE roles_add_description_stmt;
-
-SET @roles_add_created_at_sql = (
-  SELECT IF(
-    COUNT(*) = 0,
-    'ALTER TABLE roles ADD COLUMN created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP',
-    'SELECT 1'
-  )
-  FROM information_schema.COLUMNS
-  WHERE TABLE_SCHEMA = DATABASE()
-    AND TABLE_NAME = 'roles'
-    AND COLUMN_NAME = 'created_at'
-);
-PREPARE roles_add_created_at_stmt FROM @roles_add_created_at_sql;
-EXECUTE roles_add_created_at_stmt;
-DEALLOCATE PREPARE roles_add_created_at_stmt;
-
--- Tabla de usuarios registrados.
--- BOOLEAN en MariaDB/MySQL es alias de TINYINT(1), por eso se usa sin perder compatibilidad.
-CREATE TABLE IF NOT EXISTS users (
-  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  username VARCHAR(100) NOT NULL UNIQUE,
-  email VARCHAR(100) NOT NULL UNIQUE,
-  password_hash VARCHAR(255) NOT NULL,
-  role_id INT NOT NULL,
-  is_active BOOLEAN NOT NULL DEFAULT TRUE,
-  email_verified BOOLEAN NOT NULL DEFAULT FALSE,
-  email_verification_token VARCHAR(255) NULL,
-  verification_expires_at DATETIME NULL,
-  password_reset_token VARCHAR(255) NULL,
-  password_reset_expires_at DATETIME NULL,
-  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  CONSTRAINT fk_users_role
-    FOREIGN KEY (role_id) REFERENCES roles(id)
-    ON UPDATE CASCADE
-    ON DELETE RESTRICT
-);
-
--- Compatibilidad para bases ya existentes con estructura antigua de users.
-SET @users_add_is_active_sql = (
-  SELECT IF(
-    COUNT(*) = 0,
-    'ALTER TABLE users ADD COLUMN is_active TINYINT(1) NOT NULL DEFAULT 1',
-    'SELECT 1'
-  )
-  FROM information_schema.COLUMNS
-  WHERE TABLE_SCHEMA = DATABASE()
-    AND TABLE_NAME = 'users'
-    AND COLUMN_NAME = 'is_active'
-);
-PREPARE users_add_is_active_stmt FROM @users_add_is_active_sql;
-EXECUTE users_add_is_active_stmt;
-DEALLOCATE PREPARE users_add_is_active_stmt;
-
-SET @users_add_email_verified_sql = (
-  SELECT IF(
-    COUNT(*) = 0,
-    'ALTER TABLE users ADD COLUMN email_verified TINYINT(1) NOT NULL DEFAULT 0',
-    'SELECT 1'
-  )
-  FROM information_schema.COLUMNS
-  WHERE TABLE_SCHEMA = DATABASE()
-    AND TABLE_NAME = 'users'
-    AND COLUMN_NAME = 'email_verified'
-);
-PREPARE users_add_email_verified_stmt FROM @users_add_email_verified_sql;
-EXECUTE users_add_email_verified_stmt;
-DEALLOCATE PREPARE users_add_email_verified_stmt;
-
-SET @users_add_verification_token_sql = (
-  SELECT IF(
-    COUNT(*) = 0,
-    'ALTER TABLE users ADD COLUMN email_verification_token VARCHAR(255) NULL',
-    'SELECT 1'
-  )
-  FROM information_schema.COLUMNS
-  WHERE TABLE_SCHEMA = DATABASE()
-    AND TABLE_NAME = 'users'
-    AND COLUMN_NAME = 'email_verification_token'
-);
-PREPARE users_add_verification_token_stmt FROM @users_add_verification_token_sql;
-EXECUTE users_add_verification_token_stmt;
-DEALLOCATE PREPARE users_add_verification_token_stmt;
-
-SET @users_add_verification_expires_sql = (
-  SELECT IF(
-    COUNT(*) = 0,
-    'ALTER TABLE users ADD COLUMN verification_expires_at DATETIME NULL',
-    'SELECT 1'
-  )
-  FROM information_schema.COLUMNS
-  WHERE TABLE_SCHEMA = DATABASE()
-    AND TABLE_NAME = 'users'
-    AND COLUMN_NAME = 'verification_expires_at'
-);
-PREPARE users_add_verification_expires_stmt FROM @users_add_verification_expires_sql;
-EXECUTE users_add_verification_expires_stmt;
-DEALLOCATE PREPARE users_add_verification_expires_stmt;
-
-SET @users_add_password_reset_token_sql = (
-  SELECT IF(
-    COUNT(*) = 0,
-    'ALTER TABLE users ADD COLUMN password_reset_token VARCHAR(255) NULL',
-    'SELECT 1'
-  )
-  FROM information_schema.COLUMNS
-  WHERE TABLE_SCHEMA = DATABASE()
-    AND TABLE_NAME = 'users'
-    AND COLUMN_NAME = 'password_reset_token'
-);
-PREPARE users_add_password_reset_token_stmt FROM @users_add_password_reset_token_sql;
-EXECUTE users_add_password_reset_token_stmt;
-DEALLOCATE PREPARE users_add_password_reset_token_stmt;
-
-SET @users_add_password_reset_expires_sql = (
-  SELECT IF(
-    COUNT(*) = 0,
-    'ALTER TABLE users ADD COLUMN password_reset_expires_at DATETIME NULL',
-    'SELECT 1'
-  )
-  FROM information_schema.COLUMNS
-  WHERE TABLE_SCHEMA = DATABASE()
-    AND TABLE_NAME = 'users'
-    AND COLUMN_NAME = 'password_reset_expires_at'
-);
-PREPARE users_add_password_reset_expires_stmt FROM @users_add_password_reset_expires_sql;
-EXECUTE users_add_password_reset_expires_stmt;
-DEALLOCATE PREPARE users_add_password_reset_expires_stmt;
-
--- Roles iniciales del sistema.
--- ON DUPLICATE KEY evita errores si el esquema se ejecuta mas de una vez.
-INSERT INTO roles (name, description)
-VALUES
-  ('admin', 'Acceso total al sistema'),
-  ('content_manager', 'Gestion de contenidos y catalogos'),
-  ('user', 'Usuario registrado con permisos basicos')
-ON DUPLICATE KEY UPDATE
-  description = VALUES(description);
-
--- Usuario administrador inicial.
--- Password original: admin123 (almacenada con hash bcrypt).
-INSERT INTO users (
-  username,
-  email,
-  password_hash,
-  role_id,
-  is_active,
-  email_verified,
-  email_verification_token,
-  verification_expires_at,
-  password_reset_token,
-  password_reset_expires_at
-)
-SELECT
-  'admin',
-  'admin@tfg.local',
-  '$2b$10$6EBZa1q7fZUrXcGh7kfV8uMyl6ZWBNlgjzJt4QJGFwyW9ZfNJxGYq',
-  r.id,
-  TRUE,
-  TRUE,
-  NULL,
-  NULL,
-  NULL,
-  NULL
-FROM roles r
-WHERE r.name = 'admin'
-  AND NOT EXISTS (
-    SELECT 1
-    FROM users u
-    WHERE u.email = 'admin@tfg.local'
-  );
-
--- ======================
--- Catalogos de negocio
--- ======================
-
--- Tabla de categorias para clasificar cada evento por tipo.
-CREATE TABLE IF NOT EXISTS categories (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  name VARCHAR(100) NOT NULL
-);
-
--- Tabla de ubicaciones con nombre y coordenadas geograficas.
-CREATE TABLE IF NOT EXISTS locations (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  name VARCHAR(150) NOT NULL,
-  locality VARCHAR(50) NOT NULL DEFAULT 'Otras parroquias',
-  lat DECIMAL(10,7) NOT NULL,
-  lng DECIMAL(10,7) NOT NULL
-);
-
--- Tabla de audiencias para describir rangos de edad o publico objetivo.
-CREATE TABLE IF NOT EXISTS audiences (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  name VARCHAR(100) NOT NULL,
-  age_min INT NULL,
-  age_max INT NULL
-);
-
--- Tabla de organizadores con informacion basica de contacto.
-CREATE TABLE IF NOT EXISTS organizers (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  name VARCHAR(100) NOT NULL,
-  email VARCHAR(100) NULL,
-  phone VARCHAR(30) NULL
-);
-
--- Tabla principal de eventos con claves ajenas hacia los catalogos auxiliares.
-CREATE TABLE IF NOT EXISTS events (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  title VARCHAR(150) NOT NULL,
-  description TEXT NULL,
-  image_url VARCHAR(255) NULL,
-  event_date DATETIME NULL,
-  is_free TINYINT(1) NOT NULL DEFAULT 1,
-  price DECIMAL(10,2) NULL,
-  min_age INT NULL,
-  max_age INT NULL,
-  audience_id INT NULL,
-  organizer_id INT NULL,
-  category_id INT NOT NULL,
-  location_id INT NOT NULL,
-  -- Estas claves foraneas protegen la integridad entre eventos y sus catalogos.
-  CONSTRAINT fk_audience FOREIGN KEY (audience_id) REFERENCES audiences(id),
-  CONSTRAINT fk_organizer FOREIGN KEY (organizer_id) REFERENCES organizers(id),
-  CONSTRAINT fk_category FOREIGN KEY (category_id) REFERENCES categories(id),
-  CONSTRAINT fk_location FOREIGN KEY (location_id) REFERENCES locations(id)
-);
-
--- Tabla de favoritos: relacion N:M entre usuarios y eventos.
--- user_id sigue el tipo UNSIGNED de users.id; event_id sigue el tipo de events.id.
-CREATE TABLE IF NOT EXISTS favorites (
-  user_id INT UNSIGNED NOT NULL,
-  event_id INT NOT NULL,
-  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (user_id, event_id),
-  CONSTRAINT fk_favorites_user
-    FOREIGN KEY (user_id) REFERENCES users(id)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE,
-  CONSTRAINT fk_favorites_event
-    FOREIGN KEY (event_id) REFERENCES events(id)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE
-);
-
--- Controla los recordatorios enviados para favoritos y evita duplicados diarios.
-CREATE TABLE IF NOT EXISTS favorite_event_reminders (
-  user_id INT UNSIGNED NOT NULL,
-  event_id INT NOT NULL,
-  reminder_for DATE NOT NULL,
-  sent_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (user_id, event_id, reminder_for),
-  CONSTRAINT fk_favorite_reminders_user
-    FOREIGN KEY (user_id) REFERENCES users(id)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE,
-  CONSTRAINT fk_favorite_reminders_event
-    FOREIGN KEY (event_id) REFERENCES events(id)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE
-);
-
--- Tabla de alertas guardadas por usuarios registrados.
--- Cada alerta contiene filtros opcionales que se evaluan al crear eventos nuevos.
-CREATE TABLE IF NOT EXISTS alerts (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  user_id INT UNSIGNED NOT NULL,
-  name VARCHAR(100) NOT NULL,
-  category_id INT NULL,
-  location_id INT NULL,
-  audience_id INT NULL,
-  min_age INT NULL,
-  max_age INT NULL,
-  keyword VARCHAR(150) NULL,
-  is_active TINYINT(1) NOT NULL DEFAULT 1,
-  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  CONSTRAINT fk_alerts_user
-    FOREIGN KEY (user_id) REFERENCES users(id)
-    ON DELETE CASCADE
-    ON UPDATE CASCADE,
-  CONSTRAINT fk_alerts_category
-    FOREIGN KEY (category_id) REFERENCES categories(id)
-    ON DELETE SET NULL
-    ON UPDATE CASCADE,
-  CONSTRAINT fk_alerts_location
-    FOREIGN KEY (location_id) REFERENCES locations(id)
-    ON DELETE SET NULL
-    ON UPDATE CASCADE,
-  CONSTRAINT fk_alerts_audience
-    FOREIGN KEY (audience_id) REFERENCES audiences(id)
-    ON DELETE SET NULL
-    ON UPDATE CASCADE
-);
