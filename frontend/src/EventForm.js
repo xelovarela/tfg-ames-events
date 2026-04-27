@@ -7,6 +7,7 @@ import React, { useEffect, useState } from 'react';
 import { API_BASE_URL } from './config';
 import { withAuthHeaders } from './utils/authFetch';
 import { getEventImageUrl } from './utils/eventImages';
+import { readJsonResponse } from './utils/http';
 import './EventForm.css';
 
 // Estado inicial del formulario para altas o reseteos.
@@ -67,10 +68,10 @@ const EventForm = ({
   // Al montar o refrescar catalogos se cargan las opciones de selects auxiliares.
   useEffect(() => {
     Promise.all([
-      fetch(`${API_BASE_URL}/categories`).then(res => res.json()),
-      fetch(`${API_BASE_URL}/locations`).then(res => res.json()),
-      fetch(`${API_BASE_URL}/audiences`).then(res => res.json()),
-      fetch(`${API_BASE_URL}/organizers`).then(res => res.json())
+      fetch(`${API_BASE_URL}/categories`).then(res => readJsonResponse(res, 'No se pudieron cargar las categorias.')),
+      fetch(`${API_BASE_URL}/locations`).then(res => readJsonResponse(res, 'No se pudieron cargar las ubicaciones.')),
+      fetch(`${API_BASE_URL}/audiences`).then(res => readJsonResponse(res, 'No se pudieron cargar las audiencias.')),
+      fetch(`${API_BASE_URL}/organizers`).then(res => readJsonResponse(res, 'No se pudieron cargar los organizadores.'))
     ])
       .then(([categoriesData, locationsData, audiencesData, organizersData]) => {
         setCategories(categoriesData);
@@ -192,11 +193,7 @@ const EventForm = ({
         body: payload
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Error saving event');
-      }
+      await readJsonResponse(response, 'Error al guardar el evento.');
 
       setMessage(eventToEdit ? 'Evento actualizado correctamente' : 'Evento creado correctamente');
       resetForm();
