@@ -1,48 +1,103 @@
 # Ames Events - TFG
 
-Aplicacion web para gestionar y visualizar eventos infantiles geolocalizados en Ames.
+Aplicacion web para consultar, proponer y gestionar eventos infantiles y familiares geolocalizados en Ames.
 
 ## Stack
-- Frontend: React + Leaflet
-- Backend: Node.js + Express (REST API)
-- Base de datos: MySQL
 
-## Estado Actual
+- Frontend: React, React Router, Leaflet, Lucide React
+- Backend: Node.js, Express, JWT, Multer, Nodemailer
+- Base de datos: MySQL/MariaDB con `mysql2`
+
+## Dependencias instaladas
+
+### Backend Node.js
+
+Dependencias de ejecucion definidas en `backend/package.json`:
+
+- `bcrypt`: hash y verificacion de contrasenas.
+- `cors`: configuracion CORS para permitir peticiones desde el frontend.
+- `dotenv`: carga de variables desde `backend/.env`.
+- `express`: servidor HTTP y API REST.
+- `jsonwebtoken`: emision y validacion de tokens JWT.
+- `multer`: recepcion de imagenes subidas en formularios `multipart/form-data`.
+- `mysql2`: conexion a MySQL/MariaDB con promesas.
+- `nodemailer`: envio de emails de verificacion, alertas y recordatorios.
+
+Scripts disponibles:
+
+- `npm start`: inicia el backend con `node server.js`.
+- `npm run send:favorite-reminders`: ejecuta manualmente el envio de recordatorios de favoritos.
+- `npm test`: ejecuta tests unitarios con el runner nativo de Node.js.
+
+### Frontend React
+
+Dependencias de ejecucion definidas en `frontend/package.json`:
+
+- `react`: libreria principal de UI.
+- `react-dom`: renderizado de React en navegador.
+- `react-router-dom`: rutas de la SPA.
+- `leaflet`: motor del mapa.
+- `react-leaflet`: integracion de Leaflet con React.
+- `lucide-react`: iconos de la interfaz.
+- `web-vitals`: metricas de rendimiento web.
+
+Dependencias de testing y tooling incluidas por Create React App:
+
+- `react-scripts`: scripts de desarrollo, build y test.
+- `@testing-library/dom`: utilidades de testing sobre DOM.
+- `@testing-library/jest-dom`: matchers de Jest para DOM.
+- `@testing-library/react`: utilidades para testear componentes React.
+- `@testing-library/user-event`: simulacion de interacciones de usuario en tests.
+
+## Estado actual
+
+- Pagina de inicio con accesos rapidos, eventos destacados y CTA para proponer eventos.
 - Mapa interactivo con Leaflet y agrupacion de eventos por ubicacion.
-- Registro, verificacion de email y login con JWT.
+- Listado, detalle, alta, edicion y borrado de eventos segun permisos.
+- Subida de imagenes para eventos mediante `multipart/form-data`.
+- Registro, verificacion de email, login JWT, recuperacion de contrasena y perfil propio.
 - Control de acceso por roles: `admin`, `content_manager` y `user`.
-- Gestion de usuarios para administradores.
-- Favoritos de eventos para usuarios registrados.
-- Alertas de eventos por email para usuarios autenticados.
-- CRUD de eventos.
-- CRUD completo de categorias.
-- CRUD completo de ubicaciones.
-- CRUD completo de audiencias.
-- CRUD completo de organizadores.
-- Validaciones backend y frontend para datos clave.
-- Modelo `events` actualizado a v5 con:
-  - `event_date`
-  - `is_free`
-  - `price`
-  - `min_age`
-  - `max_age`
-  - `audience_id`
-  - `organizer_id`
-  - `description`
+- Gestion de usuarios y revision de solicitudes de gestor para administradores.
+- Flujo para que usuarios registrados soliciten acceso como gestores de contenido.
+- Favoritos para usuarios registrados.
+- Alertas por email cuando se crean eventos que coinciden con criterios guardados.
+- Recordatorios por email de eventos favoritos.
+- CRUD de categorias, ubicaciones, audiencias y organizadores.
+- Validaciones backend y frontend para los campos principales.
 
 ## Estructura
-- `frontend/`: SPA React
-- `backend/`: API Express
-- `database/`: schema y seed SQL
+
+- `frontend/`: SPA React.
+- `backend/`: API REST Express.
+- `database/`: esquema, datos iniciales y scripts auxiliares SQL.
+- `docs/`: documentacion auxiliar del proyecto.
+
+## Mantenimiento de documentacion
+
+Cada cambio funcional, tecnico o de configuracion debe reflejarse en este `README.md` cuando afecte a:
+
+- Dependencias instaladas o scripts de `npm`.
+- Variables de entorno.
+- Pasos de instalacion, ejecucion, build, test o despliegue.
+- Rutas frontend.
+- Endpoints backend.
+- Roles, permisos o flujos de usuario.
+- Modelo de datos, scripts SQL o migraciones.
+- Funcionalidades visibles de la aplicacion.
+
+La idea es que el README sea siempre la referencia rapida del estado real del proyecto.
 
 ## Requisitos
-- Node.js 18+ (recomendado)
-- MySQL 8+
+
+- Node.js 18+ recomendado.
+- MySQL 8+ o MariaDB compatible.
+- Servidor SMTP si se quieren probar emails reales.
 
 ## Configuracion
-### Backend `.env`
-1. Copia `backend/.env.example` como `backend/.env`
-2. Ajusta credenciales:
+
+### Backend
+
+Copia `backend/.env.example` como `backend/.env` y ajusta los valores:
 
 ```env
 DB_HOST=localhost
@@ -50,180 +105,261 @@ DB_USER=root
 DB_PASSWORD=your_password
 DB_NAME=ames_events
 DB_PORT=3306
+JWT_SECRET=change-this-in-production
+APP_BASE_URL=http://localhost:3000
+SMTP_HOST=smtp.example.com
+SMTP_PORT=587
+SMTP_SECURE=false
+SMTP_USER=your_smtp_user
+SMTP_PASS=your_smtp_password
+MAIL_FROM="Ames Events <no-reply@ames-events.local>"
 PORT=3001
+FAVORITE_REMINDERS_ENABLED=false
+FAVORITE_REMINDERS_RUN_TIME=09:00
+FAVORITE_REMINDERS_RUN_ON_START=true
+CORS_ORIGINS=http://localhost:3000,https://ames-events.anxovarela.es
 ```
 
-## Base de Datos
-Los scripts SQL no incluyen un nombre de base de datos fijo. Ejecutalos indicando la base objetivo desde el cliente MySQL:
+Variables opcionales para hosting de imagenes:
+
+```env
+EVENT_IMAGES_DIR=/home/your-user/api/uploads/events
+EVENT_IMAGES_PUBLIC_BASE_URL=https://api.anxovarela.es
+```
+
+Si no se definen, las imagenes se guardan en `backend/uploads/events` y se sirven desde `/uploads/events/...`.
+
+### Frontend
+
+Copia `frontend/.env.example` como `frontend/.env`:
+
+```env
+REACT_APP_API_BASE_URL=http://localhost:3001
+```
+
+En produccion, apunta esta variable al dominio de la API.
+
+## Base de datos
+
+Los scripts SQL no fijan el nombre de la base. Ejecutalos sobre la base objetivo:
 
 ```powershell
 mysql -u root -p ames_events < database/schema.sql
 mysql -u root -p ames_events < database/seed.sql
 ```
 
-En hosting, usa el nombre real de la base configurado en `DB_NAME`:
+En hosting:
 
 ```powershell
 mysql -u usuario -p nombre_base_hosting < database/schema.sql
 mysql -u usuario -p nombre_base_hosting < database/seed.sql
 ```
 
-## Ejecucion
+La tabla `content_manager_requests` tambien se crea automaticamente desde el backend la primera vez que se usa el flujo de solicitudes.
+
+## Ejecucion local
+
 ### Backend
+
 ```powershell
 cd backend
 npm install
-node server.js
+npm start
 ```
 
 ### Frontend
+
 ```powershell
 cd frontend
 npm install
 npm start
 ```
 
-## URLs
+URLs por defecto:
+
 - Frontend: `http://localhost:3000`
 - Backend: `http://localhost:3001`
+- Comprobacion API: `GET http://localhost:3001/`
 
-## Endpoints Principales
+## Scripts utiles
+
+Backend:
+
+```powershell
+npm start
+npm run send:favorite-reminders
+npm test
+```
+
+Frontend:
+
+```powershell
+npm start
+npm run build
+npm test
+```
+
+## Tests automatizados
+
+### Backend
+
+`cd backend && npm test` ejecuta pruebas unitarias sobre utilidades puras de validacion:
+
+- Identificadores enteros positivos usados en parametros y cuerpos HTTP.
+- Coordenadas geograficas de ubicaciones.
+- Fechas locales de eventos en formato MySQL sin desplazamiento horario.
+- Normalizacion de booleanos y precios antes de persistirlos.
+
+Estas pruebas no necesitan servidor, base de datos ni variables `.env`.
+
+### Frontend
+
+`cd frontend && npm test` ejecuta Jest y React Testing Library. La suite actual comprueba:
+
+- Que la aplicacion renderiza la home inicial y muestra accesos principales.
+- Que las URLs de imagenes de eventos se resuelven correctamente segun su origen.
+- Que las respuestas JSON de la API se leen bien y que los errores devuelven mensajes utiles.
+
+Para forzar una ejecucion serial si el entorno restringe procesos worker:
+
+```powershell
+npm test -- --runInBand
+```
+
+## Rutas frontend
+
+- `/`: home.
+- `/map`: mapa de eventos.
+- `/events`: listado y gestion de eventos.
+- `/events/new`: crear evento, solo `admin` o `content_manager`.
+- `/events/:id`: detalle de evento.
+- `/events/:id/edit`: editar evento, solo `admin` o `content_manager`.
+- `/favorites`: favoritos, solo `user` o `admin`.
+- `/alerts`: alertas del usuario autenticado.
+- `/profile`: perfil propio.
+- `/propose-event`: solicitud de acceso como gestor.
+- `/admin/users`: gestion de usuarios y solicitudes de gestor, solo `admin`.
+- `/categories`, `/locations`, `/organizers`: catalogos para `admin` o `content_manager`.
+- `/audiences`: audiencias, solo `admin`.
+- `/login`, `/register`, `/verify-email`, `/forgot-password`, `/reset-password`: autenticacion.
+
+## Endpoints principales
+
+### Auth
+
+- `POST /auth/register`
+- `GET /auth/verify-email?token=...`
+- `POST /auth/resend-verification`
+- `POST /auth/forgot-password`
+- `POST /auth/reset-password`
+- `POST /auth/login`
+- `GET /auth/me`
+
+El login devuelve un JWT y bloquea el acceso si la cuenta no esta verificada o si `is_active = 0`.
+
 ### Events
+
 - `GET /events`
 - `GET /events/:id`
-- `POST /events`
-- `PUT /events/:id`
-- `DELETE /events/:id`
+- `POST /events` - `admin` o `content_manager`
+- `PUT /events/:id` - `admin` o `content_manager`
+- `DELETE /events/:id` - `admin`
 
-### Categories
+Los endpoints de creacion y edicion aceptan imagen en el campo `image`.
+
+### Catalogos
+
+Categorias:
+
 - `GET /categories`
 - `GET /categories/:id`
-- `POST /categories`
-- `PUT /categories/:id`
-- `DELETE /categories/:id`
+- `POST /categories` - `admin` o `content_manager`
+- `PUT /categories/:id` - `admin` o `content_manager`
+- `DELETE /categories/:id` - `admin`
 
-### Locations
+Ubicaciones:
+
 - `GET /locations`
 - `GET /locations/:id`
-- `POST /locations`
-- `PUT /locations/:id`
-- `DELETE /locations/:id`
+- `POST /locations` - `admin` o `content_manager`
+- `PUT /locations/:id` - `admin` o `content_manager`
+- `DELETE /locations/:id` - `admin`
 
-### Audiences
+Audiencias:
+
 - `GET /audiences`
 - `GET /audiences/:id`
 - `POST /audiences`
 - `PUT /audiences/:id`
 - `DELETE /audiences/:id`
 
-### Organizers
+Organizadores:
+
 - `GET /organizers`
 - `GET /organizers/:id`
-- `POST /organizers`
-- `PUT /organizers/:id`
-- `DELETE /organizers/:id`
+- `POST /organizers` - `admin` o `content_manager`
+- `PUT /organizers/:id` - `admin` o `content_manager`
+- `DELETE /organizers/:id` - `admin`
 
-### Auth
-- `POST /auth/register`
-- `GET /auth/verify-email?token=...`
-- `POST /auth/resend-verification`
-- `POST /auth/login`
-- `GET /auth/me`
+Roles:
 
-El login devuelve un JWT y bloquea el acceso si la cuenta no esta verificada o si `is_active = 0`.
+- `GET /roles` - `admin`
 
-### Users Admin
-Endpoints protegidos con JWT y rol `admin`.
+### Users
+
+Perfil propio:
+
+- `PATCH /users/me`
+- `PATCH /users/me/password`
+
+Administracion:
 
 - `GET /users`
 - `GET /users/:id`
 - `PATCH /users/:id/role`
 - `PATCH /users/:id/status`
 
-Los endpoints de lectura devuelven datos seguros del usuario:
-
-```json
-{
-  "id": 1,
-  "username": "admin",
-  "email": "admin@tfg.local",
-  "role": "admin",
-  "is_active": true,
-  "email_verified": true,
-  "created_at": "2026-04-16T10:00:00.000Z"
-}
-```
-
-`PATCH /users/:id/role` permite cambiar el rol a `admin`, `content_manager` o `user`.
-
-```json
-{
-  "role": "content_manager"
-}
-```
-
-La respuesta incluye el rol actualizado de forma explicita y el usuario recargado desde base de datos:
-
-```json
-{
-  "message": "User role updated successfully",
-  "role": "content_manager",
-  "user": {
-    "id": 2,
-    "username": "gestor",
-    "email": "gestor@example.com",
-    "role": "content_manager",
-    "is_active": true,
-    "email_verified": true,
-    "created_at": "2026-04-16T10:00:00.000Z"
-  }
-}
-```
-
-`PATCH /users/:id/status` activa o desactiva cuentas:
-
-```json
-{
-  "is_active": false
-}
-```
-
 Defensas implementadas:
-- un admin no puede quitarse a si mismo el rol `admin`
-- un admin no puede desactivar su propia cuenta
-- no se asignan roles inexistentes
-- no se devuelven `password_hash`, tokens de verificacion ni fechas de expiracion de token
 
-### Perfil propio
-Endpoints protegidos con JWT para el usuario autenticado.
+- Un admin no puede quitarse a si mismo el rol `admin`.
+- Un admin no puede desactivar su propia cuenta.
+- No se asignan roles inexistentes.
+- No se devuelven `password_hash`, tokens de verificacion ni fechas de expiracion de token.
 
-- `GET /auth/me`
-- `PATCH /users/me`
-- `PATCH /users/me/password`
+### Content manager requests
 
-`PATCH /users/me` solo acepta el campo `username`:
+Endpoints protegidos con JWT.
 
-```json
-{
-  "username": "nuevo_usuario"
-}
-```
+- `GET /content-manager-requests/me`
+- `POST /content-manager-requests`
+- `GET /content-manager-requests?status=pending` - `admin`
+- `PATCH /content-manager-requests/:id/review` - `admin`
 
-No permite modificar email, rol, estado de verificacion ni `is_active`.
-
-`PATCH /users/me/password` exige la contrasena actual y una nueva contrasena de al menos 8 caracteres:
+Ejemplo de solicitud:
 
 ```json
 {
-  "currentPassword": "contrasena_actual",
-  "newPassword": "nueva_contrasena"
+  "phone": "+34 600 000 000",
+  "organization_name": "Asociacion vecinal",
+  "proposal_title": "Taller familiar",
+  "proposal_description": "Actividad propuesta para familias del municipio."
 }
 ```
 
-Nota de consistencia: la tabla `users` usa la columna `username` y la API/frontend mantienen ese mismo nombre para evitar confusiones entre capas. En la interfaz se muestra como "Nombre de usuario".
+Ejemplo de revision:
+
+```json
+{
+  "status": "approved",
+  "admin_notes": "Solicitud validada."
+}
+```
+
+Si se aprueba, el usuario pasa a rol `content_manager`.
 
 ### Favorites
-Endpoints protegidos con JWT y rol `user`.
+
+Endpoints protegidos con JWT y rol `user` o `admin`.
 
 - `GET /favorites`
 - `GET /favorites/ids`
@@ -231,6 +367,7 @@ Endpoints protegidos con JWT y rol `user`.
 - `DELETE /favorites/:eventId`
 
 ### Alerts
+
 Endpoints protegidos con JWT. Cada usuario gestiona solo sus propias alertas.
 
 - `GET /alerts`
@@ -254,27 +391,32 @@ Una alerta debe tener nombre y al menos un criterio:
 }
 ```
 
-Cuando se crea un evento nuevo, el backend evalua las alertas activas. Si una alerta coincide, envia un email al usuario siempre que la cuenta este activa y el email verificado. Si falla el envio de un correo, se registra el error y la creacion del evento no se cancela.
+Cuando se crea un evento nuevo, el backend evalua las alertas activas. Si una alerta coincide, envia un email al usuario siempre que la cuenta este activa y el email verificado. Si falla el envio, se registra el error y la creacion del evento no se cancela.
 
-## Rutas Frontend
-- `/map`: mapa de eventos
-- `/events`: listado y gestion de eventos segun rol
-- `/favorites`: favoritos del usuario registrado
-- `/alerts`: alertas de eventos del usuario autenticado
-- `/profile`: perfil propio del usuario autenticado
-- `/admin/users`: gestion de usuarios para administradores
+## Modelo de evento
 
-## Notas de Validacion (Events v4)
+Campos principales de `events`:
+
 - `title`: obligatorio, maximo 150 caracteres.
-- `category_id`, `location_id`: enteros positivos existentes.
-- `audience_id`: opcional, pero debe existir si se informa.
-- `organizer_id`: opcional, pero debe existir si se informa.
-- `is_free`: obligatorio (`1/0` o booleano).
-- Si `is_free = 0`, `price > 0`.
+- `description`: opcional, maximo 2000 caracteres.
+- `category_id`: obligatorio, debe existir.
+- `location_id`: obligatorio, debe existir.
 - `event_date`: opcional.
-- `min_age` y `max_age`: opcionales, pero deben ir juntos si se informan.
+- `is_free`: obligatorio.
+- `price`: obligatorio y mayor que 0 si `is_free = 0`.
+- `min_age` y `max_age`: opcionales, pero deben ser coherentes si se informan.
+- `audience_id`: opcional, debe existir si se informa.
+- `organizer_id`: opcional, debe existir si se informa.
+- `image_url`: opcional, generado al subir imagen o informado desde datos iniciales.
 
-## Build Frontend
+## Notas de despliegue
+
+- Configura `CORS_ORIGINS` con los origenes reales del frontend.
+- Usa un `JWT_SECRET` fuerte en produccion.
+- El directorio configurado en `EVENT_IMAGES_DIR` debe existir o poder crearse, y ser escribible por el proceso Node.
+- Si el frontend se publica en una subruta, React usa `PUBLIC_URL` como `basename` del router y para resolver recursos publicos.
+- El build de frontend se genera con:
+
 ```powershell
 cd frontend
 npm run build

@@ -21,11 +21,13 @@ afterEach(() => {
   jest.restoreAllMocks();
 });
 
-// Esta prueba comprueba que la aplicacion principal se monta en la ruta inicial real.
-test('renders the map page by default', async () => {
+// Esta prueba comprueba que la aplicacion principal se monta en la home real.
+test('renders the home page by default', async () => {
   render(<App />);
 
-  expect(await screen.findByRole('heading', { name: /mapa de eventos/i })).toBeInTheDocument();
-  expect(screen.getByTestId('ames-map')).toBeInTheDocument();
-  expect(screen.getByRole('link', { name: /eventos/i })).toBeInTheDocument();
+  expect(await screen.findByRole('heading', {
+    name: /encuentra planes municipales y familiares/i
+  })).toBeInTheDocument();
+  expect(screen.getByRole('link', { name: /ver agenda/i })).toBeInTheDocument();
+  expect(screen.getByRole('link', { name: /abrir mapa/i })).toBeInTheDocument();
 });
