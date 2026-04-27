@@ -412,9 +412,10 @@ function EventDetailPage({ session }) {
                     </article>
 
                     <article className="event-detail-block">
-                      <h4><span className="event-detail-block-icon"><IconLocation /></span>{DETAIL_TEXT.where}</h4>
-                      <p>{event.location || DETAIL_TEXT.locationFallback}</p>
-                    </article>
+					  <h4><span className="event-detail-block-icon"><IconLocation /></span>{DETAIL_TEXT.where}</h4>
+					  <p>{event.location || DETAIL_TEXT.locationFallback}</p>
+					  {event.location_locality && <p>({event.location_locality})</p>}
+					</article>
 
                     <article className="event-detail-block">
                       <h4><span className="event-detail-block-icon"><IconOrganizer /></span>{DETAIL_TEXT.organizer}</h4>
