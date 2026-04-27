@@ -18,6 +18,7 @@ const usersRoutes = require('./src/routes/users');
 const rolesRoutes = require('./src/routes/roles');
 const favoritesRoutes = require('./src/routes/favorites');
 const alertsRoutes = require('./src/routes/alerts');
+const contentManagerRequestsRoutes = require('./src/routes/contentManagerRequests');
 const { startFavoriteReminderJob } = require('./src/jobs/favoriteReminderJob');
 
 const app = express();
@@ -60,6 +61,7 @@ app.use('/users', usersRoutes);
 app.use('/roles', rolesRoutes);
 app.use('/favorites', favoritesRoutes);
 app.use('/alerts', alertsRoutes);
+app.use('/content-manager-requests', contentManagerRequestsRoutes);
 
 app.use((err, req, res, next) => {
   if (err) {

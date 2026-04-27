@@ -5,6 +5,13 @@
  */
 ﻿const mysql = require('mysql2/promise');
 
+const requiredDbEnvVars = ['DB_USER', 'DB_PASSWORD', 'DB_NAME'];
+const missingDbEnvVars = requiredDbEnvVars.filter((name) => !process.env[name]);
+
+if (missingDbEnvVars.length > 0) {
+  console.warn(`Missing DB environment variables: ${missingDbEnvVars.join(', ')}`);
+}
+
 // El pool reutiliza conexiones y toma su configuracion desde variables de entorno.
 const pool = mysql.createPool({
   host: process.env.DB_HOST || 'localhost',

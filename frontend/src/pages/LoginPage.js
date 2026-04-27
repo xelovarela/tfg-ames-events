@@ -4,13 +4,14 @@
  * persistir token/usuario en localStorage y navegar al mapa tras login.
  */
 import React, { useState } from 'react';
-import { Link, Navigate, useNavigate } from 'react-router-dom';
+import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { API_BASE_URL } from '../config';
 import { getAuthSession, setAuthSession } from '../utils/authStorage';
 import './LoginPage.css';
 
 function LoginPage({ onLogin }) {
   const navigate = useNavigate();
+  const location = useLocation();
   const [loginValue, setLoginValue] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
@@ -18,10 +19,16 @@ function LoginPage({ onLogin }) {
   const [showResend, setShowResend] = useState(false);
   const [resendMessage, setResendMessage] = useState('');
   const [isResending, setIsResending] = useState(false);
+  const fromPathname = location.state?.from?.pathname;
+  const fromSearch = location.state?.from?.search || '';
+  const fromHash = location.state?.from?.hash || '';
+  const redirectTarget = (typeof fromPathname === 'string' && fromPathname.startsWith('/'))
+    ? `${fromPathname}${fromSearch}${fromHash}`
+    : '/';
 
   const existingSession = getAuthSession();
   if (existingSession?.token) {
-    return <Navigate to="/map" replace />;
+    return <Navigate to={redirectTarget} replace />;
   }
 
   const handleSubmit = async (event) => {
@@ -68,7 +75,7 @@ function LoginPage({ onLogin }) {
         onLogin();
       }
 
-      navigate('/map', { replace: true });
+      navigate(redirectTarget, { replace: true });
     } catch (error) {
       console.error(error);
       setMessage(error.message || 'No se pudo iniciar sesion.');

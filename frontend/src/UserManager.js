@@ -5,6 +5,10 @@
 import React, { useEffect, useState } from 'react';
 import { API_BASE_URL } from './config';
 import { withAuthHeaders } from './utils/authFetch';
+import {
+  listContentManagerRequests,
+  reviewContentManagerRequest
+} from './utils/contentManagerRequestsApi';
 import './UserManager.css';
 
 const ROLE_LABELS = {
@@ -40,10 +44,12 @@ async function readJsonOrThrow(response, fallbackMessage) {
 
 function UserManager({ session }) {
   const [users, setUsers] = useState([]);
+  const [managerRequests, setManagerRequests] = useState([]);
   const [roles, setRoles] = useState([]);
   const [message, setMessage] = useState('');
   const [loadError, setLoadError] = useState('');
   const [savingUserId, setSavingUserId] = useState(null);
+  const [reviewingRequestId, setReviewingRequestId] = useState(null);
   const currentUserId = Number(session?.user?.id);
 
   const loadUsers = async () => {
@@ -77,7 +83,18 @@ function UserManager({ session }) {
   useEffect(() => {
     loadUsers();
     loadRoles();
+    loadManagerRequests();
   }, []);
+
+  const loadManagerRequests = async () => {
+    try {
+      const data = await listContentManagerRequests('pending');
+      setManagerRequests(Array.isArray(data) ? data : []);
+    } catch (error) {
+      console.error(error);
+      setMessage(error.message || 'No se pudieron cargar las solicitudes de gestor.');
+    }
+  };
 
   const updateUserInList = (updatedUser) => {
     setUsers((currentUsers) => currentUsers.map((user) => (
@@ -140,6 +157,27 @@ function UserManager({ session }) {
       setMessage(error.message || 'No se pudo actualizar el estado');
     } finally {
       setSavingUserId(null);
+    }
+  };
+
+  const handleReviewRequest = async (request, nextStatus) => {
+    if (reviewingRequestId) {
+      return;
+    }
+
+    setReviewingRequestId(request.id);
+    setMessage('');
+
+    try {
+      const data = await reviewContentManagerRequest(request.id, { status: nextStatus });
+      setManagerRequests((current) => current.filter((item) => Number(item.id) !== Number(request.id)));
+      setMessage(data?.message || 'Solicitud revisada correctamente.');
+      await loadUsers();
+    } catch (error) {
+      console.error(error);
+      setMessage(error.message || 'No se pudo revisar la solicitud.');
+    } finally {
+      setReviewingRequestId(null);
     }
   };
 
@@ -211,6 +249,51 @@ function UserManager({ session }) {
               })}
             </tbody>
           </table>
+        </div>
+      )}
+
+      <h3 className="users-title users-title-secondary">Solicitudes para gestor de contenido</h3>
+
+      {managerRequests.length === 0 ? (
+        <p>No hay solicitudes pendientes.</p>
+      ) : (
+        <div className="users-requests-list">
+          {managerRequests.map((request) => {
+            const isReviewing = Number(reviewingRequestId) === Number(request.id);
+
+            return (
+              <article key={request.id} className="users-request-card">
+                <div className="users-request-head">
+                  <strong>{request.username || 'Usuario'}</strong>
+                  <span>{request.email}</span>
+                </div>
+                <p><strong>Propuesta:</strong> {request.proposal_title}</p>
+                <p>{request.proposal_description}</p>
+                {request.organization_name && <p><strong>Entidad:</strong> {request.organization_name}</p>}
+                {request.phone && <p><strong>Telefono:</strong> {request.phone}</p>}
+                <p><strong>Enviada:</strong> {formatDate(request.created_at)}</p>
+
+                <div className="users-request-actions">
+                  <button
+                    type="button"
+                    className="users-btn users-btn-approve"
+                    onClick={() => handleReviewRequest(request, 'approved')}
+                    disabled={isReviewing}
+                  >
+                    Aprobar
+                  </button>
+                  <button
+                    type="button"
+                    className="users-btn users-btn-secondary"
+                    onClick={() => handleReviewRequest(request, 'rejected')}
+                    disabled={isReviewing}
+                  >
+                    Rechazar
+                  </button>
+                </div>
+              </article>
+            );
+          })}
         </div>
       )}
     </section>

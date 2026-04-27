@@ -13,6 +13,10 @@
   margin: 0 0 1rem;
 }
 
+.users-title-secondary {
+  margin-top: 1.1rem;
+}
+
 .users-message {
   margin: 0 0 0.75rem;
   color: #244b24;
@@ -97,9 +101,51 @@
   color: #fff;
 }
 
+.users-btn-approve {
+  background: #24745c;
+  color: #fff;
+}
+
 .users-btn-secondary {
   background: #e4e4e4;
   color: #222;
+}
+
+.users-requests-list {
+  display: grid;
+  gap: 0.7rem;
+}
+
+.users-request-card {
+  border: 1px solid #e5d4c6;
+  border-radius: 10px;
+  background: #fff;
+  padding: 0.8rem;
+}
+
+.users-request-head {
+  display: grid;
+  gap: 0.12rem;
+  margin-bottom: 0.35rem;
+}
+
+.users-request-head strong {
+  color: #5e2412;
+}
+
+.users-request-head span {
+  color: #6f5a4d;
+  font-size: 0.9rem;
+}
+
+.users-request-card p {
+  margin: 0.3rem 0 0;
+}
+
+.users-request-actions {
+  margin-top: 0.65rem;
+  display: inline-flex;
+  gap: 0.45rem;
 }
 
 @media (max-width: 720px) {

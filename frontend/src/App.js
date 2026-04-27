@@ -24,11 +24,33 @@ import VerifyEmailPage from './pages/VerifyEmailPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
 import ProfilePage from './pages/ProfilePage';
+import ProposeEventPage from './pages/ProposeEventPage';
 import FavoritesPage from './pages/FavoritesPage';
 import AlertsPage from './pages/AlertsPage';
 import { AUTH_SESSION_EVENT, clearAuthSession, getAuthSession } from './utils/authStorage';
 import ProtectedRoute from './ProtectedRoute';
 import UsersPage from './pages/UsersPage';
+
+const PUBLIC_URL = process.env.PUBLIC_URL || '';
+
+function getRouterBasename() {
+  if (!PUBLIC_URL) {
+    return undefined;
+  }
+
+  try {
+    const resolvedUrl = typeof window === 'undefined'
+      ? new URL(PUBLIC_URL, 'http://localhost')
+      : new URL(PUBLIC_URL, window.location.origin);
+    const pathname = resolvedUrl.pathname.replace(/\/+$/, '');
+    return pathname || undefined;
+  } catch (error) {
+    const normalized = PUBLIC_URL.startsWith('/')
+      ? PUBLIC_URL.replace(/\/+$/, '')
+      : '';
+    return normalized || undefined;
+  }
+}
 
 // Esta constante describe las opciones visibles en el menu lateral de navegacion.
 const NAV_ITEMS = [
@@ -136,7 +158,7 @@ function AppShell({ session, onLogout, onSessionChange }) {
           </button>
 
           <Link to="/" className="app-brand" aria-label="Ir a inicio de Eventos en Ames">
-            <img className="app-brand-mark" src="/favicon.svg" alt="" aria-hidden="true" />
+            <img className="app-brand-mark" src={`${PUBLIC_URL}/favicon.svg`} alt="" aria-hidden="true" />
             <span className="app-brand-copy">
               <strong>Eventos en Ames</strong>
               <span>Agenda municipal y familiar</span>
@@ -213,7 +235,7 @@ function AppShell({ session, onLogout, onSessionChange }) {
 
       <nav className={`app-drawer${isMenuOpen ? ' open' : ''}`}>
         <div className="app-drawer-brand">
-          <img className="app-brand-mark" src="/favicon.svg" alt="" aria-hidden="true" />
+          <img className="app-brand-mark" src={`${PUBLIC_URL}/favicon.svg`} alt="" aria-hidden="true" />
           <h1 className="app-title">Eventos en Ames</h1>
         </div>
         {visibleNavItems.map((item) => (
@@ -323,6 +345,14 @@ function AppShell({ session, onLogout, onSessionChange }) {
               </ProtectedRoute>
             )}
           />
+          <Route
+            path="/propose-event"
+            element={(
+              <ProtectedRoute session={session}>
+                <ProposeEventPage session={session} />
+              </ProtectedRoute>
+            )}
+          />
 
           <Route path="*" element={<p className="app-not-found">Ruta no encontrada.</p>} />
         </Routes>
@@ -349,6 +379,7 @@ function AppShell({ session, onLogout, onSessionChange }) {
 // Este componente envuelve toda la aplicacion con el router del navegador.
 function App() {
   const [session, setSession] = useState(() => getAuthSession());
+  const routerBasename = getRouterBasename();
 
   const handleLogout = () => {
     clearAuthSession();
@@ -370,7 +401,7 @@ function App() {
   }, [syncSessionFromStorage]);
 
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={routerBasename}>
       <AppShell session={session} onLogout={handleLogout} onSessionChange={syncSessionFromStorage} />
     </BrowserRouter>
   );

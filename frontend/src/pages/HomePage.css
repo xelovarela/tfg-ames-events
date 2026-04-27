@@ -5,6 +5,7 @@
 
 .home-hero,
 .home-quick-links,
+.home-proposal-cta,
 .home-upcoming,
 .home-how {
   border: 1px solid #e7d6c8;
@@ -151,10 +152,50 @@
 }
 
 .home-quick-links h2,
+.home-proposal-cta h2,
 .home-upcoming h2,
 .home-how h2 {
   margin: 0;
   color: #5e2412;
+}
+
+.home-proposal-cta {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 0.8rem;
+  align-items: center;
+  background:
+    linear-gradient(135deg, rgba(184, 49, 20, 0.96), rgba(153, 39, 22, 0.96)),
+    #a72f18;
+  color: #fff;
+}
+
+.home-proposal-cta .home-kicker {
+  color: rgba(255, 238, 218, 0.9);
+}
+
+.home-proposal-cta h2 {
+  color: #fff8ef;
+}
+
+.home-proposal-cta p {
+  margin: 0.45rem 0 0;
+  color: #ffe9d8;
+}
+
+.home-proposal-icon {
+  width: 22px;
+  height: 22px;
+  color: #ffd9bf;
+  display: inline-flex;
+}
+
+.home-proposal-icon svg {
+  width: 100%;
+  height: 100%;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2;
 }
 
 .home-quick-grid,
@@ -368,6 +409,10 @@
   .home-section-head {
     align-items: start;
     flex-direction: column;
+  }
+
+  .home-proposal-cta {
+    grid-template-columns: 1fr;
   }
 
   .home-quick-grid,

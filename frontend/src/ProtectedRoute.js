@@ -4,15 +4,16 @@
  * el usuario autenticado no tiene rol admin.
  */
 import React from 'react';
-import { Link, Navigate } from 'react-router-dom';
+import { Link, Navigate, useLocation } from 'react-router-dom';
 
 function ProtectedRoute({ session, requireAdmin = false, allowedRoles = null, children }) {
+  const location = useLocation();
   const isAuthenticated = Boolean(session?.token);
   const isAdmin = session?.user?.role === 'admin';
   const userRole = session?.user?.role;
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/login" replace state={{ from: location }} />;
   }
 
   // El rol admin tiene acceso transversal a rutas con allowedRoles.

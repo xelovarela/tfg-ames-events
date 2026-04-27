@@ -4,7 +4,7 @@
  * reutilizando el modelo de datos existente sin logica de backend adicional.
  */
 import React, { useEffect, useMemo, useState } from 'react';
-import { ArrowRight, CalendarDays, Heart, MapPin, Search, SlidersHorizontal } from 'lucide-react';
+import { ArrowRight, CalendarDays, Heart, MapPin, Megaphone, Search, SlidersHorizontal } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { API_BASE_URL } from '../config';
 import { getEventImageUrl } from '../utils/eventImages';
@@ -36,6 +36,8 @@ function HomePage({ session }) {
   const [loadError, setLoadError] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const canAccessFavorites = ['user', 'admin'].includes(session?.user?.role);
+  const canCreateEventsDirectly = ['admin', 'content_manager'].includes(session?.user?.role);
+  const isAuthenticated = Boolean(session?.token);
 
   useEffect(() => {
     let isMounted = true;
@@ -164,6 +166,24 @@ function HomePage({ session }) {
             </Link>
           )}
         </div>
+      </section>
+
+      <section className="home-proposal-cta" aria-label="Proponer evento">
+        <span className="home-proposal-icon" aria-hidden="true"><Megaphone /></span>
+        <div>
+          <p className="home-kicker">¿Organizas algo?</p>
+          <h2>Publica tu evento vecinal en minutos</h2>
+          <p>
+            Si eres usuario registrado, puedes solicitar acceso como gestor para publicar eventos.
+          </p>
+        </div>
+        <Link
+          to={canCreateEventsDirectly ? '/events/new' : isAuthenticated ? '/propose-event' : '/login'}
+          className="home-cta home-cta-primary"
+        >
+          Proponer evento
+          <span aria-hidden="true"><ArrowRight /></span>
+        </Link>
       </section>
 
       <section className="home-upcoming" aria-label="Eventos proximos">
