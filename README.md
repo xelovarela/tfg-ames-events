@@ -63,6 +63,10 @@ Dependencias de testing y tooling incluidas por Create React App:
 - Bandeja admin de solicitudes con filtros por estado y notas de revision.
 - Favoritos para usuarios registrados.
 - Contadores de `favs` visibles en portada, listado y detalle de evento.
+- Páginas informativas y legales estáticas enlazadas desde el footer: acerca de, contacto, ayuda, accesibilidad, privacidad, aviso legal y mapa del sitio.
+- Header principal rediseñado con barra cálida tipo tarjeta, buscador con icono, accesos rápidos con iconos y avatar desplegable.
+- Footer reorganizado en columnas con enlaces informativos, aviso de no uso de cookies y licencia Creative Commons BY-NC 4.0.
+- Portada ajustada a una paleta cálida coherente con el resto de la web e insignia destacada para el siguiente plan.
 - Alertas por email cuando se crean eventos que coinciden con criterios guardados.
 - Recordatorios por email de eventos favoritos.
 - CRUD de categorias, ubicaciones, audiencias y organizadores.
@@ -241,10 +245,23 @@ npm test -- --runInBand
 - `/alerts`: alertas del usuario autenticado.
 - `/profile`: perfil propio.
 - `/propose-event`: solicitud de acceso como creador de contenido.
+- `/acerca-de`, `/contacto`, `/aviso-legal`, `/privacidad`, `/accesibilidad`, `/ayuda`, `/mapa-del-sitio`: paginas informativas y legales enlazadas desde el footer.
 - `/admin/users`: gestion de usuarios y solicitudes de acceso como creador de contenido, solo `admin`.
 - `/categories`, `/locations`, `/organizers`: catalogos para `admin` o `content_manager`.
 - `/audiences`: audiencias, solo `admin`.
 - `/login`, `/register`, `/verify-email`, `/forgot-password`, `/reset-password`: autenticacion.
+
+## Interfaz publica y paginas estaticas
+
+La zona publica de la aplicacion se ha reforzado para que la experiencia sea mas completa y coherente:
+
+- La cabecera mantiene el menu lateral, marca, buscador, accesos a agenda/mapa y menu de usuario, pero con una presentacion mas clara, responsive y accesible.
+- La home usa colores calidos, tarjetas suaves y un distintivo visual para el bloque "Siguiente plan".
+- El footer se organiza en columnas: proyecto, explorar, informacion y legal.
+- La web no utiliza cookies; por ello no existe pagina de politica de cookies ni enlace de configuracion de cookies.
+- El aviso legal identifica como titular a Manuel Angel Varela Martinez y como contacto legal `admin@anxovarela.es`.
+- Los contenidos propios se publican bajo licencia Creative Commons BY-NC 4.0.
+- Las paginas estaticas no incluyen mensajes provisionales ni textos de tipo "[pendiente de completar]".
 
 ## Endpoints principales
 

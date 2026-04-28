@@ -4,7 +4,7 @@
  * la distribucion general de la aplicacion de Eventos en Ames.
  */
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { LogOut, UserRound } from 'lucide-react';
+import { CalendarDays, ChevronDown, LogOut, MapPin, Search, UserRound } from 'lucide-react';
 import { BrowserRouter, Link, Navigate, NavLink, Route, Routes, useLocation, useSearchParams } from 'react-router-dom';
 import './styles/topbar.css';
 import './App.css';
@@ -14,18 +14,25 @@ import AudiencesPage from './pages/AudiencesPage';
 import OrganizersPage from './pages/OrganizersPage';
 import EventDetailPage from './pages/EventDetailPage';
 import HomePage from './pages/HomePage';
+import AboutPage from './pages/AboutPage';
+import ContactPage from './pages/ContactPage';
 import CategoriesPage from './pages/CategoriesPage';
 import LocationsPage from './pages/LocationsPage';
 import EventCreatePage from './pages/EventCreatePage';
 import EventEditPage from './pages/EventEditPage';
+import LegalNoticePage from './pages/LegalNoticePage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import VerifyEmailPage from './pages/VerifyEmailPage';
 import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import PrivacyPage from './pages/PrivacyPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
+import HelpPage from './pages/HelpPage';
 import ProfilePage from './pages/ProfilePage';
 import ProposeEventPage from './pages/ProposeEventPage';
 import FavoritesPage from './pages/FavoritesPage';
+import AccessibilityPage from './pages/AccessibilityPage';
+import SitemapPage from './pages/SitemapPage';
 import AlertsPage from './pages/AlertsPage';
 import { AUTH_SESSION_EVENT, clearAuthSession, getAuthSession } from './utils/authStorage';
 import ProtectedRoute from './ProtectedRoute';
@@ -166,9 +173,12 @@ function AppShell({ session, onLogout, onSessionChange }) {
           </Link>
 
           <div className="app-search-wrap">
+            <span className="app-search-icon" aria-hidden="true">
+              <Search />
+            </span>
             <input
               type="text"
-              placeholder="Buscar eventos, lugares o categorias..."
+              placeholder="Buscar eventos, lugares o categorías..."
               className="app-search"
               value={searchValue}
               onChange={handleSearchChange}
@@ -177,10 +187,12 @@ function AppShell({ session, onLogout, onSessionChange }) {
 
           <nav className="app-topbar-links" aria-label="Enlaces rapidos">
             <NavLink to="/events" className={({ isActive }) => `app-topbar-link${isActive ? ' active' : ''}`}>
-              Agenda
+              <span className="app-topbar-link-icon" aria-hidden="true"><CalendarDays /></span>
+              <span>Agenda</span>
             </NavLink>
             <NavLink to="/map" className={({ isActive }) => `app-topbar-link${isActive ? ' active' : ''}`}>
-              Mapa
+              <span className="app-topbar-link-icon" aria-hidden="true"><MapPin /></span>
+              <span>Mapa</span>
             </NavLink>
           </nav>
 
@@ -194,7 +206,8 @@ function AppShell({ session, onLogout, onSessionChange }) {
                   aria-expanded={isUserMenuOpen}
                   onClick={() => setIsUserMenuOpen((current) => !current)}
                 >
-                  {getUserInitial(session.user)}
+                  <span className="app-user-avatar-initial">{getUserInitial(session.user)}</span>
+                  <span className="app-user-avatar-chevron" aria-hidden="true"><ChevronDown /></span>
                 </button>
 
                 {isUserMenuOpen && (
@@ -255,6 +268,13 @@ function AppShell({ session, onLogout, onSessionChange }) {
           <Route path="/" element={<HomePage session={session} />} />
 
           <Route path="/map" element={<MapPage />} />
+          <Route path="/acerca-de" element={<AboutPage />} />
+          <Route path="/contacto" element={<ContactPage />} />
+          <Route path="/aviso-legal" element={<LegalNoticePage />} />
+          <Route path="/privacidad" element={<PrivacyPage />} />
+          <Route path="/accesibilidad" element={<AccessibilityPage />} />
+          <Route path="/ayuda" element={<HelpPage />} />
+          <Route path="/mapa-del-sitio" element={<SitemapPage />} />
 
           <Route path="/events" element={<EventsPage session={session} />} />
           <Route
@@ -360,16 +380,47 @@ function AppShell({ session, onLogout, onSessionChange }) {
 
       <footer className="app-footer">
         <div className="app-footer-inner">
-          <div>
+          <div className="app-footer-brand">
             <strong>Eventos en Ames</strong>
-            <p>Proyecto TFG - Angel Varela - 2026</p>
+            <p>Agenda local para descubrir eventos, espacios y actividades en Ames.</p>
+            <span>Proyecto TFG - Angel Varela - 2026</span>
           </div>
-          <nav className="app-footer-links" aria-label="Enlaces del pie">
-            <Link to="/events">Eventos</Link>
-            <Link to="/map">Mapa</Link>
-            {isAuthenticated && <Link to="/alerts">Alertas</Link>}
-            {canAccessFavorites && <Link to="/favorites">Favoritos</Link>}
-          </nav>
+            <nav className="app-footer-group" aria-label="Explorar">
+              <span className="app-footer-group-title">Explorar</span>
+              <div className="app-footer-group-links">
+                <Link to="/">Inicio</Link>
+                <Link to="/events">Agenda</Link>
+                <Link to="/map">Mapa</Link>
+                <Link to="/favorites">Favoritos</Link>
+                <Link to="/alerts">Alertas</Link>
+              </div>
+            </nav>
+
+            <nav className="app-footer-group" aria-label="Informacion">
+              <span className="app-footer-group-title">Informacion</span>
+              <div className="app-footer-group-links">
+                <Link to="/acerca-de">Acerca de</Link>
+                <Link to="/contacto">Contacto</Link>
+                <Link to="/ayuda">Ayuda</Link>
+                <Link to="/accesibilidad">Accesibilidad</Link>
+              </div>
+            </nav>
+
+            <nav className="app-footer-group" aria-label="Legal">
+              <span className="app-footer-group-title">Legal</span>
+              <div className="app-footer-group-links">
+                <Link to="/privacidad">Privacidad</Link>
+                <Link to="/aviso-legal">Aviso legal</Link>
+                <Link to="/mapa-del-sitio">Mapa del sitio</Link>
+                <Link to="/aviso-legal#licencia">Licencia</Link>
+              </div>
+            </nav>
+        </div>
+
+        <div className="app-footer-bottom">
+          <span>&copy; 2026 Eventos en Ames. Proyecto academico TFG de Angel Varela.</span>
+          <span>Esta web no utiliza cookies.</span>
+          <Link to="/aviso-legal#licencia">Licencia Creative Commons BY-NC 4.0</Link>
         </div>
       </footer>
     </div>

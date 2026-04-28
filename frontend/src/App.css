@@ -1297,18 +1297,19 @@ h1, h2, h3, h4, h5, h6 {
     radial-gradient(circle at 15% 0%, rgba(244, 196, 48, 0.14), transparent 30%),
     #2b251f;
   color: #d3c8ba;
-  padding: 1rem;
-  font-size: 0.82rem;
+  padding: 1.35rem 1rem 0.95rem;
+  font-size: 0.86rem;
   border-top: 1px solid #474036;
 }
 
 .app-footer-inner {
   width: min(1200px, 100%);
   margin: 0 auto;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
+  display: grid;
+  grid-template-columns: minmax(300px, 1fr) repeat(3, max-content);
+  align-items: start;
+  column-gap: 3.2rem;
+  row-gap: 1rem;
 }
 
 .app-footer strong {
@@ -1321,104 +1322,128 @@ h1, h2, h3, h4, h5, h6 {
   margin: 0;
 }
 
-.app-footer-links {
+.app-footer-brand {
+  display: grid;
+  gap: 0.45rem;
+  max-width: 300px;
+}
+
+.app-footer-brand strong {
+  font-size: 1.05rem;
+}
+
+.app-footer-brand p {
+  color: #eadfd2;
+  line-height: 1.45;
+}
+
+.app-footer-brand span {
+  color: #c9b9a6;
+  font-size: 0.82rem;
+}
+
+.app-footer-group {
+  display: grid;
+  gap: 0.55rem;
+  min-width: 0;
+}
+
+.app-footer-group-title {
+  color: #f4c430;
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.app-footer-group-links {
+  display: grid;
+  gap: 0.38rem;
+}
+
+.app-footer-group-links a {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  min-height: 30px;
+  color: #eadfd2;
+  text-decoration: none;
+  border-radius: 8px;
+  padding: 0.2rem 0;
+  line-height: 1.25;
+  transition: color 0.16s ease, transform 0.16s ease;
+}
+
+.app-footer-group-links a::before {
+  content: "";
+  width: 5px;
+  height: 5px;
+  margin-right: 0.45rem;
+  border-top: 2px solid #f4c430;
+  border-right: 2px solid #f4c430;
+  transform: rotate(45deg);
+  opacity: 0.82;
+}
+
+.app-footer-group-links a:hover,
+.app-footer-group-links a:focus-visible,
+.app-footer-bottom a:hover,
+.app-footer-bottom a:focus-visible {
+  color: #fff8e7;
+  outline: none;
+  text-decoration: underline;
+  text-decoration-color: #f4c430;
+  text-underline-offset: 0.22rem;
+}
+
+.app-footer-group-links a:hover {
+  transform: translateX(2px);
+}
+
+.app-footer-bottom {
+  width: min(1200px, 100%);
+  margin: 1.05rem auto 0;
+  padding-top: 0.85rem;
+  border-top: 1px solid rgba(248, 238, 229, 0.16);
+  color: #c9b9a6;
   display: flex;
   flex-wrap: wrap;
-  justify-content: flex-end;
-  gap: 0.45rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.55rem 1rem;
+  font-size: 0.8rem;
 }
 
-.app-footer-links a {
-  color: #f8eee5;
+.app-footer-bottom a {
+  color: #f4c430;
+  font-weight: 800;
   text-decoration: none;
-  border: 1px solid rgba(248, 238, 229, 0.2);
-  border-radius: 999px;
-  padding: 0.28rem 0.62rem;
-}
-
-.app-footer-links a:hover {
-  background: rgba(248, 238, 229, 0.09);
 }
 
 /* Ajustes para pantallas pequenas y uso movil. */
 @media (max-width: 720px) {
-  .app-topbar {
-    padding: 0.6rem 0.75rem;
-  }
-
-  .app-topbar-inner {
-    grid-template-columns: 42px minmax(0, 1fr) auto auto;
-    gap: 0.55rem;
-  }
-
-  .app-brand-copy span {
-    display: none;
-  }
-
-  .app-brand-mark {
-    width: 36px;
-    height: 36px;
-    border-radius: 12px;
-  }
-
-  .app-search-wrap {
-    grid-column: 1 / -1;
-    grid-row: 2;
-  }
-
-  .app-topbar-links {
-    gap: 0.45rem;
-  }
-
-  .app-topbar-link {
-    font-size: 0.82rem;
-  }
-
-  .app-icon-btn {
-    width: 36px;
-    height: 36px;
-  }
-
-  .app-search {
-    height: 34px;
-    font-size: 0.88rem;
-  }
-
-  .app-auth-wrap {
-    gap: 0.4rem;
-  }
-
   .app-auth-user {
     display: none;
-  }
-
-  .app-auth-link,
-  .app-auth-btn {
-    padding: 0.3rem 0.55rem;
-    font-size: 0.78rem;
-  }
-
-  .app-user-avatar-btn {
-    width: 36px;
-    height: 36px;
-  }
-
-  .app-user-menu {
-    right: -0.2rem;
   }
 
   .app-main {
     padding: 0.75rem;
   }
 
-  .map-shell-header,
-  .app-footer-inner {
+  .map-shell-header {
     align-items: flex-start;
-    flex-direction: column;
   }
 
-  .map-shell-stats,
-  .app-footer-links {
+  .map-shell-stats {
+    justify-content: flex-start;
+  }
+
+  .app-footer-inner {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .app-footer-bottom {
     justify-content: flex-start;
   }
 
@@ -1609,5 +1634,11 @@ h1, h2, h3, h4, h5, h6 {
 
   .event-detail-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 460px) {
+  .app-footer {
+    padding-inline: 0.85rem;
   }
 }
