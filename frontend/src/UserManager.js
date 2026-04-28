@@ -2,7 +2,7 @@
  * Gestor de administracion de usuarios.
  * Permite a admin consultar usuarios, cambiar roles y activar/desactivar cuentas.
  */
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { API_BASE_URL } from './config';
 import { withAuthHeaders } from './utils/authFetch';
 import {
@@ -67,7 +67,7 @@ function UserManager({ session }) {
   const [requestNotes, setRequestNotes] = useState({});
   const currentUserId = Number(session?.user?.id);
 
-  const loadUsers = async () => {
+  const loadUsers = useCallback(async () => {
     try {
       const response = await fetch(`${API_BASE_URL}/users`, {
         headers: withAuthHeaders()
@@ -80,9 +80,9 @@ function UserManager({ session }) {
       setUsers([]);
       setLoadError(error.message || 'No se pudieron cargar los usuarios');
     }
-  };
+  }, []);
 
-  const loadRoles = async () => {
+  const loadRoles = useCallback(async () => {
     try {
       const response = await fetch(`${API_BASE_URL}/roles`, {
         headers: withAuthHeaders()
@@ -93,14 +93,14 @@ function UserManager({ session }) {
       console.error(error);
       setMessage(error.message || 'No se pudieron cargar los roles');
     }
-  };
+  }, []);
 
   useEffect(() => {
     loadUsers();
     loadRoles();
-  }, []);
+  }, [loadRoles, loadUsers]);
 
-  const loadManagerRequests = async () => {
+  const loadManagerRequests = useCallback(async () => {
     try {
       const data = await listContentManagerRequests(managerRequestStatus);
       setManagerRequests(Array.isArray(data) ? data : []);
@@ -108,11 +108,11 @@ function UserManager({ session }) {
       console.error(error);
       setMessage(error.message || 'No se pudieron cargar las solicitudes de gestor.');
     }
-  };
+  }, [managerRequestStatus]);
 
   useEffect(() => {
     loadManagerRequests();
-  }, [managerRequestStatus]);
+  }, [loadManagerRequests]);
 
   const updateUserInList = (updatedUser) => {
     setUsers((currentUsers) => currentUsers.map((user) => (
