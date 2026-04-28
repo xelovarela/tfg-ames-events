@@ -3,8 +3,8 @@ const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 const authService = require('../services/authService');
 const emailService = require('../services/emailService');
+const { JWT_SECRET } = require('../config/auth');
 
-const JWT_SECRET = process.env.JWT_SECRET || 'cambiar-esto-en-produccion';
 const JWT_EXPIRES_IN = '8h';
 const SALT_ROUNDS = 10;
 const MIN_PASSWORD_LENGTH = 8;

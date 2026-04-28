@@ -461,7 +461,7 @@ Campos principales de `events`:
 ## Notas de despliegue
 
 - Configura `CORS_ORIGINS` con los origenes reales del frontend.
-- Usa un `JWT_SECRET` fuerte en produccion.
+- Usa un `JWT_SECRET` fuerte en produccion. El backend no arranca en `NODE_ENV=production` si esta variable no existe.
 - El directorio configurado en `EVENT_IMAGES_DIR` debe existir o poder crearse, y ser escribible por el proceso Node.
 - Si el frontend se publica en una subruta, React usa `PUBLIC_URL` como `basename` del router y para resolver recursos publicos.
 - El build de frontend se genera con:
