@@ -1,6 +1,11 @@
 .home-page {
   display: grid;
   gap: 1rem;
+  padding: 0.25rem 0 0.35rem;
+  border-radius: 22px;
+  background:
+    radial-gradient(circle at 8% 6%, rgba(244, 196, 48, 0.16), transparent 28%),
+    radial-gradient(circle at 88% 8%, rgba(184, 49, 20, 0.08), transparent 30%);
 }
 
 .home-hero,
@@ -18,7 +23,8 @@
   align-items: stretch;
   padding: 1.1rem;
   background:
-    linear-gradient(135deg, rgba(255, 250, 246, 0.96), rgba(239, 248, 243, 0.92)),
+    radial-gradient(circle at 0% 0%, rgba(244, 196, 48, 0.18), transparent 32%),
+    linear-gradient(135deg, rgba(255, 247, 229, 0.98), rgba(250, 235, 222, 0.94)),
     var(--color-paper);
 }
 
@@ -97,14 +103,14 @@
 }
 
 .home-cta-secondary {
-  border: 1px solid #b8d6c8;
-  background: #f4fff9;
-  color: #185a45;
+  border: 1px solid #e1c8aa;
+  background: #fff8ee;
+  color: #6b3a27;
 }
 
 .home-cta-secondary:hover {
-  border-color: #6ea98f;
-  background: #e7f7ef;
+  border-color: #d49b72;
+  background: #fff0df;
 }
 
 .home-cta-light {
@@ -118,22 +124,51 @@
 }
 
 .home-hero-panel {
+  position: relative;
   overflow: hidden;
   border: 1px solid #d8c6b7;
   border-radius: 16px;
-  background: #fff;
+  background: #fffaf3;
   min-height: 320px;
-  padding: 0.75rem;
+  padding: 1.35rem 0.75rem 0.75rem;
+}
+
+.home-next-plan-badge {
+  position: absolute;
+  top: 0.72rem;
+  left: 0.62rem;
+  z-index: 4;
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  padding: 0.36rem 0.8rem;
+  border: 1px solid rgba(121, 70, 0, 0.16);
+  border-radius: 999px;
+  background:
+    linear-gradient(135deg, #ffd86b, #f4b72d);
+  color: #5f2f00;
+  font-size: 0.76rem;
+  font-weight: 900;
+  letter-spacing: 0.07em;
+  line-height: 1;
+  text-transform: uppercase;
+  transform: rotate(-6deg);
+  transform-origin: center;
+  box-shadow:
+    0 10px 18px rgba(121, 70, 0, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.55);
+  pointer-events: none;
 }
 
 .home-hero-panel-card {
-  margin-top: 0.75rem;
+  position: relative;
+  margin-top: 0.95rem;
   padding: 0.5rem;
   border: 1px solid #d9c0a7;
   border-radius: 18px;
   background:
-    radial-gradient(circle at top right, rgba(244, 196, 48, 0.22), transparent 32%),
-    linear-gradient(135deg, rgba(255, 250, 246, 0.98), rgba(241, 246, 252, 0.98));
+    radial-gradient(circle at top right, rgba(244, 196, 48, 0.28), transparent 34%),
+    linear-gradient(135deg, rgba(255, 249, 239, 0.98), rgba(250, 231, 216, 0.96));
   box-shadow:
     0 18px 36px rgba(73, 44, 25, 0.14),
     inset 0 1px 0 rgba(255, 255, 255, 0.72);
@@ -193,7 +228,8 @@
 .home-upcoming {
   padding: 1rem;
   background:
-    linear-gradient(135deg, rgba(255, 250, 246, 0.95), rgba(255, 244, 226, 0.9)),
+    radial-gradient(circle at top left, rgba(244, 196, 48, 0.13), transparent 30%),
+    linear-gradient(135deg, rgba(255, 250, 244, 0.97), rgba(255, 240, 222, 0.92)),
     #fff;
 }
 
@@ -245,7 +281,7 @@
   overflow: hidden;
   border: 1px solid #ead8ca;
   border-radius: 14px;
-  background: #fff;
+  background: #fffaf6;
   transition: border-color 0.16s ease, box-shadow 0.16s ease, transform 0.16s ease;
 }
 
@@ -341,13 +377,13 @@
 }
 
 .home-event-chip-soft {
-  background: #e7f7ef;
-  color: #185a45;
+  background: #ffe7b7;
+  color: #734600;
 }
 
 .home-event-chip-audience {
-  background: #eef0ff;
-  color: #3f4a92;
+  background: #f5dfcb;
+  color: #6e3a22;
 }
 
 .home-event-body h3 {
@@ -406,7 +442,8 @@
   align-items: center;
   padding: 1rem;
   background:
-    linear-gradient(135deg, rgba(184, 49, 20, 0.96), rgba(31, 103, 79, 0.94)),
+    radial-gradient(circle at 100% 0%, rgba(244, 196, 48, 0.24), transparent 32%),
+    linear-gradient(135deg, rgba(184, 49, 20, 0.96), rgba(91, 46, 28, 0.96)),
     #8f2410;
   color: #fff;
 }
@@ -462,6 +499,23 @@
 
   .home-hero {
     padding: 0.8rem;
+  }
+
+  .home-hero-panel {
+    padding-top: 1.15rem;
+  }
+
+  .home-next-plan-badge {
+    top: 0.62rem;
+    left: 0.54rem;
+    min-height: 28px;
+    padding: 0.3rem 0.66rem;
+    font-size: 0.68rem;
+    transform: rotate(-4deg);
+  }
+
+  .home-hero-panel-card {
+    margin-top: 0.8rem;
   }
 
   .home-hero h1 {

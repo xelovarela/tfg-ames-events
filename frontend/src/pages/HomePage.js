@@ -185,7 +185,7 @@ function HomePage({ session }) {
         </div>
 
         <div className="home-hero-panel" aria-label="Siguiente evento destacado">
-          <p className="home-kicker">Siguiente plan</p>
+          <span className="home-next-plan-badge">Siguiente plan</span>
           {isLoading && <p className="home-hero-panel-text">Cargando agenda...</p>}
           {!isLoading && loadError && <p className="home-hero-panel-text">{loadError}</p>}
           {!isLoading && !loadError && !nextEvent && (
