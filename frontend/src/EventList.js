@@ -240,6 +240,7 @@ const EventList = ({
           {events.map((event) => {
             const shortDate = formatShortDate(event.event_date);
             const isFavorite = favoriteIdsSet.has(Number(event.id));
+            const favoriteCount = Number(event.favorite_count);
 
             return (
               <article
@@ -258,6 +259,12 @@ const EventList = ({
                     <span>{shortDate.month}</span>
                     {shortDate.time && <small>{shortDate.time}</small>}
                   </div>
+                  {favoriteCount > 0 && (
+                    <div className="event-list-popularity" aria-label={`${favoriteCount} favs`}>
+                      <Heart aria-hidden="true" focusable="false" />
+                      <span>{favoriteCount === 1 ? '1 fav' : `${favoriteCount} favs`}</span>
+                    </div>
+                  )}
                 </Link>
 
                 <div className="event-list-card-body">

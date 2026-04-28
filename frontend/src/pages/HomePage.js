@@ -4,7 +4,7 @@
  * reutilizando el modelo de datos existente sin logica de backend adicional.
  */
 import React, { useEffect, useMemo, useState } from 'react';
-import { ArrowRight, MapPin, Megaphone } from 'lucide-react';
+import { ArrowRight, Heart, MapPin, Megaphone } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { API_BASE_URL } from '../config';
 import { getEventImageUrl } from '../utils/eventImages';
@@ -51,6 +51,15 @@ function formatAudience(event) {
   }
 
   return String(rawAudience).trim();
+}
+
+function formatFavoriteCountLabel(value) {
+  const count = Number(value);
+  if (Number.isNaN(count) || count <= 0) {
+    return '';
+  }
+
+  return count === 1 ? '1 fav' : `${count} favs`;
 }
 
 function HomePage({ session }) {
@@ -114,6 +123,7 @@ function HomePage({ session }) {
   const renderEventCard = (event, { featured = false } = {}) => {
     const audienceLabel = formatAudience(event);
     const eventDateParts = formatEventDateParts(event.event_date);
+    const favoriteCountLabel = formatFavoriteCountLabel(event.favorite_count);
 
     return (
       <article key={event.id} className={`home-event-card${featured ? ' home-event-card-featured' : ''}`}>
@@ -129,6 +139,12 @@ function HomePage({ session }) {
             {Number(event.is_free) === 1 && <span className="home-event-chip home-event-chip-soft">Gratis</span>}
             {audienceLabel && <span className="home-event-chip home-event-chip-audience">{audienceLabel}</span>}
           </div>
+          {favoriteCountLabel && (
+            <div className="home-event-popularity" aria-label={favoriteCountLabel}>
+              <Heart aria-hidden="true" focusable="false" />
+              <span>{favoriteCountLabel}</span>
+            </div>
+          )}
         </Link>
 
         <div className="home-event-body">

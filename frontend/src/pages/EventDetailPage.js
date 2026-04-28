@@ -112,6 +112,15 @@ function formatAgeRange(event) {
   return `${event.min_age}-${event.max_age} a\u00f1os`;
 }
 
+function formatFavoriteCountLabel(value) {
+  const count = Number(value);
+  if (Number.isNaN(count) || count <= 0) {
+    return '';
+  }
+
+  return count === 1 ? '1 fav' : `${count} favs`;
+}
+
 function IconCalendarClock() {
   return <CalendarClock aria-hidden="true" focusable="false" />;
 }
@@ -224,6 +233,7 @@ function EventDetailPage({ session }) {
   const canManageEvents = ['admin', 'content_manager'].includes(session?.user?.role);
   const dateParts = event ? formatDateParts(event.event_date) : null;
   const dateBadge = event ? formatDateBadgeParts(event.event_date) : null;
+  const favoriteCountLabel = formatFavoriteCountLabel(event?.favorite_count);
   const googleCalendarUrl = event ? buildGoogleCalendarUrl(event) : '';
 
   // Al cambiar el id de la URL se vuelve a pedir el evento correspondiente.
@@ -398,6 +408,12 @@ function EventDetailPage({ session }) {
 
             <div className="event-detail-media">
               <img src={getEventImageUrl(event)} alt="" className="event-detail-image" />
+              {favoriteCountLabel && (
+                <div className="event-detail-popularity" aria-label={favoriteCountLabel}>
+                  <Heart aria-hidden="true" focusable="false" />
+                  <span>{favoriteCountLabel}</span>
+                </div>
+              )}
             </div>
 
             <div className="event-detail-side">

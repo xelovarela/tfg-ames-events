@@ -62,6 +62,7 @@ Dependencias de testing y tooling incluidas por Create React App:
 - Flujo para que usuarios registrados soliciten acceso como creadores de contenido.
 - Bandeja admin de solicitudes con filtros por estado y notas de revision.
 - Favoritos para usuarios registrados.
+- Contadores de `favs` visibles en portada, listado y detalle de evento.
 - Alertas por email cuando se crean eventos que coinciden con criterios guardados.
 - Recordatorios por email de eventos favoritos.
 - CRUD de categorias, ubicaciones, audiencias y organizadores.

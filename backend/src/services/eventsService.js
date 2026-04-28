@@ -26,12 +26,18 @@ async function listEvents() {
       l.name AS location,
       l.locality AS location_locality,
       l.lat,
-      l.lng
+      l.lng,
+      COALESCE(fc.favorite_count, 0) AS favorite_count
     FROM events e
     JOIN categories c ON e.category_id = c.id
     LEFT JOIN audiences a ON e.audience_id = a.id
     LEFT JOIN organizers o ON e.organizer_id = o.id
     JOIN locations l ON e.location_id = l.id
+    LEFT JOIN (
+      SELECT event_id, COUNT(*) AS favorite_count
+      FROM favorites
+      GROUP BY event_id
+    ) fc ON fc.event_id = e.id
     ORDER BY e.id`
   );
 
@@ -61,12 +67,18 @@ async function getEventById(id) {
       l.lat,
       l.lng,
       e.category_id,
-      e.location_id
+      e.location_id,
+      COALESCE(fc.favorite_count, 0) AS favorite_count
     FROM events e
     JOIN categories c ON e.category_id = c.id
     LEFT JOIN audiences a ON e.audience_id = a.id
     LEFT JOIN organizers o ON e.organizer_id = o.id
     JOIN locations l ON e.location_id = l.id
+    LEFT JOIN (
+      SELECT event_id, COUNT(*) AS favorite_count
+      FROM favorites
+      GROUP BY event_id
+    ) fc ON fc.event_id = e.id
     WHERE e.id = ?`,
     [id]
   );
