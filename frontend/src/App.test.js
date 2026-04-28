@@ -26,7 +26,7 @@ test('renders the home page by default', async () => {
   render(<App />);
 
   expect(await screen.findByRole('heading', {
-    name: /encuentra planes municipales y familiares/i
+    name: /la agenda local para encontrar el próximo plan/i
   })).toBeInTheDocument();
   expect(screen.getByRole('link', { name: /ver agenda/i })).toBeInTheDocument();
   expect(screen.getByRole('link', { name: /abrir mapa/i })).toBeInTheDocument();

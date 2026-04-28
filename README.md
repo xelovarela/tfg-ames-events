@@ -51,7 +51,7 @@ Dependencias de testing y tooling incluidas por Create React App:
 
 ## Estado actual
 
-- Pagina de inicio con accesos rapidos, eventos destacados y CTA para proponer eventos.
+- Pagina de inicio con un evento destacado, proximos eventos y CTA para proponer eventos.
 - Mapa interactivo con Leaflet y agrupacion de eventos por ubicacion.
 - **Capas contextuales del mapa**: Límite del Concello de Ames (GeoJSON), zonas de Bertamiráns y O Milladoiro (círculos aprox.), con etiquetas legibles.
 - Listado, detalle, alta, edicion y borrado de eventos segun permisos.
