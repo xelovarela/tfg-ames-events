@@ -6,63 +6,304 @@
 /* Tarjeta principal del modulo de ubicaciones. */
 .locations-card {
   padding: 1rem;
-  background: #f7f7f7;
-  border-radius: 8px;
+  border: 1px solid #ead8ca;
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at top right, rgba(244, 196, 48, 0.16), transparent 30%),
+    linear-gradient(145deg, rgba(255, 250, 246, 0.98), rgba(255, 245, 232, 0.95));
+  box-shadow: var(--shadow-soft);
   margin-bottom: 1rem;
 }
 
 .locations-title {
   margin: 0 0 1rem;
+  color: #5e2412;
 }
 
 /* Rejilla del formulario con nombre, localidad y coordenadas. */
 .locations-form {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 0.6rem;
+  grid-template-columns: 1fr;
+  gap: 0.85rem;
+}
+
+.locations-form-grid,
+.locations-coordinate-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.locations-field {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.locations-field span {
+  color: #7a3a20;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
 }
 
 .locations-input {
   width: 100%;
-  padding: 0.65rem;
-  border: 1px solid #cdcdcd;
-  border-radius: 6px;
+  padding: 0.72rem 0.8rem;
+  border: 1px solid #d9c3b4;
+  border-radius: 12px;
+  background: #fff;
+  color: #2f2520;
   font-size: 0.95rem;
+}
+
+.locations-input:focus {
+  outline: 2px solid rgba(184, 49, 20, 0.2);
+  border-color: #b83114;
+}
+
+.locations-input[readonly] {
+  background: #fff8f1;
+  color: #6f3321;
+  cursor: default;
+}
+
+.locations-map-section {
+  border: 1px solid #ead8ca;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #fffaf6;
+}
+
+.locations-map-copy {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.85rem 0.95rem;
+  border-bottom: 1px solid #ead8ca;
+}
+
+.locations-map-copy strong {
+  display: block;
+  color: #4c1f12;
+}
+
+.locations-map-copy span {
+  display: block;
+  margin-top: 0.18rem;
+  color: #6f5a4d;
+  font-size: 0.9rem;
+  line-height: 1.35;
+}
+
+.locations-map-toggles {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.45rem;
+}
+
+.locations-map-toggles label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: 30px;
+  padding: 0.25rem 0.6rem;
+  border: 1px solid #ead8ca;
+  border-radius: 999px;
+  background: #fff;
+  color: #6f3321;
+  font-size: 0.82rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.locations-map-toggles input {
+  accent-color: var(--color-brand);
+}
+
+.locations-map-frame {
+  position: relative;
+  height: clamp(280px, 44vh, 430px);
+  padding: 0.55rem;
+  background:
+    linear-gradient(90deg, rgba(184, 49, 20, 0.07) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(184, 49, 20, 0.07) 1px, transparent 1px),
+    #f6eadc;
+  background-size: 28px 28px;
+}
+
+.locations-map {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border: 1px solid rgba(86, 52, 32, 0.18);
+  border-radius: 14px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.45);
+}
+
+.locations-map .leaflet-popup-content {
+  display: grid;
+  gap: 0.2rem;
+  margin: 0.65rem 0.75rem;
+  color: #3d3029;
+}
+
+.locations-map .leaflet-popup-content strong {
+  color: #4c1f12;
+}
+
+.locations-map .leaflet-popup-content span {
+  color: #6f5a4d;
+}
+
+.location-picker-marker {
+  background: transparent;
+  border: 0;
+}
+
+.location-picker-marker-pin {
+  position: relative;
+  width: 34px;
+  height: 34px;
+  border: 3px solid #fff8e7;
+  border-radius: 50% 50% 50% 10px;
+  background: #b83114;
+  display: block;
+  transform: rotate(-45deg);
+  box-shadow: 0 12px 22px rgba(68, 35, 22, 0.35);
+}
+
+.location-picker-marker-pin::after {
+  content: "";
+  position: absolute;
+  inset: 8px;
+  border-radius: 50%;
+  background: #ffd86b;
+}
+
+.location-existing-marker {
+  background: transparent;
+  border: 0;
+}
+
+.location-existing-marker-dot {
+  width: 18px;
+  height: 18px;
+  border: 3px solid #fff8e7;
+  border-radius: 999px;
+  background: #6f5a4d;
+  display: block;
+  box-shadow: 0 6px 14px rgba(68, 35, 22, 0.28);
+}
+
+.locations-map-legend {
+  position: absolute;
+  left: 0.85rem;
+  bottom: 0.85rem;
+  z-index: 500;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  max-width: calc(100% - 1.7rem);
+  pointer-events: none;
+}
+
+.locations-map-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: 26px;
+  padding: 0.22rem 0.55rem;
+  border: 1px solid rgba(117, 76, 50, 0.16);
+  border-radius: 999px;
+  background: rgba(255, 250, 246, 0.94);
+  color: #5b3523;
+  font-size: 0.76rem;
+  font-weight: 800;
+  box-shadow: 0 6px 14px rgba(73, 44, 25, 0.12);
+}
+
+.locations-map-legend i {
+  flex: 0 0 auto;
+}
+
+.locations-legend-selected {
+  width: 12px;
+  height: 12px;
+  border-radius: 50% 50% 50% 3px;
+  background: #b83114;
+  transform: rotate(-45deg);
+}
+
+.locations-legend-existing {
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  background: #6f5a4d;
+}
+
+.locations-legend-area {
+  width: 18px;
+  height: 10px;
+  border: 2px solid #f39c12;
+  border-radius: 999px;
+  background: rgba(244, 196, 48, 0.24);
 }
 
 /* Zona de botones del formulario. */
 .locations-actions {
-  grid-column: 1 / -1;
   display: flex;
+  flex-wrap: wrap;
   gap: 0.5rem;
   margin-top: 0.3rem;
 }
 
 .locations-btn {
-  border: 0;
-  border-radius: 6px;
+  border: 1px solid #e5d4c6;
+  border-radius: 999px;
+  background: #fffaf6;
+  color: var(--color-brand-dark);
   padding: 0.6rem 0.95rem;
   cursor: pointer;
   font-size: 0.9rem;
+  font-weight: 800;
 }
 
 .locations-btn-primary {
-  background: #b30000;
+  border-color: var(--color-brand);
+  background: var(--color-brand);
   color: #fff;
 }
 
 .locations-btn-secondary {
-  background: #e4e4e4;
-  color: #222;
+  background: #fffaf6;
+  color: var(--color-brand-dark);
 }
 
 .locations-btn-danger {
+  border-color: #d64545;
   background: #d64545;
   color: #fff;
 }
 
+.locations-btn:hover {
+  filter: brightness(0.97);
+}
+
+.locations-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
 .locations-message {
   margin: 0.75rem 0 0;
+  padding: 0.75rem 0.85rem;
+  border: 1px solid #e9c8bd;
+  border-radius: 12px;
+  background: #fff8f1;
+  color: #7a3321;
 }
 
 /* Cuadricula que muestra las ubicaciones disponibles. */
@@ -74,10 +315,14 @@
 }
 
 .locations-item {
-  border: 1px solid #ddd;
-  border-radius: 8px;
+  border: 1px solid #ead8ca;
+  border-radius: 14px;
   padding: 0.8rem;
   background: #fff;
+}
+
+.locations-item strong {
+  color: #4c1f12;
 }
 
 .locations-item p {
@@ -93,8 +338,30 @@
 
 /* Ajustes para pantallas pequenas. */
 @media (max-width: 720px) {
-  .locations-form {
+  .locations-form-grid,
+  .locations-coordinate-grid {
     grid-template-columns: 1fr;
+  }
+
+  .locations-map-frame {
+    height: 300px;
+    padding: 0.45rem;
+  }
+
+  .locations-map-copy,
+  .locations-map-toggles {
+    justify-content: flex-start;
+  }
+
+  .locations-map-toggles label {
+    width: 100%;
+  }
+
+  .locations-map-legend {
+    left: 0.65rem;
+    right: 0.65rem;
+    bottom: 0.65rem;
+    max-width: none;
   }
 
   .locations-actions {

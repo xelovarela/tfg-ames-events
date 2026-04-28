@@ -93,8 +93,9 @@ const useBoundaryGeoJSON = () => {
  * @param {boolean} [visible=true] - Si false, no renderiza las capas.
  * @param {boolean} [showBoundary=true] - Si false, oculta el límite municipal.
  * @param {boolean} [showZones=true] - Si false, oculta las zonas.
+ * @param {boolean} [interactive=true] - Si false, las capas no capturan clics del mapa.
  */
-function MapContextLayers({ visible = true, showBoundary = true, showZones = true }) {
+function MapContextLayers({ visible = true, showBoundary = true, showZones = true, interactive = true }) {
   const { geoData } = useBoundaryGeoJSON();
 
   if (!visible) {
@@ -105,7 +106,12 @@ function MapContextLayers({ visible = true, showBoundary = true, showZones = tru
     <>
       {/* Límite del Concello de Ames (si existe GeoJSON) */}
       {showBoundary && geoData && (
-        <GeoJSON data={geoData} style={BOUNDARY_STYLE} onEachFeature={onEachFeature} />
+        <GeoJSON
+          data={geoData}
+          style={BOUNDARY_STYLE}
+          onEachFeature={interactive ? onEachFeature : undefined}
+          interactive={interactive}
+        />
       )}
 
       {/* Zonas aproximadas con Circle */}
@@ -115,6 +121,7 @@ function MapContextLayers({ visible = true, showBoundary = true, showZones = tru
           <Circle
             center={ZONE_CONFIG.bertamiranes.center}
             radius={ZONE_CONFIG.bertamiranes.radius}
+            interactive={interactive}
             pathOptions={{
               color: ZONE_CONFIG.bertamiranes.color,
               weight: ZONE_CONFIG.bertamiranes.weight,
@@ -137,6 +144,7 @@ function MapContextLayers({ visible = true, showBoundary = true, showZones = tru
           <Circle
             center={ZONE_CONFIG.milladoiro.center}
             radius={ZONE_CONFIG.milladoiro.radius}
+            interactive={interactive}
             pathOptions={{
               color: ZONE_CONFIG.milladoiro.color,
               weight: ZONE_CONFIG.milladoiro.weight,

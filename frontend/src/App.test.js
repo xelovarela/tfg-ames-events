@@ -10,6 +10,10 @@ jest.mock('./AmesMap', () => function MockAmesMap() {
   return require('react').createElement('div', { 'data-testid': 'ames-map' });
 });
 
+jest.mock('./LocationManager', () => function MockLocationManager() {
+  return require('react').createElement('div', { 'data-testid': 'location-manager' });
+});
+
 beforeEach(() => {
   global.fetch = jest.fn(() => Promise.resolve({
     ok: true,
