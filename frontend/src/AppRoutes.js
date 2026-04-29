@@ -2,6 +2,7 @@ import React from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import MapPage from './pages/MapPage';
 import EventsPage from './pages/EventsPage';
+import EventCalendarPage from './pages/EventCalendarPage';
 import AudiencesPage from './pages/AudiencesPage';
 import OrganizersPage from './pages/OrganizersPage';
 import EventDetailPage from './pages/EventDetailPage';
@@ -44,6 +45,7 @@ function AppRoutes({ session, onSessionChange }) {
       <Route path="/mapa-del-sitio" element={<SitemapPage />} />
 
       <Route path="/events" element={<EventsPage session={session} />} />
+      <Route path="/events/calendar" element={<EventCalendarPage session={session} />} />
       <Route
         path="/events/new"
         element={(

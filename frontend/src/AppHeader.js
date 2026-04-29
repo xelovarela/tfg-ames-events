@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { CalendarDays, ChevronDown, LogOut, MapPin, Search, UserRound } from 'lucide-react';
+import { CalendarDays, CalendarRange, ChevronDown, LogOut, MapPin, Search, UserRound } from 'lucide-react';
 import { Link, NavLink, useLocation, useSearchParams } from 'react-router-dom';
 import './styles/topbar.css';
 
@@ -8,6 +8,7 @@ const PUBLIC_URL = process.env.PUBLIC_URL || '';
 const NAV_ITEMS = [
   { to: '/map', label: 'Mapa' },
   { to: '/events', label: 'Eventos' },
+  { to: '/events/calendar', label: 'Calendario' },
   { to: '/favorites', label: 'Mis favoritos', allowedRoles: ['user', 'admin'] },
   { to: '/alerts', label: 'Alertas', authenticatedOnly: true },
   { to: '/audiences', label: 'Audiencias', adminOnly: true },
@@ -127,9 +128,13 @@ function AppHeader({ session, onLogout }) {
           </div>
 
           <nav className="app-topbar-links" aria-label="Enlaces rapidos">
-            <NavLink to="/events" className={({ isActive }) => `app-topbar-link${isActive ? ' active' : ''}`}>
+            <NavLink end to="/events" className={({ isActive }) => `app-topbar-link${isActive ? ' active' : ''}`}>
               <span className="app-topbar-link-icon" aria-hidden="true"><CalendarDays /></span>
               <span>Agenda</span>
+            </NavLink>
+            <NavLink to="/events/calendar" className={({ isActive }) => `app-topbar-link${isActive ? ' active' : ''}`}>
+              <span className="app-topbar-link-icon" aria-hidden="true"><CalendarRange /></span>
+              <span>Calendario</span>
             </NavLink>
             <NavLink to="/map" className={({ isActive }) => `app-topbar-link${isActive ? ' active' : ''}`}>
               <span className="app-topbar-link-icon" aria-hidden="true"><MapPin /></span>
@@ -196,6 +201,7 @@ function AppHeader({ session, onLogout }) {
           <NavLink
             key={item.to}
             to={item.to}
+            end={item.to === '/events'}
             className={({ isActive }) => `app-nav-link${isActive ? ' active' : ''}`}
           >
             {item.label}

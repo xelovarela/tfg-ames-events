@@ -104,6 +104,10 @@ function EventsPage({ session }) {
       {loadError && <p className="event-filters-feedback event-filters-feedback-error">{loadError}</p>}
 
       <div className="event-management-toolbar">
+        <Link to="/events/calendar" className="app-inline-link">
+          Ver calendario
+        </Link>
+
         {canManageEvents && (
           <>
             <div className="event-time-scope-filter" aria-label="Filtro temporal de eventos">
