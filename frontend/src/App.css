@@ -3,7 +3,7 @@
  * Incluye la cabecera, el menu lateral, la zona central de contenido, el detalle
  * de eventos y los estilos responsive compartidos por varias vistas.
  */
-/* Reset basico para que la aplicacion ocupe toda la altura disponible. */
+/* Reset basico para que la aplicación ocupe toda la altura disponible. */
 html, body, #root {
   margin: 0;
   padding: 0;
@@ -20,7 +20,7 @@ html, body, #root {
   stroke-linejoin: round;
 }
 
-/* Estilo general de tipografia y fondo de toda la aplicacion. */
+/* Estilo general de tipografia y fondo de toda la aplicación. */
 body {
   font-family: var(--font-family-base);
   background: linear-gradient(180deg, var(--background) 0%, #e9dfd1 100%);
@@ -41,7 +41,7 @@ h1, h2, h3, h4, h5, h6 {
   position: relative;
 }
 
-/* Menu lateral deslizante para la navegacion entre secciones. */
+/* Menu lateral deslizante para la navegación entre secciones. */
 .app-drawer {
   position: fixed;
   top: 0;
@@ -104,7 +104,7 @@ h1, h2, h3, h4, h5, h6 {
   color: #fff;
 }
 
-/* Zona central donde se renderizan las paginas del router. */
+/* Zona central donde se renderizan las páginas del router. */
 .app-main {
   flex: 1;
   width: min(1200px, 100%);
@@ -115,6 +115,44 @@ h1, h2, h3, h4, h5, h6 {
 .app-main > main > h2 {
   margin: 0 0 0.9rem;
   color: #602211;
+}
+
+.event-management-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin: 0 0 1rem;
+}
+
+.event-time-scope-filter {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem;
+  border: 1px solid #e7d6c8;
+  border-radius: 999px;
+  background: #fffaf6;
+}
+
+.event-time-scope-filter button {
+  min-height: 34px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: #6b3320;
+  padding: 0.35rem 0.75rem;
+  font: inherit;
+  font-size: 0.84rem;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.event-time-scope-filter button:hover,
+.event-time-scope-filter button.active {
+  background: #b83114;
+  color: #fff;
 }
 
 .app-not-found {
@@ -486,6 +524,15 @@ h1, h2, h3, h4, h5, h6 {
   cursor: pointer;
 }
 
+.event-list-card.is-past {
+  border-color: #d7d0c8;
+  background: #fbfaf8;
+}
+
+.event-list-card.is-past .event-list-image {
+  filter: saturate(0.65);
+}
+
 .event-list-card:hover {
   border-color: #d9a184;
   box-shadow: 0 14px 30px rgba(73, 44, 25, 0.11);
@@ -617,6 +664,11 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--chip-soft-fg);
 }
 
+.event-list-chip-ended {
+  background: #4f5b66;
+  color: #fff;
+}
+
 .event-list-card h4 {
   margin: 0;
   color: #4c1f12;
@@ -700,6 +752,9 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .event-list-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
   border: 1px solid #e5d4c6;
   border-radius: 999px;
   background: #fffaf6;
@@ -721,6 +776,18 @@ h1, h2, h3, h4, h5, h6 {
   border-color: #24745c;
   background: #24745c;
   color: #fff;
+}
+
+.event-list-action-icon {
+  display: inline-flex;
+  width: 16px;
+  height: 16px;
+}
+
+.event-list-action-icon svg {
+  width: 100%;
+  height: 100%;
+  stroke: currentColor;
 }
 
 .event-list-action-danger {
@@ -773,7 +840,7 @@ h1, h2, h3, h4, h5, h6 {
   fill: currentColor;
 }
 
-/* Detalle de evento con hero, resumen y llamadas a la accion. */
+/* Detalle de evento con hero, resumen y llamadas a la acción. */
 .event-detail-page {
   display: grid;
   gap: 1rem;
@@ -1291,7 +1358,7 @@ h1, h2, h3, h4, h5, h6 {
   font-size: 0.9rem;
 }
 
-/* Pie de pagina comun para toda la aplicacion. */
+/* Pie de página comun para toda la aplicación. */
 .app-footer {
   background:
     radial-gradient(circle at 15% 0%, rgba(244, 196, 48, 0.14), transparent 30%),

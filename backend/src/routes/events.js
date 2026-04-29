@@ -1,17 +1,17 @@
 /**
  * Este archivo define las rutas REST del recurso eventos.
- * Su unica responsabilidad es asociar cada endpoint HTTP con la accion adecuada
+ * Su única responsabilidad es asociar cada endpoint HTTP con la acción adecuada
  * del controlador, sin contener logica de negocio propia.
  */
 const express = require('express');
 const eventsController = require('../controllers/eventsController');
-const { requireAuth, requireAdmin, requireAnyRole } = require('../middleware/authMiddleware');
+const { attachUserIfAuthenticated, requireAuth, requireAdmin, requireAnyRole } = require('../middleware/authMiddleware');
 const { eventImageUpload } = require('../middleware/eventImageUpload');
 
 const router = express.Router();
 
 // Se registran las operaciones CRUD disponibles para los eventos.
-router.get('/', eventsController.getAll);
+router.get('/', attachUserIfAuthenticated, eventsController.getAll);
 router.get('/:id', eventsController.getById);
 
 router.post('/', requireAuth, requireAnyRole(['admin', 'content_manager']), eventImageUpload.single('image'), eventsController.create);

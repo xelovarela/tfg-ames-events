@@ -4,11 +4,12 @@
  * para editar, borrar y navegar al detalle de cada evento.
  */
 import React, { useEffect, useState } from 'react';
-import { Baby, Building2, Heart, MapPin, Users } from 'lucide-react';
+import { Baby, Building2, Copy, Heart, MapPin, Users } from 'lucide-react';
 import { API_BASE_URL } from './config';
 import { Link, useNavigate } from 'react-router-dom';
 import { withAuthHeaders } from './utils/authFetch';
 import { getEventImageUrl } from './utils/eventImages';
+import { isPastEvent } from './utils/eventTime';
 
 // Convierte la fecha tecnica del backend a un formato legible.
 function formatDate(value) {
@@ -44,7 +45,7 @@ function formatAgeRange(event) {
   if (event.min_age === null || event.max_age === null) {
     return 'Todas las edades';
   }
-  return `${event.min_age}-${event.max_age} anos`;
+  return `${event.min_age}-${event.max_age} años`;
 }
 
 function formatShortDate(value) {
@@ -74,7 +75,7 @@ function formatShortDate(value) {
 
 function buildDescriptionPreview(description) {
   if (!description) {
-    return 'Sin descripcion ampliada por ahora.';
+    return 'Sin descripción ampliada por ahora.';
   }
 
   return description.length > 150 ? `${description.slice(0, 147)}...` : description;
@@ -100,6 +101,10 @@ function IconHeart() {
   return <Heart aria-hidden="true" focusable="false" />;
 }
 
+function IconCopy() {
+  return <Copy aria-hidden="true" focusable="false" />;
+}
+
 // El componente admite modo controlado para reutilizarlo con eventos ya filtrados.
 const EventList = ({
   refreshTrigger,
@@ -111,7 +116,9 @@ const EventList = ({
   showFavoriteButton = false,
   canManageEvents = false,
   emptyMessage = 'No hay eventos registrados.',
-  showEmptyState = true
+  showEmptyState = true,
+  kicker = 'Agenda',
+  title = 'Lista de eventos'
 }) => {
   const navigate = useNavigate();
   const [events, setEvents] = useState([]);
@@ -159,7 +166,7 @@ const EventList = ({
     setLoadError('');
   }, [externalEvents, isControlled]);
 
-  // El borrado pide confirmacion y despues actualiza el listado visible.
+  // El borrado pide confirmación y después actualiza el listado visible.
   const handleDelete = async (id) => {
     const confirmed = window.confirm('Seguro que quieres borrar este evento?');
     if (!confirmed) return;
@@ -217,8 +224,8 @@ const EventList = ({
     <section className="event-list-panel">
       <div className="event-list-header">
         <div>
-          <p className="event-list-kicker">Agenda</p>
-          <h3>Lista de eventos</h3>
+          <p className="event-list-kicker">{kicker}</p>
+          <h3>{title}</h3>
         </div>
         <span className="event-list-count">{events.length} eventos</span>
       </div>
@@ -241,11 +248,12 @@ const EventList = ({
             const shortDate = formatShortDate(event.event_date);
             const isFavorite = favoriteIdsSet.has(Number(event.id));
             const favoriteCount = Number(event.favorite_count);
+            const isPast = isPastEvent(event);
 
             return (
               <article
                 key={event.id}
-                className="event-list-card"
+                className={`event-list-card${isPast ? ' is-past' : ''}`}
                 role="link"
                 tabIndex={0}
                 onClick={() => handleOpenDetails(event.id)}
@@ -269,8 +277,9 @@ const EventList = ({
 
                 <div className="event-list-card-body">
                   <div className="event-list-card-top">
-                    <span className="event-list-chip">{event.category || 'Sin categoria'}</span>
+                    <span className="event-list-chip">{event.category || 'Sin categoría'}</span>
                     <span className="event-list-chip event-list-chip-soft">{formatPrice(event)}</span>
+                    {isPast && <span className="event-list-chip event-list-chip-ended">Finalizado</span>}
                   </div>
 
                   <h4>
@@ -317,6 +326,15 @@ const EventList = ({
 
                       {canManageEvents && (
                         <>
+                          <Link
+                            to={`/events/new?duplicateFrom=${event.id}`}
+                            className="event-list-action-btn"
+                            onClick={(clickEvent) => clickEvent.stopPropagation()}
+                          >
+                            <span className="event-list-action-icon" aria-hidden="true"><IconCopy /></span>
+                            Duplicar
+                          </Link>
+
                           <Link
                             to={`/events/${event.id}/edit`}
                             className="event-list-action-btn"

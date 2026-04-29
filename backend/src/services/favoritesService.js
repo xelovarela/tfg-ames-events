@@ -1,4 +1,5 @@
 const db = require('../config/db');
+const { buildIsPastSelect } = require('../utils/eventTime');
 
 async function eventExists(eventId) {
   const [rows] = await db.query('SELECT id FROM events WHERE id = ? LIMIT 1', [eventId]);
@@ -26,6 +27,7 @@ async function listFavoritesByUserId(userId) {
       l.locality AS location_locality,
       l.lat,
       l.lng,
+      ${buildIsPastSelect('e')},
       f.created_at AS favorited_at
     FROM favorites f
     JOIN events e ON e.id = f.event_id

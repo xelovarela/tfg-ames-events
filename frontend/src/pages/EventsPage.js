@@ -1,6 +1,6 @@
 /**
- * Este archivo define la pagina de gestion de eventos.
- * Usa la logica compartida de filtrado y muestra el acceso a creacion,
+ * Este archivo define la página de gestión de eventos.
+ * Usa la logica compartida de filtrado y muestra el acceso a creación,
  * favoritos y listado reutilizable de eventos.
  */
 import React, { useEffect, useState } from 'react';
@@ -12,6 +12,8 @@ import { addFavorite, listFavoriteIds, removeFavorite } from '../utils/favorites
 import { noFilteredEventsMessage } from '../utils/eventFilters';
 
 function EventsPage({ session }) {
+  const [timeScope, setTimeScope] = useState('upcoming');
+  const canManageEvents = ['admin', 'content_manager'].includes(session?.user?.role);
   const {
     events,
     categories,
@@ -24,11 +26,19 @@ function EventsPage({ session }) {
     handleFilterChange,
     applyFilterPatch,
     refreshEvents
-  } = useFilteredEvents();
+  } = useFilteredEvents({
+    timeScope: canManageEvents ? timeScope : 'upcoming',
+    includeAuth: canManageEvents
+  });
   const [favoriteIds, setFavoriteIds] = useState([]);
   const isAuthenticated = Boolean(session?.token);
   const canUseFavorites = ['user', 'admin'].includes(session?.user?.role);
-  const canManageEvents = ['admin', 'content_manager'].includes(session?.user?.role);
+
+  useEffect(() => {
+    if (!canManageEvents && timeScope !== 'upcoming') {
+      setTimeScope('upcoming');
+    }
+  }, [canManageEvents, timeScope]);
 
   useEffect(() => {
     let isMounted = true;
@@ -77,7 +87,7 @@ function EventsPage({ session }) {
 
   return (
     <main>
-      <h2>Gestion de eventos</h2>
+      <h2>Gestión de eventos</h2>
 
       <EventFilters
         filters={filters}
@@ -93,13 +103,32 @@ function EventsPage({ session }) {
 
       {loadError && <p className="event-filters-feedback event-filters-feedback-error">{loadError}</p>}
 
-      <div style={{ marginBottom: '1rem' }}>
+      <div className="event-management-toolbar">
         {canManageEvents && (
-          <Link to="/events/new">
-            <button className="event-btn event-btn-primary">
-              Crear nuevo evento
-            </button>
-          </Link>
+          <>
+            <div className="event-time-scope-filter" aria-label="Filtro temporal de eventos">
+              {[
+                { value: 'all', label: 'Todos' },
+                { value: 'upcoming', label: 'Futuros' },
+                { value: 'past', label: 'Pasados' }
+              ].map((option) => (
+                <button
+                  key={option.value}
+                  type="button"
+                  className={timeScope === option.value ? 'active' : ''}
+                  onClick={() => setTimeScope(option.value)}
+                >
+                  {option.label}
+                </button>
+              ))}
+            </div>
+
+            <Link to="/events/new">
+              <button className="event-btn event-btn-primary">
+                Crear nuevo evento
+              </button>
+            </Link>
+          </>
         )}
       </div>
 

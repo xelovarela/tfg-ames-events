@@ -1,9 +1,10 @@
 /**
  * Servicio de alertas de eventos.
- * Centraliza persistencia, validacion de relaciones y matching contra eventos nuevos.
+ * Centraliza persistencia, validación de relaciones y matching contra eventos nuevos.
  */
 const db = require('../config/db');
 const emailService = require('./emailService');
+const { isPastEvent } = require('../utils/eventTime');
 
 function normalizeAlert(row) {
   if (!row) {
@@ -262,6 +263,10 @@ function alertMatchesEvent(alert, event) {
 }
 
 async function notifyMatchingAlertsForEvent(event) {
+  if (isPastEvent(event)) {
+    return { checked: 0, sent: 0, skipped: 'past_event' };
+  }
+
   const alerts = await listActiveAlertsForNotifications();
   const sentKeys = new Set();
   let sentCount = 0;

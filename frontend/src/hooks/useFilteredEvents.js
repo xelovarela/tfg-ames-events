@@ -7,8 +7,26 @@ import {
   filtersFromSearchParams,
   initialEventFilters
 } from '../utils/eventFilters';
+import { withAuthHeaders } from '../utils/authFetch';
 
-function useFilteredEvents(eventLoadErrorMessage = 'No se pudieron cargar los eventos') {
+function normalizeOptions(optionsOrMessage) {
+  if (typeof optionsOrMessage === 'string') {
+    return {
+      eventLoadErrorMessage: optionsOrMessage,
+      timeScope: 'upcoming',
+      includeAuth: false
+    };
+  }
+
+  return {
+    eventLoadErrorMessage: optionsOrMessage?.eventLoadErrorMessage || 'No se pudieron cargar los eventos',
+    timeScope: optionsOrMessage?.timeScope || 'upcoming',
+    includeAuth: Boolean(optionsOrMessage?.includeAuth)
+  };
+}
+
+function useFilteredEvents(optionsOrMessage = {}) {
+  const { eventLoadErrorMessage, timeScope, includeAuth } = normalizeOptions(optionsOrMessage);
   const [events, setEvents] = useState([]);
   const [categories, setCategories] = useState([]);
   const [audiences, setAudiences] = useState([]);
@@ -35,7 +53,14 @@ function useFilteredEvents(eventLoadErrorMessage = 'No se pudieron cargar los ev
 
   const loadEvents = useCallback(async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/events`);
+      const params = new URLSearchParams();
+      if (timeScope && timeScope !== 'upcoming') {
+        params.set('timeScope', timeScope);
+      }
+
+      const response = await fetch(`${API_BASE_URL}/events${params.toString() ? `?${params.toString()}` : ''}`, {
+        headers: includeAuth ? withAuthHeaders() : undefined
+      });
       const data = await response.json();
       if (!response.ok || !Array.isArray(data)) {
         throw new Error(data?.error || eventLoadErrorMessage);
@@ -47,7 +72,7 @@ function useFilteredEvents(eventLoadErrorMessage = 'No se pudieron cargar los ev
       setEvents([]);
       setLoadError(error.message || eventLoadErrorMessage);
     }
-  }, [eventLoadErrorMessage]);
+  }, [eventLoadErrorMessage, includeAuth, timeScope]);
 
   const loadCatalogs = useCallback(async () => {
     try {
@@ -65,7 +90,7 @@ function useFilteredEvents(eventLoadErrorMessage = 'No se pudieron cargar los ev
         organizersRes.json()
       ]);
 
-      if (!categoriesRes.ok || !Array.isArray(categoriesData)) throw new Error('No se pudieron cargar las categorias');
+      if (!categoriesRes.ok || !Array.isArray(categoriesData)) throw new Error('No se pudieron cargar las categorías');
       if (!audiencesRes.ok || !Array.isArray(audiencesData)) throw new Error('No se pudieron cargar las audiencias');
       if (!locationsRes.ok || !Array.isArray(locationsData)) throw new Error('No se pudieron cargar las ubicaciones');
       if (!organizersRes.ok || !Array.isArray(organizersData)) throw new Error('No se pudieron cargar los organizadores');
@@ -76,7 +101,7 @@ function useFilteredEvents(eventLoadErrorMessage = 'No se pudieron cargar los ev
       setOrganizers(organizersData);
     } catch (error) {
       console.error(error);
-      setLoadError(error.message || 'No se pudieron cargar los catalogos auxiliares');
+      setLoadError(error.message || 'No se pudieron cargar los catálogos auxiliares');
     }
   }, []);
 

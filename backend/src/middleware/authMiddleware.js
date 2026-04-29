@@ -25,6 +25,30 @@ function requireAuth(req, res, next) {
   }
 }
 
+function attachUserIfAuthenticated(req, res, next) {
+  const authHeader = req.headers.authorization || '';
+
+  if (!authHeader.startsWith('Bearer ')) {
+    return next();
+  }
+
+  const token = authHeader.slice(7);
+
+  try {
+    const payload = jwt.verify(token, JWT_SECRET);
+
+    req.user = {
+      id: payload.sub,
+      username: payload.username,
+      role: payload.role
+    };
+
+    return next();
+  } catch (error) {
+    return res.status(401).json({ error: 'Token invÃ¡lido o expirado.' });
+  }
+}
+
 function requireAdmin(req, res, next) {
   if (!req.user || req.user.role !== 'admin') {
     return res.status(403).json({ error: 'Acceso restringido a administradores.' });
@@ -36,7 +60,7 @@ function requireAdmin(req, res, next) {
 function requireAnyRole(allowedRoles) {
   return (req, res, next) => {
     if (!req.user || !allowedRoles.includes(req.user.role)) {
-      return res.status(403).json({ error: 'No tienes permisos suficientes para esta accion.' });
+      return res.status(403).json({ error: 'No tienes permisos suficientes para esta acción.' });
     }
 
     next();
@@ -44,6 +68,7 @@ function requireAnyRole(allowedRoles) {
 }
 
 module.exports = {
+  attachUserIfAuthenticated,
   requireAuth,
   requireAdmin,
   requireAnyRole

@@ -1,6 +1,6 @@
 /**
  * Este archivo implementa el formulario reutilizable de eventos.
- * Sirve tanto para crear como para editar, carga catalogos auxiliares, valida los
+ * Sirve tanto para crear como para editar, carga catálogos auxiliares, valida los
  * datos en cliente y envia el payload final al backend.
  */
 import React, { useEffect, useState } from 'react';
@@ -45,10 +45,11 @@ function toDateTimeLocalInput(value) {
   return `${year}-${month}-${day}T${hours}:${minutes}`;
 }
 
-// Este componente encapsula toda la logica del formulario de creacion y edicion.
+// Este componente encapsula toda la logica del formulario de creación y edición.
 const EventForm = ({
   onEventCreated,
   eventToEdit,
+  duplicateSourceEvent,
   onEditFinished,
   locationRefreshTrigger = 0,
   categoryRefreshTrigger = 0,
@@ -64,11 +65,13 @@ const EventForm = ({
   const [isSaving, setIsSaving] = useState(false);
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState('');
+  const [sourceImageUrl, setSourceImageUrl] = useState('');
+  const isDuplicating = Boolean(duplicateSourceEvent) && !eventToEdit;
 
-  // Al montar o refrescar catalogos se cargan las opciones de selects auxiliares.
+  // Al montar o refrescar catálogos se cargan las opciones de selects auxiliares.
   useEffect(() => {
     Promise.all([
-      fetch(`${API_BASE_URL}/categories`).then(res => readJsonResponse(res, 'No se pudieron cargar las categorias.')),
+      fetch(`${API_BASE_URL}/categories`).then(res => readJsonResponse(res, 'No se pudieron cargar las categorías.')),
       fetch(`${API_BASE_URL}/locations`).then(res => readJsonResponse(res, 'No se pudieron cargar las ubicaciones.')),
       fetch(`${API_BASE_URL}/audiences`).then(res => readJsonResponse(res, 'No se pudieron cargar las audiencias.')),
       fetch(`${API_BASE_URL}/organizers`).then(res => readJsonResponse(res, 'No se pudieron cargar los organizadores.'))
@@ -103,10 +106,35 @@ const EventForm = ({
     });
     setImageFile(null);
     setImagePreview(getEventImageUrl(eventToEdit));
+    setSourceImageUrl('');
     setMessage('');
   }, [eventToEdit]);
 
-  // Actualiza el estado local cuando cambia cualquier campo del formulario.
+  useEffect(() => {
+    if (!isDuplicating) {
+      return;
+    }
+
+    setFormData({
+      title: duplicateSourceEvent.title || '',
+      description: duplicateSourceEvent.description || '',
+      event_date: '',
+      is_free: String(duplicateSourceEvent.is_free ?? 1),
+      price: duplicateSourceEvent.price !== null && duplicateSourceEvent.price !== undefined ? String(duplicateSourceEvent.price) : '',
+      min_age: duplicateSourceEvent.min_age !== null && duplicateSourceEvent.min_age !== undefined ? String(duplicateSourceEvent.min_age) : '',
+      max_age: duplicateSourceEvent.max_age !== null && duplicateSourceEvent.max_age !== undefined ? String(duplicateSourceEvent.max_age) : '',
+      audience_id: duplicateSourceEvent.audience_id ? String(duplicateSourceEvent.audience_id) : '',
+      organizer_id: duplicateSourceEvent.organizer_id ? String(duplicateSourceEvent.organizer_id) : '',
+      category_id: duplicateSourceEvent.category_id ? String(duplicateSourceEvent.category_id) : '',
+      location_id: duplicateSourceEvent.location_id ? String(duplicateSourceEvent.location_id) : ''
+    });
+    setImageFile(null);
+    setImagePreview(getEventImageUrl(duplicateSourceEvent));
+    setSourceImageUrl(duplicateSourceEvent.image_url || '');
+    setMessage('Revisa los datos y elige una nueva fecha antes de guardar.');
+  }, [duplicateSourceEvent, isDuplicating]);
+
+  // Actualiza el estado local cuándo cambia cualquier campo del formulario.
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
@@ -115,14 +143,15 @@ const EventForm = ({
   const handleImageChange = (e) => {
     const file = e.target.files?.[0] || null;
     setImageFile(file);
-    setImagePreview(file ? URL.createObjectURL(file) : (eventToEdit ? getEventImageUrl(eventToEdit) : ''));
+    setImagePreview(file ? URL.createObjectURL(file) : (eventToEdit ? getEventImageUrl(eventToEdit) : (isDuplicating ? getEventImageUrl(duplicateSourceEvent) : '')));
   };
 
-  // Devuelve el formulario a su estado base despues de guardar o cancelar.
+  // Devuelve el formulario a su estado base después de guardar o cancelar.
   const resetForm = () => {
     setFormData(initialFormData);
     setImageFile(null);
     setImagePreview('');
+    setSourceImageUrl('');
   };
 
   // Valida, construye el payload final y lo envia al endpoint adecuado.
@@ -133,6 +162,11 @@ const EventForm = ({
     const trimmedTitle = formData.title.trim();
     if (!trimmedTitle || !formData.category_id || !formData.location_id) {
       setMessage('Completa todos los campos obligatorios.');
+      return;
+    }
+
+    if (isDuplicating && !formData.event_date) {
+      setMessage('Elige una nueva fecha para confirmar la duplicación.');
       return;
     }
 
@@ -178,6 +212,8 @@ const EventForm = ({
 
     if (imageFile) {
       payload.append('image', imageFile);
+    } else if (!eventToEdit && sourceImageUrl) {
+      payload.append('image_url', sourceImageUrl);
     }
 
     try {
@@ -207,7 +243,7 @@ const EventForm = ({
     }
   };
 
-  // En modo edicion permite salir sin guardar y limpiar el formulario.
+  // En modo edición permite salir sin guardar y limpiar el formulario.
   const handleCancelEdit = () => {
     resetForm();
     setMessage('');
@@ -216,9 +252,9 @@ const EventForm = ({
 
   return (
     <section className="event-form-card">
-      <h3 className="event-form-title">{eventToEdit ? 'Editar evento' : 'Crear nuevo evento'}</h3>
+      <h3 className="event-form-title">{eventToEdit ? 'Editar evento' : isDuplicating ? 'Duplicar evento' : 'Crear nuevo evento'}</h3>
 
-      {/* Formulario principal con campos basicos, precio opcional y relaciones auxiliares. */}
+      {/* Formulario principal con campos básicos, precio opcional y relaciones auxiliares. */}
       <form className="event-form" onSubmit={handleSubmit}>
         <label className="event-form-label" htmlFor="title">Titulo</label>
         <input
@@ -376,7 +412,7 @@ const EventForm = ({
           onChange={handleChange}
           required
         >
-          <option value="">Selecciona una categoria</option>
+          <option value="">Selecciona una categoría</option>
           {categories.map(category => (
             <option key={category.id} value={category.id}>
               {category.name}
@@ -393,7 +429,7 @@ const EventForm = ({
           onChange={handleChange}
           required
         >
-          <option value="">Selecciona una ubicacion</option>
+          <option value="">Selecciona una ubicación</option>
           {locations.map(location => (
             <option key={location.id} value={location.id}>
               {location.name}
@@ -403,7 +439,7 @@ const EventForm = ({
 
         <div className="event-form-actions">
           <button className="event-btn event-btn-primary" type="submit" disabled={isSaving}>
-            {isSaving ? 'Guardando...' : eventToEdit ? 'Guardar cambios' : 'Crear evento'}
+            {isSaving ? 'Guardando...' : eventToEdit ? 'Guardar cambios' : isDuplicating ? 'Crear duplicado' : 'Crear evento'}
           </button>
 
           {eventToEdit && (

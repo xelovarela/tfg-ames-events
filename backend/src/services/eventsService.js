@@ -4,9 +4,12 @@
  * pueda trabajar con operaciones de alto nivel sin conocer los detalles de MySQL.
  */
 const db = require('../config/db');
+const { TIME_SCOPES, buildIsPastSelect, buildTimeScopeWhereClause } = require('../utils/eventTime');
 
 // Recupera el listado de eventos junto con los nombres legibles de sus relaciones.
-async function listEvents() {
+async function listEvents({ timeScope = TIME_SCOPES.UPCOMING } = {}) {
+  const timeScopeWhereClause = buildTimeScopeWhereClause(timeScope, 'e');
+
   const [rows] = await db.query(
     `SELECT 
       e.id,
@@ -27,6 +30,7 @@ async function listEvents() {
       l.locality AS location_locality,
       l.lat,
       l.lng,
+      ${buildIsPastSelect('e')},
       COALESCE(fc.favorite_count, 0) AS favorite_count
     FROM events e
     JOIN categories c ON e.category_id = c.id
@@ -38,13 +42,15 @@ async function listEvents() {
       FROM favorites
       GROUP BY event_id
     ) fc ON fc.event_id = e.id
+    WHERE 1 = 1
+      ${timeScopeWhereClause}
     ORDER BY e.id`
   );
 
   return rows;
 }
 
-// Obtiene un unico evento con todos los datos necesarios para detalle y edicion.
+// Obtiene un único evento con todos los datos necesarios para detalle y edición.
 async function getEventById(id) {
   const [rows] = await db.query(
     `SELECT 
@@ -68,6 +74,7 @@ async function getEventById(id) {
       l.lng,
       e.category_id,
       e.location_id,
+      ${buildIsPastSelect('e')},
       COALESCE(fc.favorite_count, 0) AS favorite_count
     FROM events e
     JOIN categories c ON e.category_id = c.id
@@ -86,25 +93,25 @@ async function getEventById(id) {
   return rows[0] || null;
 }
 
-// Comprueba si la categoria indicada existe antes de crear o editar un evento.
+// Comprueba si la categoría indicada existe antes de crear o editar un evento.
 async function categoryExists(categoryId) {
   const [rows] = await db.query('SELECT id FROM categories WHERE id = ?', [categoryId]);
   return rows.length > 0;
 }
 
-// Comprueba si la ubicacion indicada existe.
+// Comprueba si la ubicación indicada existe.
 async function locationExists(locationId) {
   const [rows] = await db.query('SELECT id FROM locations WHERE id = ?', [locationId]);
   return rows.length > 0;
 }
 
-// Comprueba si la audiencia indicada existe cuando el campo es opcional.
+// Comprueba si la audiencia indicada existe cuándo el campo es opcional.
 async function audienceExists(audienceId) {
   const [rows] = await db.query('SELECT id FROM audiences WHERE id = ?', [audienceId]);
   return rows.length > 0;
 }
 
-// Comprueba si el organizador indicado existe cuando viene informado.
+// Comprueba si el organizador indicado existe cuándo viene informado.
 async function organizerExists(organizerId) {
   const [rows] = await db.query('SELECT id FROM organizers WHERE id = ?', [organizerId]);
   return rows.length > 0;

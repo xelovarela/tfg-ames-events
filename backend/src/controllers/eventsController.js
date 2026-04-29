@@ -16,10 +16,16 @@ const {
   toBooleanFlag,
   toNullableMoney
 } = require('../utils/validation');
+const {
+  TIME_SCOPES,
+  canUsePrivilegedTimeScope,
+  normalizeTimeScope
+} = require('../utils/eventTime');
 
 // Estas constantes definen los limites aceptados para los campos de texto.
 const MAX_TITLE_LENGTH = 150;
 const MAX_DESCRIPTION_LENGTH = 2000;
+const MAX_IMAGE_URL_LENGTH = 255;
 
 // Esta funcion transforma y valida el cuerpo recibido antes de crear o actualizar un evento.
 function parseEventPayload(body = {}) {
@@ -34,6 +40,7 @@ function parseEventPayload(body = {}) {
   let price = toNullableMoney(body.price);
   const minAge = toNullablePositiveInt(body.min_age);
   const maxAge = toNullablePositiveInt(body.max_age);
+  const imageUrl = typeof body.image_url === 'string' ? body.image_url.trim() : '';
 
   if (!title || title.length > MAX_TITLE_LENGTH) {
     return { error: 'Invalid title. Must be between 1 and 150 characters.' };
@@ -41,6 +48,10 @@ function parseEventPayload(body = {}) {
 
   if (description.length > MAX_DESCRIPTION_LENGTH) {
     return { error: 'Invalid description. Maximum length is 2000 characters.' };
+  }
+
+  if (imageUrl.length > MAX_IMAGE_URL_LENGTH) {
+    return { error: 'image_url is too long.' };
   }
 
   if (!categoryId || !locationId) {
@@ -91,14 +102,16 @@ function parseEventPayload(body = {}) {
     price,
     minAge,
     maxAge,
-    imageUrl: null
+    imageUrl: imageUrl || null
   };
 }
 
 // Devuelve la lista completa de eventos para el frontend.
 async function getAll(req, res) {
   try {
-    const events = await eventsService.listEvents();
+    const requestedTimeScope = normalizeTimeScope(req.query.timeScope, TIME_SCOPES.UPCOMING);
+    const timeScope = canUsePrivilegedTimeScope(req.user) ? requestedTimeScope : TIME_SCOPES.UPCOMING;
+    const events = await eventsService.listEvents({ timeScope });
     return res.json(events);
   } catch (error) {
     console.error('Error retrieving events:', error);
@@ -126,7 +139,7 @@ async function getById(req, res) {
   }
 }
 
-// Crea un nuevo evento despues de validar datos y comprobar relaciones existentes.
+// Crea un nuevo evento después de validar datos y comprobar relaciones existentes.
 async function create(req, res) {
   const payload = parseEventPayload(req.body);
   const uploadedImageUrl = getUploadedEventImageUrl(req.file);
@@ -136,7 +149,7 @@ async function create(req, res) {
     return res.status(400).json({ error: payload.error });
   }
 
-  payload.imageUrl = uploadedImageUrl;
+  payload.imageUrl = uploadedImageUrl || payload.imageUrl;
 
   try {
     const [hasCategory, hasLocation, hasAudience, hasOrganizer] = await Promise.all([
@@ -183,7 +196,7 @@ async function create(req, res) {
   }
 }
 
-// Actualiza un evento existente manteniendo las mismas reglas de validacion que en alta.
+// Actualiza un evento existente manteniendo las mismas reglas de validación que en alta.
 async function update(req, res) {
   const id = toPositiveInt(req.params.id);
   const uploadedImageUrl = getUploadedEventImageUrl(req.file);
