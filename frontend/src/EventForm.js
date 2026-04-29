@@ -66,6 +66,7 @@ const EventForm = ({
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState('');
   const [sourceImageUrl, setSourceImageUrl] = useState('');
+  const [removeImage, setRemoveImage] = useState(false);
   const isDuplicating = Boolean(duplicateSourceEvent) && !eventToEdit;
 
   // Al montar o refrescar catálogos se cargan las opciones de selects auxiliares.
@@ -107,6 +108,7 @@ const EventForm = ({
     setImageFile(null);
     setImagePreview(getEventImageUrl(eventToEdit));
     setSourceImageUrl('');
+    setRemoveImage(false);
     setMessage('');
   }, [eventToEdit]);
 
@@ -131,6 +133,7 @@ const EventForm = ({
     setImageFile(null);
     setImagePreview(getEventImageUrl(duplicateSourceEvent));
     setSourceImageUrl(duplicateSourceEvent.image_url || '');
+    setRemoveImage(false);
     setMessage('Revisa los datos y elige una nueva fecha antes de guardar.');
   }, [duplicateSourceEvent, isDuplicating]);
 
@@ -143,7 +146,17 @@ const EventForm = ({
   const handleImageChange = (e) => {
     const file = e.target.files?.[0] || null;
     setImageFile(file);
+    if (file) {
+      setRemoveImage(false);
+    }
     setImagePreview(file ? URL.createObjectURL(file) : (eventToEdit ? getEventImageUrl(eventToEdit) : (isDuplicating ? getEventImageUrl(duplicateSourceEvent) : '')));
+  };
+
+  const handleRemoveImageChange = (e) => {
+    const shouldRemoveImage = e.target.checked;
+    setRemoveImage(shouldRemoveImage);
+    setImageFile(null);
+    setImagePreview(shouldRemoveImage ? '' : getEventImageUrl(eventToEdit));
   };
 
   // Devuelve el formulario a su estado base después de guardar o cancelar.
@@ -152,6 +165,7 @@ const EventForm = ({
     setImageFile(null);
     setImagePreview('');
     setSourceImageUrl('');
+    setRemoveImage(false);
   };
 
   // Valida, construye el payload final y lo envia al endpoint adecuado.
@@ -209,6 +223,9 @@ const EventForm = ({
     payload.append('organizer_id', formData.organizer_id === '' ? '' : String(Number(formData.organizer_id)));
     payload.append('category_id', String(Number(formData.category_id)));
     payload.append('location_id', String(Number(formData.location_id)));
+    if (eventToEdit) {
+      payload.append('remove_image', removeImage ? '1' : '0');
+    }
 
     if (imageFile) {
       payload.append('image', imageFile);
@@ -300,12 +317,27 @@ const EventForm = ({
           accept="image/jpeg,image/png,image/webp,image/gif"
           onChange={handleImageChange}
         />
-        <p className="event-form-help">Si no subes una imagen, se mostrara una imagen por defecto.</p>
+        <p className="event-form-help">Si no subes una imagen, se mostrara la imagen de la categoria o la generica por defecto.</p>
+
+        {eventToEdit?.image_url && (
+          <label className="event-form-checkbox">
+            <input
+              type="checkbox"
+              checked={removeImage}
+              onChange={handleRemoveImageChange}
+            />
+            <span>Quitar imagen actual y usar fallback por categoria</span>
+          </label>
+        )}
 
         {imagePreview && (
           <div className="event-form-image-preview">
             <img src={imagePreview} alt="Vista previa del evento" />
           </div>
+        )}
+
+        {removeImage && (
+          <p className="event-form-help">Al guardar, el evento quedara sin imagen propia y usara el fallback visual correspondiente.</p>
         )}
 
         <label className="event-form-label" htmlFor="is_free">Tipo</label>

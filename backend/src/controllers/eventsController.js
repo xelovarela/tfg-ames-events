@@ -226,7 +226,10 @@ async function update(req, res) {
       return res.status(404).json({ error: 'Event not found' });
     }
 
-    payload.imageUrl = uploadedImageUrl || existingEvent.image_url || null;
+    const shouldRemoveImage = toBooleanFlag(req.body.remove_image) === 1;
+    payload.imageUrl = shouldRemoveImage
+      ? null
+      : uploadedImageUrl || existingEvent.image_url || null;
 
     if (!hasCategory) {
       deleteEventImageFile(uploadedImageUrl);
@@ -249,7 +252,7 @@ async function update(req, res) {
     }
 
     await eventsService.updateEvent(id, payload);
-    if (uploadedImageUrl && existingEvent.image_url !== uploadedImageUrl) {
+    if ((shouldRemoveImage || uploadedImageUrl) && existingEvent.image_url !== uploadedImageUrl) {
       deleteEventImageFile(existingEvent.image_url);
     }
     return res.json({ message: 'Event updated successfully' });

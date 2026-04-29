@@ -8,7 +8,7 @@ import { Baby, Building2, Copy, Heart, MapPin, Users } from 'lucide-react';
 import { API_BASE_URL } from './config';
 import { Link, useNavigate } from 'react-router-dom';
 import { withAuthHeaders } from './utils/authFetch';
-import { getEventImageUrl } from './utils/eventImages';
+import { getEventImageAlt, getEventImageUrl } from './utils/eventImages';
 import { isPastEvent } from './utils/eventTime';
 
 // Convierte la fecha tecnica del backend a un formato legible.
@@ -261,7 +261,7 @@ const EventList = ({
                 aria-label={`Ver detalle de ${event.title}`}
               >
                 <Link to={`/events/${event.id}`} className="event-list-image-link" aria-label={`Ver detalle de ${event.title}`}>
-                  <img src={getEventImageUrl(event)} alt="" className="event-list-image" loading="lazy" />
+                  <img src={getEventImageUrl(event)} alt={getEventImageAlt(event)} className="event-list-image" loading="lazy" />
                   <div className="event-list-date event-list-date-overlay" aria-label={`Fecha: ${formatDate(event.event_date)}`}>
                     <strong>{shortDate.day}</strong>
                     <span>{shortDate.month}</span>

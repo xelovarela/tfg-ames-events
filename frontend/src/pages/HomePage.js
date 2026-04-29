@@ -1,5 +1,5 @@
 /**
- * Este archivo define la portada principal de la aplicacion.
+ * Este archivo define la portada principal de la aplicación.
  * Sirve como punto de entrada para ir a agenda, mapa y eventos próximos
  * reutilizando el modelo de datos existente sin logica de backend adicional.
  */
@@ -7,7 +7,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { ArrowRight, Heart, MapPin, Megaphone } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { API_BASE_URL } from '../config';
-import { getEventImageUrl } from '../utils/eventImages';
+import { getEventImageAlt, getEventImageUrl } from '../utils/eventImages';
 import './HomePage.css';
 
 function formatEventDateParts(value) {
@@ -128,14 +128,14 @@ function HomePage({ session }) {
     return (
       <article key={event.id} className={`home-event-card${featured ? ' home-event-card-featured' : ''}`}>
         <Link to={`/events/${event.id}`} className="home-event-image-link" aria-label={`Ver ${event.title}`}>
-          <img src={getEventImageUrl(event)} alt="" className="home-event-image" loading="lazy" />
+          <img src={getEventImageUrl(event)} alt={getEventImageAlt(event)} className="home-event-image" loading="lazy" />
           <div className="home-event-date-overlay" aria-label={`Fecha: ${new Date(event.event_date).toLocaleString('es-ES')}`}>
             <strong>{eventDateParts.day}</strong>
             <span>{eventDateParts.month}</span>
             {eventDateParts.time && <small>{eventDateParts.time}</small>}
           </div>
           <div className="home-event-chips" aria-hidden="true">
-            <span className="home-event-chip">{event.category || 'Sin categoria'}</span>
+            <span className="home-event-chip">{event.category || 'Sin categoría'}</span>
             {Number(event.is_free) === 1 && <span className="home-event-chip home-event-chip-soft">Gratis</span>}
             {audienceLabel && <span className="home-event-chip home-event-chip-audience">{audienceLabel}</span>}
           </div>

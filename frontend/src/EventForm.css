@@ -1,6 +1,6 @@
 /*
  * Este archivo define los estilos del formulario de eventos.
- * Da formato a la tarjeta, los campos, la rejilla de edades, los botones de accion
+ * Da formato a la tarjeta, los campos, la rejilla de edades, los botones de acción
  * y la adaptacion responsive del componente.
  */
 /* Tarjeta contenedora del formulario completo. */
@@ -45,6 +45,22 @@
   margin: -0.15rem 0 0.25rem;
   color: #6f5a4d;
   font-size: 0.86rem;
+}
+
+.event-form-checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  width: fit-content;
+  color: #4f3b31;
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+.event-form-checkbox input {
+  width: 18px;
+  height: 18px;
+  accent-color: #b30000;
 }
 
 .event-form-image-preview {

@@ -1,14 +1,14 @@
 /**
- * Este archivo define la pagina de detalle de un evento.
- * Recupera un registro concreto desde la API, formatea sus datos para presentacion
- * y muestra una ficha legible con su informacion principal.
+ * Este archivo define la página de detalle de un evento.
+ * Recupera un registro concreto desde la API, formatea sus datos para presentación
+ * y muestra una ficha legible con su información principal.
  */
 import React, { useEffect, useState } from 'react';
 import { Baby, Building2, CalendarClock, CalendarPlus, Heart, MapPin } from 'lucide-react';
 import { Link, useParams } from 'react-router-dom';
 import { API_BASE_URL } from '../config';
 import { addFavorite, listFavoriteIds, removeFavorite } from '../utils/favoritesApi';
-import { getEventImageUrl } from '../utils/eventImages';
+import { getEventImageAlt, getEventImageUrl } from '../utils/eventImages';
 
 const DETAIL_TEXT = {
   title: 'Detalle del evento',
@@ -407,7 +407,7 @@ function EventDetailPage({ session }) {
             </div>
 
             <div className="event-detail-media">
-              <img src={getEventImageUrl(event)} alt="" className="event-detail-image" />
+              <img src={getEventImageUrl(event)} alt={getEventImageAlt(event)} className="event-detail-image" loading="lazy" />
               {favoriteCountLabel && (
                 <div className="event-detail-popularity" aria-label={favoriteCountLabel}>
                   <Heart aria-hidden="true" focusable="false" />
@@ -447,7 +447,7 @@ function EventDetailPage({ session }) {
 
                 <article className="event-detail-description">
                   <h3>{DETAIL_TEXT.description}</h3>
-                  <p>{event.description || 'Este evento todavia no tiene una descripcion ampliada.'}</p>
+                  <p>{event.description || 'Este evento todavía no tiene una descripción ampliada.'}</p>
                 </article>
               </div>
             </div>

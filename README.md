@@ -54,8 +54,10 @@ Dependencias de testing y tooling incluidas por Create React App:
 - Pagina de inicio con un evento destacado, próximos eventos y CTA para proponer eventos.
 - Mapa interactivo con Leaflet y agrupación de eventos por ubicación.
 - **Capas contextuales del mapa**: Límite del Concello de Ames (GeoJSON), zonas de Bertamiráns y O Milladoiro (círculos aprox.), con etiquetas legibles.
+- Calendario mensual de eventos en `/events/calendar`, reutilizando los filtros compartidos.
 - Listado, detalle, alta, edición y borrado de eventos según permisos.
 - Subida de imagenes para eventos mediante `multipart/form-data`.
+- Imagenes fallback por categoria para eventos sin imagen propia, con fallback generico final.
 - Registro, verificación de email, login JWT, recuperación de contraseña y perfil propio.
 - Control de acceso por roles: `admin`, `content_manager` y `user`.
 - Gestión de usuarios y revisión de solicitudes de acceso como creador de contenido.
@@ -87,7 +89,7 @@ El frontend es una SPA construida con React y React Router. `App` configura el `
 
 La navegación principal se concentra en `frontend/src/AppRoutes.js`, donde se separan rutas públicas, rutas autenticadas y rutas protegidas por rol mediante `ProtectedRoute`. Las pantallas viven en `frontend/src/pages`, y los componentes reutilizables como `EventList`, `EventFilters`, `EventForm` y `AmesMap` se mantienen en `frontend/src`.
 
-El frontend consume la API con `fetch` y utilidades como `authFetch`, `favoritesApi`, `contentManagerRequestsApi` y `useFilteredEvents`. Los filtros de eventos se sincronizan con la URL para que agenda y mapa compartan búsquedas y enlaces.
+El frontend consume la API con `fetch` y utilidades como `authFetch`, `favoritesApi`, `contentManagerRequestsApi` y `useFilteredEvents`. Los filtros de eventos se sincronizan con la URL para que agenda, mapa y calendario compartan búsquedas y enlaces.
 
 ### Backend Express
 
@@ -124,10 +126,10 @@ Los permisos se aplican en frontend para mostrar u ocultar accesos, y en backend
 
 ### Flujo de eventos
 
-1. El usuario consulta la agenda o el mapa.
+1. El usuario consulta la agenda, el mapa o el calendario.
 2. `useFilteredEvents` carga eventos y catálogos auxiliares desde la API.
 3. Los filtros de búsqueda, fecha, categoría, ubicación, audiencia y gratuitos se sincronizan con la query string.
-4. `EventList` muestra eventos filtrados y `AmesMap` representa los mismos datos agrupados por ubicación.
+4. `EventList` muestra eventos filtrados, `AmesMap` representa los mismos datos agrupados por ubicación y `EventCalendar` los organiza por día.
 5. `admin` y `content_manager` pueden crear y editar eventos con `EventForm`.
 6. El backend valida datos, relaciones, imágenes y permisos antes de insertar o actualizar en MySQL.
 7. Al crear eventos, el backend evalúa alertas activas y puede enviar emails si hay coincidencias.
@@ -321,6 +323,7 @@ npm test -- --runInBand
 - `/`: home.
 - `/map`: mapa de eventos con capas contextuales (límite de Ames, Bertamiráns, O Milladoiro).
 - `/events`: listado y gestión de eventos.
+- `/events/calendar`: calendario mensual de eventos con filtros compartidos.
 - `/events/new`: crear evento, solo `admin` o `content_manager`.
 - `/events/:id`: detalle de evento.
 - `/events/:id/edit`: editar evento, solo `admin` o `content_manager`.
@@ -346,6 +349,12 @@ La zona pública de la aplicación se ha reforzado para que la experiencia sea m
 - Los contenidos propios se publican bajo licencia Creative Commons BY-NC 4.0.
 - Las páginas estaticas no incluyen mensajes provisionales ni textos de tipo "[pendiente de completar]".
 
+### Imagenes de demostracion por categoria
+
+Los eventos pueden tener una imagen subida por el gestor en `image_url`. Si un evento no tiene imagen propia, el frontend usa una imagen de demostracion segun su categoria y, si no existe una categoria reconocida, utiliza `default-event.svg` como fallback final.
+
+La logica esta centralizada en `frontend/src/utils/eventImages.js` para que listado, portada, detalle, favoritos y otras vistas mantengan el mismo criterio visual. Las imagenes se almacenan en `frontend/public/event-images` y se documentan en `frontend/public/event-images/README.md`.
+
 ## Endpoints principales
 
 ### Auth
@@ -368,7 +377,7 @@ El login devuelve un JWT y bloquea el acceso si la cuenta no está verificada o 
 - `PUT /events/:id` - `admin` o `content_manager`
 - `DELETE /events/:id` - `admin`
 
-Los endpoints de creación y edición aceptan imagen en el campo `image`.
+Los endpoints de creación y edición aceptan imagen en el campo `image`. En edición también se puede enviar `remove_image=1` para dejar el evento sin imagen propia y permitir que el frontend muestre el fallback por categoría.
 
 ### Catalogos
 
@@ -539,7 +548,7 @@ Campos principales de `events`:
 - `min_age` y `max_age`: opcionales, pero deben ser coherentes si se informan.
 - `audience_id`: opcional, debe existir si se informa.
 - `organizer_id`: opcional, debe existir si se informa.
-- `image_url`: opcional, generado al subir imagen o informado desde datos iniciales.
+- `image_url`: opcional, generado al subir imagen o informado desde datos iniciales. Si queda vacio, el frontend usa la imagen fallback de la categoria y, si no existe, `default-event.svg`.
 
 ## Notas de despliegue
 
