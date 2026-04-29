@@ -6,11 +6,11 @@
 const locationsService = require('../services/locationsService');
 const { toPositiveInt, toLatitude, toLongitude } = require('../utils/validation');
 
-// Limite maximo permitido para el nombre descriptivo de una ubicacion.
+// Límite maximo permitido para el nombre descriptivo de una ubicación.
 const MAX_LOCATION_NAME_LENGTH = 150;
 const ALLOWED_LOCALITIES = ['Bertamiráns', 'Milladoiro', 'Otras parroquias'];
 
-// Valida y convierte los datos de una ubicacion antes de persistirlos.
+// Valida y convierte los datos de una ubicación antes de persistirlos.
 function parseLocationPayload(body) {
   const name = typeof body.name === 'string' ? body.name.trim() : '';
   const locality = typeof body.locality === 'string' ? body.locality.trim() : '';
@@ -43,7 +43,7 @@ async function getAll(req, res) {
   }
 }
 
-// Recupera una ubicacion concreta validando previamente su id.
+// Recupera una ubicación concreta validando previamente su id.
 async function getById(req, res) {
   const id = toPositiveInt(req.params.id);
   if (!id) {
@@ -62,7 +62,7 @@ async function getById(req, res) {
   }
 }
 
-// Crea una nueva ubicacion con nombre y coordenadas validas.
+// Crea una nueva ubicación con nombre y coordenadas válidas.
 async function create(req, res) {
   const payload = parseLocationPayload(req.body);
   if (payload.error) {
@@ -78,7 +78,7 @@ async function create(req, res) {
   }
 }
 
-// Actualiza una ubicacion existente con los datos enviados por el cliente.
+// Actualiza una ubicación existente con los datos enviados por el cliente.
 async function update(req, res) {
   const id = toPositiveInt(req.params.id);
   if (!id) {
@@ -102,7 +102,7 @@ async function update(req, res) {
   }
 }
 
-// Elimina una ubicacion solo si no esta relacionada con eventos.
+// Elimina una ubicación solo si no está relacionada con eventos.
 async function remove(req, res) {
   const id = toPositiveInt(req.params.id);
   if (!id) {

@@ -12,7 +12,7 @@ function VerifyEmailPage() {
     const token = searchParams.get('token');
     if (!token) {
       setStatus('error');
-      setMessage('No se encontro token de verificacion en la URL.');
+      setMessage('No se encontro token de verificación en la URL.');
       return;
     }
 
@@ -48,7 +48,7 @@ function VerifyEmailPage() {
 
         <div className="verify-actions">
           <Link to="/login" className="verify-link">
-            Ir a iniciar sesion
+            Ir a iniciar sesión
           </Link>
           <Link to="/register" className="verify-link">
             Crear otra cuenta

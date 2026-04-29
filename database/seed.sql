@@ -60,7 +60,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `roles` WRITE;
 /*!40000 ALTER TABLE `roles` DISABLE KEYS */;
-INSERT INTO `roles` (`id`, `name`, `description`, `created_at`) VALUES (1,'admin','Acceso total al sistema','2026-04-16 11:03:19'),(2,'user','Usuario registrado con permisos basicos','2026-04-16 11:03:19'),(3,'content_manager','Gestion de contenidos y catalogos','2026-04-16 11:03:19');
+INSERT INTO `roles` (`id`, `name`, `description`, `created_at`) VALUES (1,'admin','Acceso total al sistema','2026-04-16 11:03:19'),(2,'user','Usuario registrado con permisos básicos','2026-04-16 11:03:19'),(3,'content_manager','Gestión de contenidos y catálogos','2026-04-16 11:03:19');
 /*!40000 ALTER TABLE `roles` ENABLE KEYS */;
 UNLOCK TABLES;
 

@@ -1,6 +1,6 @@
 /**
  * Este archivo implementa el panel reutilizable de filtros de eventos.
- * Recibe estado y callbacks desde sus paginas padre y renderiza una interfaz
+ * Recibe estado y callbacks desde sus páginas padre y renderiza una interfaz
  * de chips compartida por mapa y listado.
  */
 import React from 'react';

@@ -1,5 +1,5 @@
 /**
- * Controlador de administracion de usuarios.
+ * Controlador de administración de usuarios.
  * Expone solo operaciones seguras para admin: listar, consultar,
  * cambiar rol y activar/desactivar cuentas.
  */
@@ -185,18 +185,18 @@ async function updateMyPassword(req, res) {
   const userId = Number(req.user?.id);
   const unexpectedFields = getUnexpectedFields(req.body, OWN_PASSWORD_ALLOWED_FIELDS);
   if (unexpectedFields.length > 0) {
-    return res.status(400).json({ error: 'Solo se permite enviar la contrasena actual y la nueva contrasena.' });
+    return res.status(400).json({ error: 'Solo se permite enviar la contraseña actual y la nueva contraseña.' });
   }
 
   const currentPassword = typeof req.body.currentPassword === 'string' ? req.body.currentPassword : '';
   const newPassword = typeof req.body.newPassword === 'string' ? req.body.newPassword : '';
 
   if (!currentPassword.trim() || !newPassword.trim()) {
-    return res.status(400).json({ error: 'Debes indicar la contrasena actual y la nueva contrasena.' });
+    return res.status(400).json({ error: 'Debes indicar la contraseña actual y la nueva contraseña.' });
   }
 
   if (newPassword.length < MIN_PASSWORD_LENGTH) {
-    return res.status(400).json({ error: `La nueva contrasena debe tener al menos ${MIN_PASSWORD_LENGTH} caracteres.` });
+    return res.status(400).json({ error: `La nueva contraseña debe tener al menos ${MIN_PASSWORD_LENGTH} caracteres.` });
   }
 
   try {
@@ -207,7 +207,7 @@ async function updateMyPassword(req, res) {
 
     const passwordOk = await bcrypt.compare(currentPassword, credentials.password_hash);
     if (!passwordOk) {
-      return res.status(400).json({ error: 'La contrasena actual no es correcta.' });
+      return res.status(400).json({ error: 'La contraseña actual no es correcta.' });
     }
 
     const passwordHash = await bcrypt.hash(newPassword, SALT_ROUNDS);
@@ -216,7 +216,7 @@ async function updateMyPassword(req, res) {
     return res.json({ message: 'Contrasena actualizada correctamente.' });
   } catch (error) {
     console.error('Error updating own password:', error);
-    return res.status(500).json({ error: 'Error interno al cambiar contrasena.' });
+    return res.status(500).json({ error: 'Error interno al cambiar contraseña.' });
   }
 }
 

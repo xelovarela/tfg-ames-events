@@ -1,6 +1,6 @@
 /**
  * Servicio de solicitudes para pasar de usuario a gestor de contenido.
- * Crea solicitudes, permite listarlas y gestiona su revision por administracion.
+ * Crea solicitudes, permite listarlas y gestiona su revisión por administración.
  */
 const db = require('../config/db');
 

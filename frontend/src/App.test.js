@@ -25,7 +25,7 @@ afterEach(() => {
   jest.restoreAllMocks();
 });
 
-// Esta prueba comprueba que la aplicacion principal se monta en la home real.
+// Esta prueba comprueba que la aplicación principal se monta en la home real.
 test('renders the home page by default', async () => {
   render(<App />);
 

@@ -1,6 +1,6 @@
 /**
  * Este archivo implementa la capa de servicios de usuarios.
- * Centraliza las consultas SQL seguras usadas por la administracion de usuarios.
+ * Centraliza las consultas SQL seguras usadas por la administración de usuarios.
  * Las lecturas publicas del modulo no devuelven password_hash ni tokens.
  */
 const db = require('../config/db');

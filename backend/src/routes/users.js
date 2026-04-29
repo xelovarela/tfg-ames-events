@@ -1,5 +1,5 @@
 /**
- * Este archivo define las rutas de administracion de usuarios.
+ * Este archivo define las rutas de administración de usuarios.
  * Todas quedan restringidas a sesiones autenticadas con rol admin.
  */
 const express = require('express');

@@ -1,6 +1,6 @@
 /**
  * Este archivo define las rutas REST del recurso roles.
- * Se protegen con auth de administrador porque se usan en panel de gestion.
+ * Se protegen con auth de administrador porque se usan en panel de gestión.
  */
 const express = require('express');
 const rolesController = require('../controllers/rolesController');

@@ -1,6 +1,6 @@
 /**
  * Este archivo implementa la capa de servicios de organizadores.
- * Agrupa las consultas SQL para el mantenimiento del catalogo de organizadores
+ * Agrupa las consultas SQL para el mantenimiento del catálogo de organizadores
  * y las comprobaciones de integridad con la tabla de eventos.
  */
 const db = require('../config/db');

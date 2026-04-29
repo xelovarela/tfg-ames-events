@@ -115,17 +115,17 @@ function ProfilePage({ session }) {
     }
 
     if (!currentPassword || !newPassword || !confirmPassword) {
-      setPasswordMessage('Todos los campos de contrasena son obligatorios.');
+      setPasswordMessage('Todos los campos de contraseña son obligatorios.');
       return;
     }
 
     if (newPassword.length < 8) {
-      setPasswordMessage('La nueva contrasena debe tener al menos 8 caracteres.');
+      setPasswordMessage('La nueva contraseña debe tener al menos 8 caracteres.');
       return;
     }
 
     if (newPassword !== confirmPassword) {
-      setPasswordMessage('Las contrasenas no coinciden.');
+      setPasswordMessage('Las contraseñas no coinciden.');
       return;
     }
 
@@ -141,7 +141,7 @@ function ProfilePage({ session }) {
           newPassword
         })
       });
-      const data = await readJsonOrThrow(response, 'No se pudo cambiar la contrasena.');
+      const data = await readJsonOrThrow(response, 'No se pudo cambiar la contraseña.');
 
       setCurrentPassword('');
       setNewPassword('');
@@ -149,13 +149,13 @@ function ProfilePage({ session }) {
       setPasswordMessage(data.message || 'Contrasena actualizada correctamente.');
     } catch (error) {
       console.error(error);
-      setPasswordMessage(error.message || 'No se pudo cambiar la contrasena.');
+      setPasswordMessage(error.message || 'No se pudo cambiar la contraseña.');
     } finally {
       setIsPasswordSaving(false);
     }
   };
 
-  const verifiedText = profile?.email_verified ? 'Verificado' : 'Pendiente de verificacion';
+  const verifiedText = profile?.email_verified ? 'Verificado' : 'Pendiente de verificación';
 
   return (
     <main>
@@ -214,7 +214,7 @@ function ProfilePage({ session }) {
         </article>
 
         <article className="profile-card">
-          <h3>Cambiar contrasena</h3>
+          <h3>Cambiar contraseña</h3>
           <form className="profile-form" onSubmit={handlePasswordSubmit}>
             <label htmlFor="current-password">Contrasena actual</label>
             <input
@@ -226,7 +226,7 @@ function ProfilePage({ session }) {
               autoComplete="current-password"
             />
 
-            <label htmlFor="profile-new-password">Nueva contrasena</label>
+            <label htmlFor="profile-new-password">Nueva contraseña</label>
             <input
               id="profile-new-password"
               className="profile-input"
@@ -236,7 +236,7 @@ function ProfilePage({ session }) {
               autoComplete="new-password"
             />
 
-            <label htmlFor="profile-confirm-password">Confirmar nueva contrasena</label>
+            <label htmlFor="profile-confirm-password">Confirmar nueva contraseña</label>
             <input
               id="profile-confirm-password"
               className="profile-input"
@@ -247,7 +247,7 @@ function ProfilePage({ session }) {
             />
 
             <button className="profile-btn profile-btn-primary" type="submit" disabled={isPasswordSaving}>
-              {isPasswordSaving ? 'Actualizando...' : 'Cambiar contrasena'}
+              {isPasswordSaving ? 'Actualizando...' : 'Cambiar contraseña'}
             </button>
           </form>
           {passwordMessage && <p className="profile-message">{passwordMessage}</p>}

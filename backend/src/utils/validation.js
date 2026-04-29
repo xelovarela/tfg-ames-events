@@ -1,5 +1,5 @@
 /**
- * Este archivo agrupa funciones auxiliares de validacion y normalizacion.
+ * Este archivo agrupa funciones auxiliares de validación y normalización.
  * Sirve para transformar valores recibidos desde peticiones HTTP a formatos seguros
  * antes de que los controladores los utilicen o los persistan en base de datos.
  */

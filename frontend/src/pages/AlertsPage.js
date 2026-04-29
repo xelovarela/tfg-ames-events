@@ -84,11 +84,11 @@ function buildPayload(form) {
 function describeCriteria(alert) {
   const parts = [];
 
-  if (alert.category) parts.push(`Categoria: ${alert.category}`);
-  if (alert.location) parts.push(`Ubicacion: ${alert.location}`);
+  if (alert.category) parts.push(`Categoría: ${alert.category}`);
+  if (alert.location) parts.push(`Ubicación: ${alert.location}`);
   if (alert.audience) parts.push(`Audiencia: ${alert.audience}`);
-  if (alert.min_age !== null) parts.push(`Desde ${alert.min_age} anios`);
-  if (alert.max_age !== null) parts.push(`Hasta ${alert.max_age} anios`);
+  if (alert.min_age !== null) parts.push(`Desde ${alert.min_age} años`);
+  if (alert.max_age !== null) parts.push(`Hasta ${alert.max_age} años`);
   if (alert.keyword) parts.push(`Texto: "${alert.keyword}"`);
 
   return parts.join(' · ');
@@ -129,7 +129,7 @@ function AlertsPage() {
       ]);
 
       const [categoriesData, locationsData, audiencesData] = await Promise.all([
-        readJsonOrThrow(categoriesRes, 'No se pudieron cargar las categorias'),
+        readJsonOrThrow(categoriesRes, 'No se pudieron cargar las categorías'),
         readJsonOrThrow(locationsRes, 'No se pudieron cargar las ubicaciones'),
         readJsonOrThrow(audiencesRes, 'No se pudieron cargar las audiencias')
       ]);
@@ -139,7 +139,7 @@ function AlertsPage() {
       setAudiences(Array.isArray(audiencesData) ? audiencesData : []);
     } catch (error) {
       console.error(error);
-      setMessage(error.message || 'No se pudieron cargar los catalogos');
+      setMessage(error.message || 'No se pudieron cargar los catálogos');
     }
   };
 
@@ -274,14 +274,14 @@ function AlertsPage() {
           />
 
           <select className="alerts-input" name="category_id" value={formData.category_id} onChange={handleChange}>
-            <option value="">Cualquier categoria</option>
+            <option value="">Cualquier categoría</option>
             {categories.map((category) => (
               <option key={category.id} value={category.id}>{category.name}</option>
             ))}
           </select>
 
           <select className="alerts-input" name="location_id" value={formData.location_id} onChange={handleChange}>
-            <option value="">Cualquier ubicacion</option>
+            <option value="">Cualquier ubicación</option>
             {locations.map((location) => (
               <option key={location.id} value={location.id}>{location.name}</option>
             ))}
@@ -354,7 +354,7 @@ function AlertsPage() {
         <h3 className="alerts-title">Alertas guardadas</h3>
 
         {alerts.length === 0 && !loadError ? (
-          <p>No tienes alertas guardadas todavia.</p>
+          <p>No tienes alertas guardadas todavía.</p>
         ) : (
           <div className="alerts-list">
             {alerts.map((alert) => (

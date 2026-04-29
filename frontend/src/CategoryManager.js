@@ -1,6 +1,6 @@
 /**
- * Este archivo implementa el gestor de categorias del frontend.
- * Carga el catalogo, valida el formulario, permite altas, ediciones y borrados,
+ * Este archivo implementa el gestor de categorías del frontend.
+ * Carga el catálogo, valida el formulario, permite altas, ediciones y borrados,
  * y mantiene el estado visual sincronizado con la API.
  */
 import React, { useEffect, useState } from 'react';
@@ -8,7 +8,7 @@ import { API_BASE_URL } from './config';
 import { withAuthHeaders } from './utils/authFetch';
 import './CategoryManager.css';
 
-// Estado base del formulario de categorias.
+// Estado base del formulario de categorías.
 const initialForm = { name: '' };
 
 // Valida el nombre antes de enviarlo al backend.
@@ -20,7 +20,7 @@ function validateCategory(name) {
   return null;
 }
 
-// Este componente concentra la logica CRUD de categorias.
+// Este componente concentra la logica CRUD de categorías.
 function CategoryManager({ onCategoriesChanged }) {
   const [categories, setCategories] = useState([]);
   const [formData, setFormData] = useState(initialForm);
@@ -28,13 +28,13 @@ function CategoryManager({ onCategoriesChanged }) {
   const [message, setMessage] = useState('');
   const [isSaving, setIsSaving] = useState(false);
 
-  // Recupera el catalogo actual de categorias desde la API.
+  // Recupera el catálogo actual de categorías desde la API.
   const loadCategories = async () => {
     try {
       const response = await fetch(`${API_BASE_URL}/categories`);
       const data = await response.json();
       if (!response.ok) {
-        throw new Error(data.error || 'No se pudieron cargar las categorias');
+        throw new Error(data.error || 'No se pudieron cargar las categorías');
       }
       setCategories(data);
     } catch (error) {
@@ -48,13 +48,13 @@ function CategoryManager({ onCategoriesChanged }) {
     loadCategories();
   }, []);
 
-  // Limpia el formulario y sale del modo edicion.
+  // Limpia el formulario y sale del modo edición.
   const clearForm = () => {
     setFormData(initialForm);
     setEditingId(null);
   };
 
-  // Decide si crear o actualizar en funcion de si existe un id en edicion.
+  // Decide si crear o actualizar en funcion de si existe un id en edición.
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (isSaving) return;
@@ -82,7 +82,7 @@ function CategoryManager({ onCategoriesChanged }) {
       });
       const data = await response.json();
       if (!response.ok) {
-        throw new Error(data.error || 'Error guardando categoria');
+        throw new Error(data.error || 'Error guardando categoría');
       }
 
       setMessage(editingId ? 'Categoria actualizada correctamente.' : 'Categoria creada correctamente.');
@@ -91,15 +91,15 @@ function CategoryManager({ onCategoriesChanged }) {
       if (onCategoriesChanged) onCategoriesChanged();
     } catch (error) {
       console.error(error);
-      setMessage(error.message || 'Error guardando categoria');
+      setMessage(error.message || 'Error guardando categoría');
     } finally {
       setIsSaving(false);
     }
   };
 
-  // El borrado pide confirmacion y refresca el catalogo cuando termina.
+  // El borrado pide confirmación y refresca el catálogo cuándo termina.
   const handleDelete = async (id) => {
-    const confirmed = window.confirm('Seguro que quieres eliminar esta categoria?');
+    const confirmed = window.confirm('Seguro que quieres eliminar esta categoría?');
     if (!confirmed) return;
 
     try {
@@ -109,7 +109,7 @@ function CategoryManager({ onCategoriesChanged }) {
       });
       const data = await response.json();
       if (!response.ok) {
-        throw new Error(data.error || 'Error eliminando categoria');
+        throw new Error(data.error || 'Error eliminando categoría');
       }
 
       setMessage('Categoria eliminada correctamente.');
@@ -117,21 +117,21 @@ function CategoryManager({ onCategoriesChanged }) {
       if (onCategoriesChanged) onCategoriesChanged();
     } catch (error) {
       console.error(error);
-      setMessage(error.message || 'Error eliminando categoria');
+      setMessage(error.message || 'Error eliminando categoría');
     }
   };
 
   return (
     <section className="categories-card">
-      <h3 className="categories-title">Gestion de categorias</h3>
+      <h3 className="categories-title">Gestión de categorías</h3>
 
-      {/* Formulario de alta y edicion de categorias. */}
+      {/* Formulario de alta y edición de categorías. */}
       <form className="categories-form" onSubmit={handleSubmit}>
         <input
           className="categories-input"
           type="text"
           name="name"
-          placeholder="Nombre de la categoria"
+          placeholder="Nombre de la categoría"
           value={formData.name}
           onChange={(event) => setFormData({ name: event.target.value })}
           maxLength={100}
@@ -140,7 +140,7 @@ function CategoryManager({ onCategoriesChanged }) {
 
         <div className="categories-actions">
           <button className="categories-btn categories-btn-primary" type="submit" disabled={isSaving}>
-            {isSaving ? 'Guardando...' : editingId ? 'Guardar cambios' : 'Crear categoria'}
+            {isSaving ? 'Guardando...' : editingId ? 'Guardar cambios' : 'Crear categoría'}
           </button>
           {editingId && (
             <button className="categories-btn categories-btn-secondary" type="button" onClick={clearForm}>
@@ -154,7 +154,7 @@ function CategoryManager({ onCategoriesChanged }) {
 
       <div className="categories-list">
         {categories.length === 0 ? (
-          <p>No hay categorias registradas.</p>
+          <p>No hay categorías registradas.</p>
         ) : (
           categories.map((category) => (
             <article className="categories-item" key={category.id}>

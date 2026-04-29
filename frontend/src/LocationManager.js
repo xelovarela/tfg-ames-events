@@ -1,7 +1,7 @@
 /**
  * Este archivo implementa el gestor de ubicaciones del frontend.
  * Permite mantener los puntos geograficos disponibles para los eventos mediante
- * formularios con validacion local y operaciones CRUD contra la API.
+ * formularios con validación local y operaciones CRUD contra la API.
  */
 import React, { useEffect, useState } from 'react';
 import { MapContainer, Marker, Popup, TileLayer, useMap, useMapEvents } from 'react-leaflet';
@@ -96,7 +96,7 @@ function MapCenterSync({ position }) {
   return null;
 }
 
-// Valida nombre y coordenadas antes de persistir una ubicacion.
+// Valida nombre y coordenadas antes de persistir una ubicación.
 function validateLocation(form) {
   const name = form.name.trim();
   const lat = Number(form.lat);
@@ -111,7 +111,7 @@ function validateLocation(form) {
   }
 
   if (!form.lat || !form.lng) {
-    return 'Selecciona la ubicacion en el mapa antes de guardar.';
+    return 'Selecciona la ubicación en el mapa antes de guardar.';
   }
 
   if (!Number.isFinite(lat) || lat < -90 || lat > 90) {
@@ -137,7 +137,7 @@ function LocationManager({ onLocationsChanged }) {
   const selectedPosition = getSelectedPosition(formData);
   const referenceLocations = locations.filter((location) => location.id !== editingId);
 
-  // Recupera el catalogo completo de ubicaciones desde la API.
+  // Recupera el catálogo completo de ubicaciones desde la API.
   const loadLocations = async () => {
     try {
       const response = await fetch(`${API_BASE_URL}/locations`);
@@ -172,13 +172,13 @@ function LocationManager({ onLocationsChanged }) {
     setMessage('');
   };
 
-  // Limpia el formulario y desactiva el modo edicion.
+  // Limpia el formulario y desactiva el modo edición.
   const clearForm = () => {
     setFormData(initialForm);
     setEditingId(null);
   };
 
-  // Crea o actualiza la ubicacion segun el estado actual del formulario.
+  // Crea o actualiza la ubicación según el estado actual del formulario.
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (isSaving) {
@@ -214,7 +214,7 @@ function LocationManager({ onLocationsChanged }) {
       });
       const data = await response.json();
       if (!response.ok) {
-        throw new Error(data.error || 'Error guardando ubicacion');
+        throw new Error(data.error || 'Error guardando ubicación');
       }
 
       setMessage(editingId ? 'Ubicacion actualizada correctamente.' : 'Ubicacion creada correctamente.');
@@ -225,13 +225,13 @@ function LocationManager({ onLocationsChanged }) {
       }
     } catch (error) {
       console.error(error);
-      setMessage(error.message || 'Error guardando ubicacion');
+      setMessage(error.message || 'Error guardando ubicación');
     } finally {
       setIsSaving(false);
     }
   };
 
-  // Carga una ubicacion existente en el formulario para editarla.
+  // Carga una ubicación existente en el formulario para editarla.
   const handleEdit = (location) => {
     setEditingId(location.id);
     setFormData({
@@ -243,9 +243,9 @@ function LocationManager({ onLocationsChanged }) {
     setMessage('');
   };
 
-  // Elimina una ubicacion tras confirmacion del usuario.
+  // Elimina una ubicación tras confirmación del usuario.
   const handleDelete = async (id) => {
-    const confirmed = window.confirm('Seguro que quieres eliminar esta ubicacion?');
+    const confirmed = window.confirm('Seguro que quieres eliminar esta ubicación?');
     if (!confirmed) {
       return;
     }
@@ -257,7 +257,7 @@ function LocationManager({ onLocationsChanged }) {
       });
       const data = await response.json();
       if (!response.ok) {
-        throw new Error(data.error || 'Error eliminando ubicacion');
+        throw new Error(data.error || 'Error eliminando ubicación');
       }
 
       setMessage('Ubicacion eliminada correctamente.');
@@ -267,13 +267,13 @@ function LocationManager({ onLocationsChanged }) {
       }
     } catch (error) {
       console.error(error);
-      setMessage(error.message || 'Error eliminando ubicacion');
+      setMessage(error.message || 'Error eliminando ubicación');
     }
   };
 
   return (
     <section className="locations-card">
-      <h3 className="locations-title">Gestion de ubicaciones</h3>
+      <h3 className="locations-title">Gestión de ubicaciones</h3>
 
       {/* Formulario principal para crear y editar ubicaciones. */}
       <form className="locations-form" onSubmit={handleSubmit}>
@@ -284,7 +284,7 @@ function LocationManager({ onLocationsChanged }) {
               className="locations-input"
               type="text"
               name="name"
-              placeholder="Nombre de la ubicacion"
+              placeholder="Nombre de la ubicación"
               value={formData.name}
               onChange={handleChange}
               maxLength={150}
@@ -424,7 +424,7 @@ function LocationManager({ onLocationsChanged }) {
 
         <div className="locations-actions">
           <button className="locations-btn locations-btn-primary" type="submit" disabled={isSaving}>
-            {isSaving ? 'Guardando...' : editingId ? 'Guardar cambios' : 'Crear ubicacion'}
+            {isSaving ? 'Guardando...' : editingId ? 'Guardar cambios' : 'Crear ubicación'}
           </button>
 
           {editingId && (

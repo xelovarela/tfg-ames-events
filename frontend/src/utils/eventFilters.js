@@ -15,7 +15,7 @@ const initialEventFilters = {
   compatibleAge: ''
 };
 
-// Mensaje comun mostrado cuando ningun evento supera el filtrado.
+// Mensaje comun mostrado cuándo ningun evento supera el filtrado.
 const noFilteredEventsMessage = 'No hay eventos que cumplan los filtros seleccionados.';
 
 // Convierte cadenas o valores vacios a numeros opcionales para comparar filtros.

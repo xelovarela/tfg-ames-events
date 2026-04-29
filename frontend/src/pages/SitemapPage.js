@@ -47,12 +47,12 @@ function SitemapPage() {
     <StaticPageLayout
       eyebrow="Mapa del sitio"
       title="Mapa del sitio"
-      subtitle="Una vista ordenada de las rutas principales para moverse con rapidez por la aplicacion."
+      subtitle="Una vista ordenada de las rutas principales para moverse con rapidez por la aplicación."
       aside={(
         <div className="static-page-facts">
           <div className="static-page-fact">
             <strong>Objetivo</strong>
-            <span>Encontrar rapido la seccion que necesitas sin recorrer toda la navegacion.</span>
+            <span>Encontrar rapido la sección que necesitas sin recorrer toda la navegación.</span>
           </div>
           <div className="static-page-fact">
             <strong>Formato</strong>

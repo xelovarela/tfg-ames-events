@@ -1,4 +1,4 @@
-const DEVELOPMENT_JWT_SECRET = 'cambiar-esto-en-produccion';
+const DEVELOPMENT_JWT_SECRET = 'cambiar-esto-en-producción';
 
 function getJwtSecret() {
   if (process.env.JWT_SECRET) {

@@ -26,7 +26,7 @@ const FAQ_ITEMS = [
   {
     icon: BellRing,
     question: '¿Cómo funcionan las alertas?',
-    answer: 'Las alertas permiten recibir avisos cuando aparezcan eventos que encajen con tus criterios guardados, si la funcionalidad está activa para tu cuenta.'
+    answer: 'Las alertas permiten recibir avisos cuándo aparezcan eventos que encajen con tus criterios guardados, si la funcionalidad está activa para tu cuenta.'
   },
   {
     icon: TriangleAlert,

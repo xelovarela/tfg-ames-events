@@ -36,12 +36,12 @@ function RegisterPage() {
     }
 
     if (password.length < 8) {
-      setMessage('La contrasena debe tener al menos 8 caracteres.');
+      setMessage('La contraseña debe tener al menos 8 caracteres.');
       return;
     }
 
     if (password !== confirmPassword) {
-      setMessage('Las contrasenas no coinciden.');
+      setMessage('Las contraseñas no coinciden.');
       return;
     }
 
@@ -119,7 +119,7 @@ function RegisterPage() {
             autoComplete="new-password"
           />
 
-          <label htmlFor="confirm-password">Confirmar contrasena</label>
+          <label htmlFor="confirm-password">Confirmar contraseña</label>
           <input
             id="confirm-password"
             type="password"

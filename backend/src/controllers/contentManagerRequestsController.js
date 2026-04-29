@@ -1,6 +1,6 @@
 /**
  * Controlador de solicitudes para pasar a gestor de contenido.
- * Los usuarios crean solicitudes y administracion las revisa.
+ * Los usuarios crean solicitudes y administración las revisa.
  */
 const contentManagerRequestsService = require('../services/contentManagerRequestsService');
 const usersService = require('../services/usersService');
@@ -23,7 +23,7 @@ function parseCreatePayload(body) {
   const proposalDescriptionRaw = typeof body.proposal_description === 'string' ? body.proposal_description.trim() : '';
 
   if (phoneRaw.length > MAX_PHONE_LENGTH) {
-    return { error: `El telefono no puede superar los ${MAX_PHONE_LENGTH} caracteres.` };
+    return { error: `El teléfono no puede superar los ${MAX_PHONE_LENGTH} caracteres.` };
   }
 
   if (organizationRaw.length > MAX_ORGANIZATION_LENGTH) {
@@ -31,11 +31,11 @@ function parseCreatePayload(body) {
   }
 
   if (!proposalTitleRaw || proposalTitleRaw.length > MAX_PROPOSAL_TITLE_LENGTH) {
-    return { error: `El titulo es obligatorio y no puede superar los ${MAX_PROPOSAL_TITLE_LENGTH} caracteres.` };
+    return { error: `El título es obligatorio y no puede superar los ${MAX_PROPOSAL_TITLE_LENGTH} caracteres.` };
   }
 
   if (!proposalDescriptionRaw || proposalDescriptionRaw.length > MAX_PROPOSAL_DESCRIPTION_LENGTH) {
-    return { error: `La descripcion es obligatoria y no puede superar los ${MAX_PROPOSAL_DESCRIPTION_LENGTH} caracteres.` };
+    return { error: `La descripción es obligatoria y no puede superar los ${MAX_PROPOSAL_DESCRIPTION_LENGTH} caracteres.` };
   }
 
   return {
@@ -51,11 +51,11 @@ function parseReviewPayload(body) {
   const adminNotesRaw = typeof body.admin_notes === 'string' ? body.admin_notes.trim() : '';
 
   if (!ALLOWED_REVIEW_STATUS.includes(status)) {
-    return { error: 'El estado de revision debe ser approved o rejected.' };
+    return { error: 'El estado de revisión debe ser approved o rejected.' };
   }
 
   if (adminNotesRaw.length > MAX_ADMIN_NOTES_LENGTH) {
-    return { error: `Las notas de revision no pueden superar los ${MAX_ADMIN_NOTES_LENGTH} caracteres.` };
+    return { error: `Las notas de revisión no pueden superar los ${MAX_ADMIN_NOTES_LENGTH} caracteres.` };
   }
 
   return {
@@ -79,12 +79,12 @@ async function create(req, res) {
     }
 
     if (!ALLOWED_REQUESTER_ROLES.includes(user.role)) {
-      return res.status(400).json({ error: 'Tu cuenta ya tiene permisos de gestion o administracion.' });
+      return res.status(400).json({ error: 'Tu cuenta ya tiene permisos de gestión o administración.' });
     }
 
     const pendingRequest = await contentManagerRequestsService.getPendingRequestByUserId(userId);
     if (pendingRequest) {
-      return res.status(409).json({ error: 'Ya tienes una solicitud pendiente de revision.' });
+      return res.status(409).json({ error: 'Ya tienes una solicitud pendiente de revisión.' });
     }
 
     const requestId = await contentManagerRequestsService.createRequest({

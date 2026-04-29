@@ -1,6 +1,6 @@
 /**
- * Este archivo define las rutas REST del recurso categorias.
- * Mantiene separado el mapeo de endpoints respecto a la validacion y el acceso a datos.
+ * Este archivo define las rutas REST del recurso categorías.
+ * Mantiene separado el mapeo de endpoints respecto a la validación y el acceso a datos.
  */
 const express = require('express');
 const categoriesController = require('../controllers/categoriesController');
@@ -8,7 +8,7 @@ const { requireAuth, requireAdmin, requireAnyRole } = require('../middleware/aut
 
 const router = express.Router();
 
-// Se exponen las operaciones CRUD de categorias.
+// Se exponen las operaciones CRUD de categorías.
 router.get('/', categoriesController.getAll);
 router.get('/:id', categoriesController.getById);
 router.post('/', requireAuth, requireAnyRole(['admin', 'content_manager']), categoriesController.create);

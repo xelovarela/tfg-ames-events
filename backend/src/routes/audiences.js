@@ -1,6 +1,6 @@
 /**
  * Este archivo define las rutas REST del recurso audiencias.
- * Su funcion es describir la API publica del modulo sin mezclar logica adicional.
+ * Su funcion es describir la API pública del modulo sin mezclar logica adicional.
  */
 const express = require('express');
 const audiencesController = require('../controllers/audiencesController');

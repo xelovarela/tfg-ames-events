@@ -1,15 +1,15 @@
 /**
  * Este archivo contiene el controlador de audiencias.
- * Gestiona la validacion del nombre y del rango de edades antes de utilizar
- * los servicios que leen o modifican la informacion en base de datos.
+ * Gestiona la validación del nombre y del rango de edades antes de utilizar
+ * los servicios que leen o modifican la información en base de datos.
  */
 const audiencesService = require('../services/audiencesService');
 const { toPositiveInt } = require('../utils/validation');
 
-// Limite maximo permitido para el nombre visible de la audiencia.
+// Límite maximo permitido para el nombre visible de la audiencia.
 const MAX_AUDIENCE_NAME_LENGTH = 100;
 
-// Convierte edades opcionales a enteros no negativos cuando el dato es valido.
+// Convierte edades opcionales a enteros no negativos cuándo el dato es valido.
 function toNullableNonNegativeInt(value) {
   if (value === null || value === undefined || value === '') {
     return null;
@@ -99,7 +99,7 @@ async function create(req, res) {
   }
 }
 
-// Actualiza una audiencia existente conservando la validacion previa.
+// Actualiza una audiencia existente conservando la validación previa.
 async function update(req, res) {
   const id = toPositiveInt(req.params.id);
   if (!id) {
@@ -124,7 +124,7 @@ async function update(req, res) {
   }
 }
 
-// Elimina una audiencia unicamente cuando no esta asociada a eventos.
+// Elimina una audiencia únicamente cuándo no está asociada a eventos.
 async function remove(req, res) {
   const id = toPositiveInt(req.params.id);
   if (!id) {

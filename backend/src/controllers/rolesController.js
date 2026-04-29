@@ -1,6 +1,6 @@
 /**
  * Este archivo contiene el controlador de roles.
- * Por ahora solo expone la lectura del catalogo de roles para usarlo
+ * Por ahora solo expone la lectura del catálogo de roles para usarlo
  * desde formularios de usuarios en el frontend.
  */
 const rolesService = require('../services/rolesService');

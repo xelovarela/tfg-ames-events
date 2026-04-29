@@ -1,7 +1,7 @@
 /**
  * Este archivo es el punto de entrada del backend.
- * Crea la aplicacion Express, registra los middlewares globales y monta las rutas REST
- * que permiten gestionar eventos, categorias, ubicaciones, audiencias y organizadores.
+ * Crea la aplicación Express, registra los middlewares globales y monta las rutas REST
+ * que permiten gestionar eventos, categorías, ubicaciones, audiencias y organizadores.
  */
 const path = require('path');
 const express = require('express');
@@ -23,7 +23,7 @@ const { startFavoriteReminderJob } = require('./src/jobs/favoriteReminderJob');
 
 const app = express();
 
-// Se inicializa la aplicacion principal de Express antes de registrar cualquier ruta.
+// Se inicializa la aplicación principal de Express antes de registrar cualquier ruta.
 
 const allowedCorsOrigins = (process.env.CORS_ORIGINS || '')
   .split(',')
@@ -45,7 +45,7 @@ app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use('/auth', authRoutes);
 
-// Ruta de prueba para comprobar rapidamente que la API esta levantada.
+// Ruta de prueba para comprobar rápidamente que la API esta levantada.
 app.get('/', (req, res) => {
   res.send('API Ames Events funcionando');
 });

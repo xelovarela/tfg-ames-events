@@ -16,15 +16,15 @@ function PrivacyPage() {
           </div>
           <div className="static-page-fact">
             <strong>Base tecnica</strong>
-            <span>La sesion autenticada se conserva en localStorage para mantener la experiencia tras recargar la pagina.</span>
+            <span>La sesión autenticada se conserva en localStorage para mantener la experiencia tras recargar la página.</span>
           </div>
         </div>
       )}
     >
       <StaticPageSection icon={UserRound} title="Que datos se tratan">
         <ul className="static-page-bullets">
-          <li>Datos de cuenta y autenticacion, como nombre, correo y token de sesion.</li>
-          <li>Favoritos guardados, alertas configuradas y acciones de uso dentro de la aplicacion.</li>
+          <li>Datos de cuenta y autenticación, como nombre, correo y token de sesión.</li>
+          <li>Favoritos guardados, alertas configuradas y acciones de uso dentro de la aplicación.</li>
           <li>Datos enviados mediante canales de contacto o propuestas.</li>
         </ul>
       </StaticPageSection>
@@ -39,16 +39,16 @@ function PrivacyPage() {
       <StaticPageSection icon={Lock} title="Conservacion y seguridad">
         <p>
           Los datos se conservan mientras la cuenta siga activa o mientras sean necesarios para prestar el servicio.
-          La aplicacion aplica medidas tecnicas razonables para proteger el acceso y el almacenamiento.
+          La aplicación aplica medidas técnicas razonables para proteger el acceso y el almacenamiento.
         </p>
       </StaticPageSection>
 
       <StaticPageSection icon={ShieldCheck} title="Derechos de las personas usuarias">
         <ul className="static-page-bullets">
           <li>Acceso a los datos tratados.</li>
-          <li>Rectificacion y supresion cuando corresponda.</li>
+          <li>Rectificacion y supresion cuándo corresponda.</li>
           <li>Oposicion y limitacion del tratamiento.</li>
-          <li>Portabilidad, cuando sea aplicable.</li>
+          <li>Portabilidad, cuándo sea aplicable.</li>
         </ul>
       </StaticPageSection>
     </StaticPageLayout>

@@ -99,7 +99,7 @@ async function sendVerificationEmail({ to, name, token }) {
 
   if (!transporter) {
     // En desarrollo sin SMTP se registra el enlace para poder probar el flujo.
-    console.warn(`[emailService] SMTP no configurado. Link de verificacion para ${to}: ${verificationUrl}`);
+    console.warn(`[emailService] SMTP no configurado. Link de verificación para ${to}: ${verificationUrl}`);
     return { delivered: false, verificationUrl };
   }
 
@@ -120,14 +120,14 @@ async function sendPasswordResetEmail(user, token) {
   const from = process.env.MAIL_FROM || process.env.SMTP_USER || 'no-reply@ames-events.local';
   const to = user.email;
   const name = user.username || 'usuario';
-  const subject = 'Restablece tu contrasena - Ames Events';
+  const subject = 'Restablece tu contraseña - Ames Events';
   const safeName = escapeHtml(name);
   const safeResetUrl = escapeHtml(resetUrl);
   const text = [
     `Hola ${name},`,
     '',
-    'Hemos recibido una solicitud para restablecer tu contrasena en Ames Events.',
-    'Puedes crear una nueva contrasena usando este enlace:',
+    'Hemos recibido una solicitud para restablecer tu contraseña en Ames Events.',
+    'Puedes crear una nueva contraseña usando este enlace:',
     resetUrl,
     '',
     'El enlace caduca en 1 hora.',
@@ -135,9 +135,9 @@ async function sendPasswordResetEmail(user, token) {
   ].join('\n');
   const html = `
     <p>Hola ${safeName},</p>
-    <p>Hemos recibido una solicitud para restablecer tu contrasena en Ames Events.</p>
+    <p>Hemos recibido una solicitud para restablecer tu contraseña en Ames Events.</p>
     <p>
-      Puedes crear una nueva contrasena usando este enlace:
+      Puedes crear una nueva contraseña usando este enlace:
       <a href="${safeResetUrl}">${safeResetUrl}</a>
     </p>
     <p>El enlace caduca en 1 hora.</p>
@@ -145,7 +145,7 @@ async function sendPasswordResetEmail(user, token) {
   `;
 
   if (!transporter) {
-    console.warn(`[emailService] SMTP no configurado. Link de recuperacion para ${to}: ${resetUrl}`);
+    console.warn(`[emailService] SMTP no configurado. Link de recuperación para ${to}: ${resetUrl}`);
     return { delivered: false, resetUrl };
   }
 
@@ -180,9 +180,9 @@ async function sendEventAlertEmail({ to, name, alertName, event }) {
     '',
     `Evento: ${event.title}`,
     `Fecha: ${eventDate}`,
-    `Ubicacion: ${location}`,
+    `Ubicación: ${location}`,
     '',
-    `Puedes ver el detalle aqui: ${eventUrl}`
+    `Puedes ver el detalle aquí: ${eventUrl}`
   ].join('\n');
   const html = `
     <p>Hola ${safeName},</p>
@@ -190,7 +190,7 @@ async function sendEventAlertEmail({ to, name, alertName, event }) {
     <ul>
       <li><strong>Evento:</strong> ${safeEventTitle}</li>
       <li><strong>Fecha:</strong> ${safeEventDate}</li>
-      <li><strong>Ubicacion:</strong> ${safeLocation}</li>
+      <li><strong>Ubicación:</strong> ${safeLocation}</li>
     </ul>
     <p><a href="${safeEventUrl}">Ver detalle del evento</a></p>
   `;
@@ -215,7 +215,7 @@ async function sendFavoriteReminderEmail({ to, name, event }) {
   const eventUrl = getEventUrl(event.id);
   const transporter = createTransporterIfConfigured();
   const from = process.env.MAIL_FROM || process.env.SMTP_USER || 'no-reply@ames-events.local';
-  const subject = `Recordatorio: ${event.title} es manana`;
+  const subject = `Recordatorio: ${event.title} es mañana`;
   const eventDate = formatEventDate(event.event_date);
   const location = event.location || 'Ubicacion no especificada';
   const organizer = event.organizer || 'Organizador no especificado';
@@ -228,22 +228,22 @@ async function sendFavoriteReminderEmail({ to, name, event }) {
   const text = [
     `Hola ${name || 'usuario'},`,
     '',
-    `Te recordamos que manana empieza este evento que tienes marcado como favorito:`,
+    `Te recordamos que mañana empieza este evento que tienes marcado como favorito:`,
     '',
     `Evento: ${event.title}`,
     `Fecha: ${eventDate}`,
-    `Ubicacion: ${location}`,
+    `Ubicación: ${location}`,
     `Organizador: ${organizer}`,
     '',
-    `Puedes ver el detalle aqui: ${eventUrl}`
+    `Puedes ver el detalle aquí: ${eventUrl}`
   ].join('\n');
   const html = `
     <p>Hola ${safeName},</p>
-    <p>Te recordamos que manana empieza este evento que tienes marcado como favorito:</p>
+    <p>Te recordamos que mañana empieza este evento que tienes marcado como favorito:</p>
     <ul>
       <li><strong>Evento:</strong> ${safeEventTitle}</li>
       <li><strong>Fecha:</strong> ${safeEventDate}</li>
-      <li><strong>Ubicacion:</strong> ${safeLocation}</li>
+      <li><strong>Ubicación:</strong> ${safeLocation}</li>
       <li><strong>Organizador:</strong> ${safeOrganizer}</li>
     </ul>
     <p><a href="${safeEventUrl}">Ver detalle del evento</a></p>

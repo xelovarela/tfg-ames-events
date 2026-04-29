@@ -7,7 +7,7 @@ async function readJsonOrThrow(response, fallbackMessage) {
   if (!response.ok) {
     if (response.status === 401) {
       clearAuthSession();
-      throw new Error('Tu sesion ha expirado. Vuelve a iniciar sesion.');
+      throw new Error('Tu sesión ha expirado. Vuelve a iniciar sesión.');
     }
 
     throw new Error(data?.error || fallbackMessage);

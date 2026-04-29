@@ -1,6 +1,6 @@
 /**
  * Este archivo define una proteccion simple de rutas privadas.
- * Redirige a login si no hay sesion y bloquea rutas de gestion cuando
+ * Redirige a login si no hay sesión y bloquea rutas de gestión cuándo
  * el usuario autenticado no tiene rol admin.
  */
 import React from 'react';
@@ -21,7 +21,7 @@ function ProtectedRoute({ session, requireAdmin = false, allowedRoles = null, ch
     return (
       <main>
         <h2>Acceso restringido</h2>
-        <p>No tienes permisos para acceder a esta seccion.</p>
+        <p>No tienes permisos para acceder a esta sección.</p>
         <Link to="/map" className="app-inline-link">
           Volver al mapa
         </Link>
@@ -33,7 +33,7 @@ function ProtectedRoute({ session, requireAdmin = false, allowedRoles = null, ch
     return (
       <main>
         <h2>Acceso restringido</h2>
-        <p>Esta seccion es solo para administradores.</p>
+        <p>Esta sección es solo para administradores.</p>
         <Link to="/map" className="app-inline-link">
           Volver al mapa
         </Link>

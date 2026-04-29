@@ -1,14 +1,14 @@
 /**
- * Este archivo define la pagina de edicion de eventos.
+ * Este archivo define la página de edición de eventos.
  * Carga el evento seleccionado, muestra estados de carga y error, y reutiliza
- * el mismo formulario de creacion en modo actualizacion.
+ * el mismo formulario de creación en modo actualizacion.
  */
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import EventForm from '../EventForm';
 import { API_BASE_URL } from '../config';
 
-// Este componente resuelve el evento desde la URL y prepara su edicion.
+// Este componente resuelve el evento desde la URL y prepara su edición.
 function EventEditPage() {
   const { id } = useParams();
   const navigate = useNavigate();

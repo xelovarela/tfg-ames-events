@@ -15,7 +15,7 @@
   margin: 0 0 1rem;
 }
 
-/* Rejilla del formulario con nombre, email y telefono. */
+/* Rejilla del formulario con nombre, email y teléfono. */
 .organizers-form {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));

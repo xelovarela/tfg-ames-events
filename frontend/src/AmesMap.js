@@ -1,7 +1,7 @@
 /**
  * Este archivo implementa el componente del mapa interactivo con Leaflet.
  * Puede cargar los eventos por si mismo o recibirlos ya filtrados desde fuera,
- * los agrupa por ubicacion y crea marcadores con informacion resumida.
+ * los agrupa por ubicación y crea marcadores con información resumida.
  * Incluye capas contextuales de zonas geográficas (Bertamiráns, O Milladoiro, límite de Ames).
  */
 import React, { useEffect, useState } from 'react';
@@ -56,7 +56,7 @@ function IconAge() {
   return <Baby aria-hidden="true" focusable="false" />;
 }
 
-// El componente admite modo controlado y no controlado para reutilizarlo en distintas paginas.
+// El componente admite modo controlado y no controlado para reutilizarlo en distintas páginas.
 // También admite props opcionales para controlar las capas contextuales.
 const AmesMap = ({ refreshTrigger, events: externalEvents, showContextLayers = true }) => {
   const amesCenter = [42.8595, -8.65];
@@ -88,10 +88,10 @@ const AmesMap = ({ refreshTrigger, events: externalEvents, showContextLayers = t
   // Resume el rango de edad de cada evento mostrado en el popup.
   const formatAgeRange = (event) => {
     if (event.min_age === null || event.max_age === null) return 'Todas las edades';
-    return `${event.min_age}-${event.max_age} anios`;
+    return `${event.min_age}-${event.max_age} años`;
   };
 
-  // Agrupa eventos por ubicacion para evitar varios marcadores superpuestos en el mismo punto.
+  // Agrupa eventos por ubicación para evitar varios marcadores superpuestos en el mismo punto.
   const groupEventsByLocation = (data) => {
     if (!Array.isArray(data)) {
       setGroupedLocations([]);
@@ -222,7 +222,7 @@ const AmesMap = ({ refreshTrigger, events: externalEvents, showContextLayers = t
                         <strong>{event.title}</strong>
                         <span className="map-event-meta">
                           <span className="map-event-icon"><IconAudience /></span>
-                          {event.category || 'Sin categoria'} / {event.audience || 'General'}
+                          {event.category || 'Sin categoría'} / {event.audience || 'General'}
                         </span>
                         <span className="map-event-meta">
                           <span className="map-event-icon"><IconOrganizer /></span>

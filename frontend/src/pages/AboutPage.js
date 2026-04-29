@@ -7,7 +7,7 @@ function AboutPage() {
     <StaticPageLayout
       eyebrow="Informacion general"
       title="Acerca de Ames Events"
-      subtitle="Ames Events reune en un solo lugar la agenda municipal y familiar del concello, con una experiencia clara para familias, personas cuidadoras y ciudadania en general."
+      subtitle="Ames Events reúne en un solo lugar la agenda municipal y familiar del concello, con una experiencia clara para familias, personas cuidadoras y ciudadanía en general."
       aside={(
         <div className="static-page-facts">
           <div className="static-page-fact">
@@ -27,7 +27,7 @@ function AboutPage() {
     >
       <StaticPageSection icon={Info} title="Que es Ames Events">
         <p>
-          Es una agenda local pensada para consultar planes de forma comoda, encontrar actividades cercanas y volver a
+          Es una agenda local pensada para consultar planes de forma cómoda, encontrar actividades cercanas y volver a
           ellas sin perderse entre demasiadas pantallas.
         </p>
       </StaticPageSection>
@@ -41,17 +41,17 @@ function AboutPage() {
         </ul>
       </StaticPageSection>
 
-      <StaticPageSection icon={ShieldCheck} title="A quien ayuda">
+      <StaticPageSection icon={ShieldCheck} title="A quién ayuda">
         <p>
-          La idea es reducir friccion: menos tiempo buscando, mas claridad para comparar eventos y una navegacion mas
+          La idea es reducir fricción: menos tiempo buscando, más claridad para comparar eventos y una navegación mas
           amable en movil y escritorio.
         </p>
       </StaticPageSection>
 
       <StaticPageSection icon={GraduationCap} title="Por que existe">
         <p>
-          El proyecto se ha desarrollado como trabajo academico para construir un flujo completo de agenda local:
-          consulta, favoritos, alertas, mapa, gestion de eventos y paginas informativas basicas.
+          El proyecto se ha desarrollado como trabajo académico para construir un flujo completo de agenda local:
+          consulta, favoritos, alertas, mapa, gestión de eventos y páginas informativas básicas.
         </p>
       </StaticPageSection>
     </StaticPageLayout>

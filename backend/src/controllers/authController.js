@@ -14,8 +14,8 @@ const VERIFICATION_TOKEN_BYTES = 32;
 const VERIFICATION_EXPIRY_HOURS = 24;
 const PASSWORD_RESET_TOKEN_BYTES = 32;
 const PASSWORD_RESET_EXPIRY_HOURS = 1;
-const PASSWORD_RESET_GENERIC_MESSAGE = 'Si el email existe, recibiras instrucciones para restablecer la contrasena.';
-const VERIFICATION_EMAIL_FAILED_MESSAGE = 'Cuenta creada correctamente, pero no se pudo enviar el correo de verificacion. Puedes solicitar un nuevo correo desde la pantalla de inicio de sesion.';
+const PASSWORD_RESET_GENERIC_MESSAGE = 'Si el email existe, recibirás instrucciones para restablecer la contraseña.';
+const VERIFICATION_EMAIL_FAILED_MESSAGE = 'Cuenta creada correctamente, pero no se pudo enviar el correo de verificación. Puedes solicitar un nuevo correo desde la pantalla de inicio de sesión.';
 
 function isValidEmail(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -51,7 +51,7 @@ async function register(req, res) {
   }
 
   if (!password || password.length < MIN_PASSWORD_LENGTH) {
-    return res.status(400).json({ error: `La contrasena debe tener al menos ${MIN_PASSWORD_LENGTH} caracteres.` });
+    return res.status(400).json({ error: `La contraseña debe tener al menos ${MIN_PASSWORD_LENGTH} caracteres.` });
   }
 
   try {
@@ -105,7 +105,7 @@ async function register(req, res) {
     }
 
     return res.status(201).json({
-      message: 'Cuenta creada correctamente. Revisa tu correo para verificarla antes de iniciar sesion.',
+      message: 'Cuenta creada correctamente. Revisa tu correo para verificarla antes de iniciar sesión.',
       verification_email_sent: true
     });
   } catch (error) {
@@ -118,23 +118,23 @@ async function verifyEmail(req, res) {
   const token = typeof req.query.token === 'string' ? req.query.token.trim() : '';
 
   if (!token) {
-    return res.status(400).json({ error: 'Token de verificacion no proporcionado.' });
+    return res.status(400).json({ error: 'Token de verificación no proporcionado.' });
   }
 
   try {
     const user = await authService.getUserByVerificationToken(token);
 
     if (!user) {
-      return res.status(400).json({ error: 'El token de verificacion es invalido.' });
+      return res.status(400).json({ error: 'El token de verificación es invalido.' });
     }
 
     if (!user.verification_expires_at || new Date(user.verification_expires_at) < new Date()) {
       await authService.clearVerificationToken(user.id);
-      return res.status(400).json({ error: 'El token de verificacion ha expirado. Solicita uno nuevo.' });
+      return res.status(400).json({ error: 'El token de verificación ha expirado. Solicita uno nuevo.' });
     }
 
     await authService.markEmailAsVerified(user.id);
-    return res.json({ message: 'Email verificado correctamente. Ya puedes iniciar sesion.' });
+    return res.json({ message: 'Email verificado correctamente. Ya puedes iniciar sesión.' });
   } catch (error) {
     console.error('Error en verifyEmail:', error);
     return res.status(500).json({ error: 'Error interno al verificar email.' });
@@ -144,7 +144,7 @@ async function verifyEmail(req, res) {
 async function resendVerification(req, res) {
   const email = typeof req.body.email === 'string' ? req.body.email.trim().toLowerCase() : '';
   const genericResponse = {
-    message: 'Si existe una cuenta pendiente de verificacion, se ha enviado un nuevo correo.'
+    message: 'Si existe una cuenta pendiente de verificación, se ha enviado un nuevo correo.'
   };
 
   if (!email || email.length > MAX_EMAIL_LENGTH || !isValidEmail(email)) {
@@ -168,7 +168,7 @@ async function resendVerification(req, res) {
     return res.json(genericResponse);
   } catch (error) {
     console.error('Error en resendVerification:', error);
-    return res.status(500).json({ error: 'Error interno al reenviar verificacion.' });
+    return res.status(500).json({ error: 'Error interno al reenviar verificación.' });
   }
 }
 
@@ -194,7 +194,7 @@ async function forgotPassword(req, res) {
     return res.json(genericResponse);
   } catch (error) {
     console.error('Error en forgotPassword:', error);
-    return res.status(500).json({ error: 'Error interno al solicitar recuperacion de contrasena.' });
+    return res.status(500).json({ error: 'Error interno al solicitar recuperación de contraseña.' });
   }
 }
 
@@ -207,7 +207,7 @@ async function resetPassword(req, res) {
   }
 
   if (!newPassword || newPassword.length < MIN_PASSWORD_LENGTH) {
-    return res.status(400).json({ error: `La contrasena debe tener al menos ${MIN_PASSWORD_LENGTH} caracteres.` });
+    return res.status(400).json({ error: `La contraseña debe tener al menos ${MIN_PASSWORD_LENGTH} caracteres.` });
   }
 
   try {
@@ -228,7 +228,7 @@ async function resetPassword(req, res) {
     return res.json({ message: 'Contrasena actualizada correctamente.' });
   } catch (error) {
     console.error('Error en resetPassword:', error);
-    return res.status(500).json({ error: 'Error interno al restablecer contrasena.' });
+    return res.status(500).json({ error: 'Error interno al restablecer contraseña.' });
   }
 }
 
@@ -237,7 +237,7 @@ async function login(req, res) {
   const password = typeof req.body.password === 'string' ? req.body.password : '';
 
   if (!loginValue || !password) {
-    return res.status(400).json({ error: 'Debes indicar usuario o email y contrasena.' });
+    return res.status(400).json({ error: 'Debes indicar usuario o email y contraseña.' });
   }
 
   try {
@@ -254,11 +254,11 @@ async function login(req, res) {
     }
 
     if (Number(user.is_active) !== 1) {
-      return res.status(403).json({ error: 'Tu cuenta esta desactivada. Contacta con administracion.' });
+      return res.status(403).json({ error: 'Tu cuenta esta desactivada. Contacta con administración.' });
     }
 
     if (Number(user.email_verified) !== 1) {
-      return res.status(403).json({ error: 'Debes verificar tu email antes de iniciar sesion.' });
+      return res.status(403).json({ error: 'Debes verificar tu email antes de iniciar sesión.' });
     }
 
     const token = jwt.sign(
@@ -283,7 +283,7 @@ async function login(req, res) {
     });
   } catch (error) {
     console.error('Error en login:', error);
-    return res.status(500).json({ error: 'Error interno al iniciar sesion.' });
+    return res.status(500).json({ error: 'Error interno al iniciar sesión.' });
   }
 }
 

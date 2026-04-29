@@ -24,21 +24,21 @@ function LegalNoticePage() {
       <StaticPageSection icon={FileText} title="Informacion general">
         <p>
           Ames Events es una plataforma informativa centrada en la agenda de Ames. El contenido, el diseño y las funciones
-          visibles forman parte de un proyecto academico / TFG.
+          visibles forman parte de un proyecto académico / TFG.
         </p>
       </StaticPageSection>
 
       <StaticPageSection icon={Scale} title="Condiciones de uso">
         <ul className="static-page-bullets">
           <li>El uso del sitio debe respetar la legislacion vigente y la convivencia digital habitual.</li>
-          <li>No se debe usar la plataforma para publicar contenido ilicito, engañoso o que suplante identidades.</li>
-          <li>La informacion publicada debe utilizarse respetando la finalidad informativa de la plataforma.</li>
+          <li>No se debe usar la plataforma para publicar contenido ilícito, engañoso o que suplante identidades.</li>
+          <li>La información publicada debe utilizarse respetando la finalidad informativa de la plataforma.</li>
         </ul>
       </StaticPageSection>
 
       <StaticPageSection icon={ShieldCheck} title="Responsabilidad sobre contenidos">
         <p>
-          La informacion mostrada puede depender de terceros o de aportaciones de usuarios. Conviene verificar horarios,
+          La información mostrada puede depender de terceros o de aportaciones de usuarios. Conviene verificar horarios,
           ubicaciones y descripciones antes de tomar decisiones importantes.
         </p>
       </StaticPageSection>

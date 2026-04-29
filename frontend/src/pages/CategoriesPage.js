@@ -1,15 +1,15 @@
 /**
- * Este archivo define la pagina de gestion de categorias.
+ * Este archivo define la página de gestión de categorías.
  * Actua como contenedor ligero para el componente que implementa el CRUD completo.
  */
 import React from 'react';
 import CategoryManager from '../CategoryManager';
 
-// Esta pagina muestra el gestor de categorias dentro de la estructura comun.
+// Esta página muestra el gestor de categorías dentro de la estructura comun.
 function CategoriesPage() {
   return (
     <main>
-      <h2>Gestion de Categorias</h2>
+      <h2>Gestión de Categorías</h2>
       <CategoryManager />
     </main>
   );

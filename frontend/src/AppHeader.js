@@ -13,7 +13,7 @@ const NAV_ITEMS = [
   { to: '/alerts', label: 'Alertas', authenticatedOnly: true },
   { to: '/audiences', label: 'Audiencias', adminOnly: true },
   { to: '/organizers', label: 'Organizadores', allowedRoles: ['admin', 'content_manager'] },
-  { to: '/categories', label: 'Categorias', allowedRoles: ['admin', 'content_manager'] },
+  { to: '/categories', label: 'Categorías', allowedRoles: ['admin', 'content_manager'] },
   { to: '/locations', label: 'Ubicaciones', allowedRoles: ['admin', 'content_manager'] },
   { to: '/admin/users', label: 'Usuarios', adminOnly: true }
 ];
@@ -120,14 +120,14 @@ function AppHeader({ session, onLogout }) {
             </span>
             <input
               type="text"
-              placeholder="Buscar eventos, lugares o categorÃ­as..."
+              placeholder="Buscar eventos, lugares o categorías..."
               className="app-search"
               value={searchValue}
               onChange={handleSearchChange}
             />
           </div>
 
-          <nav className="app-topbar-links" aria-label="Enlaces rapidos">
+          <nav className="app-topbar-links" aria-label="Enlaces rápidos">
             <NavLink end to="/events" className={({ isActive }) => `app-topbar-link${isActive ? ' active' : ''}`}>
               <span className="app-topbar-link-icon" aria-hidden="true"><CalendarDays /></span>
               <span>Agenda</span>
@@ -175,7 +175,7 @@ function AppHeader({ session, onLogout }) {
                     </Link>
                     <button type="button" className="app-user-menu-button" onClick={handleLogoutClick}>
                       <span className="app-user-menu-item-icon" aria-hidden="true"><LogOut /></span>
-                      Cerrar sesion
+                      Cerrar sesión
                     </button>
                   </div>
                 )}
@@ -183,7 +183,7 @@ function AppHeader({ session, onLogout }) {
             ) : (
               <Link to="/login" className="app-auth-link">
                 <span className="app-auth-link-icon" aria-hidden="true"><UserRound /></span>
-                Iniciar sesion
+                Iniciar sesión
               </Link>
             )}
           </div>

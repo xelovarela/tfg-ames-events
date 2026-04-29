@@ -1,5 +1,5 @@
 /**
- * Este archivo define la pagina del mapa.
+ * Este archivo define la página del mapa.
  * Reutiliza la carga y filtrado de eventos y renderiza el mapa interactivo
  * mostrando solo los eventos que cumplen esos filtros.
  */

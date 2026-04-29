@@ -1,15 +1,15 @@
 /**
- * Este archivo contiene el controlador de categorias.
+ * Este archivo contiene el controlador de categorías.
  * Se encarga de validar los datos de entrada y de coordinar la capa de servicios
- * para responder a las peticiones CRUD relacionadas con las categorias.
+ * para responder a las peticiones CRUD relacionadas con las categorías.
  */
 const categoriesService = require('../services/categoriesService');
 const { toPositiveInt } = require('../utils/validation');
 
-// Limite maximo permitido para el nombre de una categoria.
+// Límite maximo permitido para el nombre de una categoría.
 const MAX_CATEGORY_NAME_LENGTH = 100;
 
-// Valida y normaliza el cuerpo recibido al crear o editar categorias.
+// Valida y normaliza el cuerpo recibido al crear o editar categorías.
 function parseCategoryPayload(body) {
   const name = typeof body.name === 'string' ? body.name.trim() : '';
 
@@ -20,7 +20,7 @@ function parseCategoryPayload(body) {
   return { name };
 }
 
-// Devuelve todas las categorias disponibles.
+// Devuelve todas las categorías disponibles.
 async function getAll(req, res) {
   try {
     const categories = await categoriesService.listCategories();
@@ -31,7 +31,7 @@ async function getAll(req, res) {
   }
 }
 
-// Busca una categoria concreta a partir del id recibido por ruta.
+// Busca una categoría concreta a partir del id recibido por ruta.
 async function getById(req, res) {
   const id = toPositiveInt(req.params.id);
   if (!id) {
@@ -50,7 +50,7 @@ async function getById(req, res) {
   }
 }
 
-// Inserta una nueva categoria cuando el nombre es valido.
+// Inserta una nueva categoría cuándo el nombre es valido.
 async function create(req, res) {
   const payload = parseCategoryPayload(req.body);
   if (payload.error) {
@@ -66,7 +66,7 @@ async function create(req, res) {
   }
 }
 
-// Modifica el nombre de una categoria ya existente.
+// Modifica el nombre de una categoría ya existente.
 async function update(req, res) {
   const id = toPositiveInt(req.params.id);
   if (!id) {
@@ -90,7 +90,7 @@ async function update(req, res) {
   }
 }
 
-// Elimina una categoria solo si existe y no esta siendo usada por eventos.
+// Elimina una categoría solo si existe y no está siendo usada por eventos.
 async function remove(req, res) {
   const id = toPositiveInt(req.params.id);
   if (!id) {
@@ -116,7 +116,7 @@ async function remove(req, res) {
   }
 }
 
-// Se exportan las acciones CRUD para el router de categorias.
+// Se exportan las acciones CRUD para el router de categorías.
 module.exports = {
   getAll,
   getById,

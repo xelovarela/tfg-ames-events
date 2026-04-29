@@ -1,9 +1,9 @@
 /**
- * Este archivo encapsula la medicion opcional de metricas web.
- * Solo carga la libreria web-vitals cuando se le pasa una funcion callback,
- * evitando trabajo extra si la aplicacion no necesita esas metricas.
+ * Este archivo encapsula la medición opcional de métricas web.
+ * Solo carga la libreria web-vitals cuándo se le pasa una funcion callback,
+ * evitando trabajo extra si la aplicación no necesita esas métricas.
  */
-// Se usa importacion dinamica para no cargar las metricas si nadie las consume.
+// Se usa importacion dinamica para no cargar las métricas si nadie las consume.
 const reportWebVitals = onPerfEntry => {
   if (onPerfEntry && onPerfEntry instanceof Function) {
     import('web-vitals').then(({ getCLS, getFID, getFCP, getLCP, getTTFB }) => {

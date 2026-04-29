@@ -1,6 +1,6 @@
 /**
  * Este archivo define las rutas REST del recurso ubicaciones.
- * Enlaza cada metodo HTTP con la accion correspondiente del controlador.
+ * Enlaza cada metodo HTTP con la acción correspondiente del controlador.
  */
 const express = require('express');
 const locationsController = require('../controllers/locationsController');

@@ -1,7 +1,7 @@
 /**
  * Este archivo es la puerta de entrada del frontend React.
  * Crea la raiz de renderizado, monta el componente principal y deja preparado
- * el gancho opcional para medir metricas de rendimiento.
+ * el gancho opcional para medir métricas de rendimiento.
  */
 import React from 'react';
 import ReactDOM from 'react-dom/client';
@@ -22,5 +22,5 @@ root.render(
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-// La medicion de rendimiento queda disponible aunque no se este usando activamente.
+// La medición de rendimiento queda disponible aunque no se este usando activamente.
 reportWebVitals();

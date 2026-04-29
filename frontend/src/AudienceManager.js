@@ -1,6 +1,6 @@
 /**
  * Este archivo implementa el gestor de audiencias del frontend.
- * Permite mantener el catalogo de tipos de publico y su rango de edad asociado
+ * Permite mantener el catálogo de tipos de público y su rango de edad asociado
  * con validaciones de cliente antes de llamar a la API.
  */
 import React, { useEffect, useState } from 'react';
@@ -74,13 +74,13 @@ function AudienceManager({ onAudiencesChanged }) {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Limpia el formulario y desactiva la edicion.
+  // Limpia el formulario y desactiva la edición.
   const clearForm = () => {
     setFormData(initialForm);
     setEditingId(null);
   };
 
-  // Crea o actualiza audiencias segun el estado actual del formulario.
+  // Crea o actualiza audiencias según el estado actual del formulario.
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (isSaving) {
@@ -143,7 +143,7 @@ function AudienceManager({ onAudiencesChanged }) {
     setMessage('');
   };
 
-  // Elimina una audiencia previa confirmacion del usuario.
+  // Elimina una audiencia previa confirmación del usuario.
   const handleDelete = async (id) => {
     const confirmed = window.confirm('Seguro que quieres eliminar esta audiencia?');
     if (!confirmed) {
@@ -173,7 +173,7 @@ function AudienceManager({ onAudiencesChanged }) {
 
   return (
     <section className="audiences-card">
-      <h3 className="audiences-title">Gestion de audiencias</h3>
+      <h3 className="audiences-title">Gestión de audiencias</h3>
 
       {/* Formulario principal para crear o editar audiencias. */}
       <form className="audiences-form" onSubmit={handleSubmit}>

@@ -1,5 +1,5 @@
 /**
- * Este archivo define la pagina de gestion de usuarios.
+ * Este archivo define la página de gestión de usuarios.
  * Actua como contenedor de alto nivel para el componente encargado
  * de administrar roles y estado de usuarios.
  */
@@ -9,7 +9,7 @@ import UserManager from '../UserManager';
 function UsersPage({ session }) {
   return (
     <main>
-      <h2>Gestion de Usuarios</h2>
+      <h2>Gestión de Usuarios</h2>
       <UserManager session={session} />
     </main>
   );

@@ -1,5 +1,5 @@
 /**
- * Gestor de administracion de usuarios.
+ * Gestor de administración de usuarios.
  * Permite a admin consultar usuarios, cambiar roles y activar/desactivar cuentas.
  */
 import React, { useCallback, useEffect, useState } from 'react';

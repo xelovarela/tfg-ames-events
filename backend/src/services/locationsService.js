@@ -13,7 +13,7 @@ async function listLocations() {
   return rows;
 }
 
-// Recupera una ubicacion concreta por id.
+// Recupera una ubicación concreta por id.
 async function getLocationById(id) {
   const [rows] = await db.query(
     'SELECT id, name, locality, lat, lng FROM locations WHERE id = ?',
@@ -22,7 +22,7 @@ async function getLocationById(id) {
   return rows[0] || null;
 }
 
-// Inserta una nueva ubicacion con nombre y coordenadas.
+// Inserta una nueva ubicación con nombre y coordenadas.
 async function createLocation({ name, locality, lat, lng }) {
   const [result] = await db.query(
     'INSERT INTO locations (name, locality, lat, lng) VALUES (?, ?, ?, ?)',
@@ -31,7 +31,7 @@ async function createLocation({ name, locality, lat, lng }) {
   return result.insertId;
 }
 
-// Actualiza los datos de una ubicacion ya existente.
+// Actualiza los datos de una ubicación ya existente.
 async function updateLocation(id, { name, locality, lat, lng }) {
   const [result] = await db.query(
     'UPDATE locations SET name = ?, locality = ?, lat = ?, lng = ? WHERE id = ?',
@@ -40,7 +40,7 @@ async function updateLocation(id, { name, locality, lat, lng }) {
   return result.affectedRows > 0;
 }
 
-// Elimina una ubicacion concreta y devuelve si hubo cambios.
+// Elimina una ubicación concreta y devuelve si hubo cambios.
 async function deleteLocation(id) {
   const [result] = await db.query(
     'DELETE FROM locations WHERE id = ?',
@@ -49,7 +49,7 @@ async function deleteLocation(id) {
   return result.affectedRows > 0;
 }
 
-// Comprueba si algun evento usa la ubicacion antes de borrarla.
+// Comprueba si algún evento usa la ubicación antes de borrarla.
 async function hasRelatedEvents(id) {
   const [rows] = await db.query(
     'SELECT COUNT(*) AS total FROM events WHERE location_id = ?',

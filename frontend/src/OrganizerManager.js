@@ -1,6 +1,6 @@
 /**
  * Este archivo implementa el gestor de organizadores del frontend.
- * Controla la carga, validacion y persistencia del catalogo de organizadores
+ * Controla la carga, validación y persistencia del catálogo de organizadores
  * junto con sus datos opcionales de contacto.
  */
 import React, { useEffect, useState } from 'react';
@@ -15,7 +15,7 @@ const initialForm = {
   phone: ''
 };
 
-// Valida nombre, email y telefono antes de enviar el formulario.
+// Valida nombre, email y teléfono antes de enviar el formulario.
 function validateOrganizer(form) {
   const name = form.name.trim();
   const email = form.email.trim();
@@ -30,7 +30,7 @@ function validateOrganizer(form) {
   }
 
   if (phone.length > 30) {
-    return 'El telefono no puede superar los 30 caracteres.';
+    return 'El teléfono no puede superar los 30 caracteres.';
   }
 
   return null;
@@ -44,7 +44,7 @@ function OrganizerManager({ onOrganizersChanged }) {
   const [message, setMessage] = useState('');
   const [isSaving, setIsSaving] = useState(false);
 
-  // Recupera el catalogo de organizadores desde la API.
+  // Recupera el catálogo de organizadores desde la API.
   const loadOrganizers = async () => {
     try {
       const response = await fetch(`${API_BASE_URL}/organizers`);
@@ -70,7 +70,7 @@ function OrganizerManager({ onOrganizersChanged }) {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Limpia el formulario y cierra el modo edicion.
+  // Limpia el formulario y cierra el modo edición.
   const clearForm = () => {
     setFormData(initialForm);
     setEditingId(null);
@@ -139,7 +139,7 @@ function OrganizerManager({ onOrganizersChanged }) {
     setMessage('');
   };
 
-  // Pide confirmacion antes de borrar un organizador.
+  // Pide confirmación antes de borrar un organizador.
   const handleDelete = async (id) => {
     const confirmed = window.confirm('Seguro que quieres eliminar este organizador?');
     if (!confirmed) {
@@ -169,7 +169,7 @@ function OrganizerManager({ onOrganizersChanged }) {
 
   return (
     <section className="organizers-card">
-      <h3 className="organizers-title">Gestion de organizadores</h3>
+      <h3 className="organizers-title">Gestión de organizadores</h3>
 
       {/* Formulario principal para crear y editar organizadores. */}
       <form className="organizers-form" onSubmit={handleSubmit}>

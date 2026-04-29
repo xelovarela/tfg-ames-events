@@ -1,5 +1,5 @@
 /**
- * Este archivo define la pagina de inicio de sesion.
+ * Este archivo define la página de inicio de sesión.
  * Implementa un formulario basico para autenticar usuario contra la API,
  * persistir token/usuario en localStorage y navegar al mapa tras login.
  */
@@ -38,7 +38,7 @@ function LoginPage({ onLogin }) {
     }
 
     if (!loginValue.trim() || !password) {
-      setMessage('Debes indicar usuario o email y contrasena.');
+      setMessage('Debes indicar usuario o email y contraseña.');
       return;
     }
 
@@ -61,7 +61,7 @@ function LoginPage({ onLogin }) {
 
       const data = await response.json();
       if (!response.ok) {
-        const apiError = data?.error || 'No se pudo iniciar sesion.';
+        const apiError = data?.error || 'No se pudo iniciar sesión.';
         setShowResend(apiError.toLowerCase().includes('verificar'));
         throw new Error(apiError);
       }
@@ -78,7 +78,7 @@ function LoginPage({ onLogin }) {
       navigate(redirectTarget, { replace: true });
     } catch (error) {
       console.error(error);
-      setMessage(error.message || 'No se pudo iniciar sesion.');
+      setMessage(error.message || 'No se pudo iniciar sesión.');
     } finally {
       setIsSubmitting(false);
     }
@@ -91,7 +91,7 @@ function LoginPage({ onLogin }) {
 
     const loginAsEmail = loginValue.trim();
     if (!loginAsEmail.includes('@')) {
-      setResendMessage('Para reenviar la verificacion, inicia sesion usando tu email en lugar de usuario.');
+      setResendMessage('Para reenviar la verificación, inicia sesión usando tu email en lugar de usuario.');
       return;
     }
 
@@ -109,13 +109,13 @@ function LoginPage({ onLogin }) {
 
       const data = await response.json();
       if (!response.ok) {
-        throw new Error(data?.error || 'No se pudo reenviar la verificacion.');
+        throw new Error(data?.error || 'No se pudo reenviar la verificación.');
       }
 
       setResendMessage(data.message || 'Si la cuenta existe, hemos reenviado el correo.');
     } catch (error) {
       console.error(error);
-      setResendMessage(error.message || 'No se pudo reenviar la verificacion.');
+      setResendMessage(error.message || 'No se pudo reenviar la verificación.');
     } finally {
       setIsResending(false);
     }
@@ -123,7 +123,7 @@ function LoginPage({ onLogin }) {
 
   return (
     <main>
-      <h2>Iniciar sesion</h2>
+      <h2>Iniciar sesión</h2>
 
       <section className="login-card">
         <form className="login-form" onSubmit={handleSubmit}>
@@ -155,7 +155,7 @@ function LoginPage({ onLogin }) {
               Crear cuenta
             </Link>
             <Link to="/forgot-password" className="login-link">
-              Olvidaste tu contrasena?
+              Olvidaste tu contraseña?
             </Link>
             <Link to="/map" className="login-link">
               Volver al mapa
@@ -168,7 +168,7 @@ function LoginPage({ onLogin }) {
         {showResend && (
           <div className="login-resend">
             <p className="login-resend-info">
-              Reenviaremos la verificacion al mismo email que has usado para iniciar sesion.
+              Reenviaremos la verificación al mismo email que has usado para iniciar sesión.
             </p>
             <button
               className="login-btn login-btn-secondary"
@@ -176,7 +176,7 @@ function LoginPage({ onLogin }) {
               disabled={isResending}
               onClick={handleResendVerification}
             >
-              {isResending ? 'Enviando...' : 'Reenviar verificacion'}
+              {isResending ? 'Enviando...' : 'Reenviar verificación'}
             </button>
             {resendMessage && <p className="login-message">{resendMessage}</p>}
           </div>

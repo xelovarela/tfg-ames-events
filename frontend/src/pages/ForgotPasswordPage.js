@@ -28,14 +28,14 @@ function ForgotPasswordPage() {
 
       const data = await response.json();
       if (!response.ok) {
-        throw new Error(data?.error || 'No se pudo solicitar la recuperacion.');
+        throw new Error(data?.error || 'No se pudo solicitar la recuperación.');
       }
 
-      setMessage(data.message || 'Si el email existe, recibiras instrucciones para restablecer la contrasena.');
+      setMessage(data.message || 'Si el email existe, recibirás instrucciones para restablecer la contraseña.');
       setEmail('');
     } catch (error) {
       console.error(error);
-      setMessage(error.message || 'No se pudo solicitar la recuperacion.');
+      setMessage(error.message || 'No se pudo solicitar la recuperación.');
     } finally {
       setIsSubmitting(false);
     }
@@ -43,7 +43,7 @@ function ForgotPasswordPage() {
 
   return (
     <main>
-      <h2>Recuperar contrasena</h2>
+      <h2>Recuperar contraseña</h2>
 
       <section className="password-reset-card">
         <form className="password-reset-form" onSubmit={handleSubmit}>

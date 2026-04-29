@@ -1,6 +1,6 @@
 /**
  * Este archivo implementa la capa de servicios de audiencias.
- * Contiene las consultas SQL necesarias para mantener el catalogo de audiencias
+ * Contiene las consultas SQL necesarias para mantener el catálogo de audiencias
  * y verificar si estan siendo utilizadas por eventos.
  */
 const db = require('../config/db');
@@ -46,7 +46,7 @@ async function deleteAudience(id) {
   return result.affectedRows > 0;
 }
 
-// Comprueba si algun evento apunta a esta audiencia.
+// Comprueba si algún evento apunta a esta audiencia.
 async function hasRelatedEvents(id) {
   const [rows] = await db.query(
     'SELECT COUNT(*) AS total FROM events WHERE audience_id = ?',

@@ -25,13 +25,13 @@ function ResetPasswordPage() {
     }
 
     if (newPassword.length < 8) {
-      setMessage('La contrasena debe tener al menos 8 caracteres.');
+      setMessage('La contraseña debe tener al menos 8 caracteres.');
       setIsSuccess(false);
       return;
     }
 
     if (newPassword !== confirmPassword) {
-      setMessage('Las contrasenas no coinciden.');
+      setMessage('Las contraseñas no coinciden.');
       setIsSuccess(false);
       return;
     }
@@ -72,11 +72,11 @@ function ResetPasswordPage() {
 
   return (
     <main>
-      <h2>Nueva contrasena</h2>
+      <h2>Nueva contraseña</h2>
 
       <section className="password-reset-card">
         <form className="password-reset-form" onSubmit={handleSubmit}>
-          <label htmlFor="new-password">Nueva contrasena</label>
+          <label htmlFor="new-password">Nueva contraseña</label>
           <input
             id="new-password"
             type="password"
@@ -86,7 +86,7 @@ function ResetPasswordPage() {
             autoComplete="new-password"
           />
 
-          <label htmlFor="confirm-new-password">Confirmar contrasena</label>
+          <label htmlFor="confirm-new-password">Confirmar contraseña</label>
           <input
             id="confirm-new-password"
             type="password"
@@ -98,7 +98,7 @@ function ResetPasswordPage() {
 
           <div className="password-reset-actions">
             <button className="password-reset-btn password-reset-btn-primary" type="submit" disabled={isSubmitting || isSuccess}>
-              {isSubmitting ? 'Actualizando...' : 'Actualizar contrasena'}
+              {isSubmitting ? 'Actualizando...' : 'Actualizar contraseña'}
             </button>
             <Link to="/login" className="password-reset-link">
               Volver al login

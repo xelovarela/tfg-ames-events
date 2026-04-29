@@ -1,7 +1,7 @@
 /**
  * Este archivo prepara el entorno global de pruebas del frontend.
  * Importa extensiones para Jest y Testing Library que facilitan escribir aserciones
- * mas expresivas sobre el DOM renderizado.
+ * más expresivas sobre el DOM renderizado.
  */
 // jest-dom adds custom jest matchers for asserting on DOM nodes.
 // allows you to do things like:

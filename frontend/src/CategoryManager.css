@@ -1,9 +1,9 @@
 /*
- * Este archivo define los estilos del gestor de categorias.
+ * Este archivo define los estilos del gestor de categorías.
  * Da formato al formulario, los botones, los mensajes y la cuadrilla de tarjetas
- * que muestran las categorias registradas.
+ * que muestran las categorías registradas.
  */
-/* Tarjeta principal del modulo de categorias. */
+/* Tarjeta principal del modulo de categorías. */
 .categories-card {
   padding: 1rem;
   background: #f7f7f7;
@@ -15,7 +15,7 @@
   margin: 0 0 1rem;
 }
 
-/* Distribucion del formulario de alta y edicion. */
+/* Distribucion del formulario de alta y edición. */
 .categories-form {
   display: grid;
   grid-template-columns: 1fr auto;
@@ -64,7 +64,7 @@
   margin: 0.75rem 0 0;
 }
 
-/* Rejilla de tarjetas con las categorias existentes. */
+/* Rejilla de tarjetas con las categorías existentes. */
 .categories-list {
   margin-top: 1rem;
   display: grid;

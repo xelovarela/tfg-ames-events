@@ -44,7 +44,7 @@ function AppFooter() {
       </div>
 
       <div className="app-footer-bottom">
-        <span>&copy; 2026 Eventos en Ames. Proyecto academico TFG de Angel Varela.</span>
+        <span>&copy; 2026 Eventos en Ames. Proyecto académico TFG de Angel Varela.</span>
         <span>Esta web no utiliza cookies.</span>
         <Link to="/aviso-legal#licencia">Licencia Creative Commons BY-NC 4.0</Link>
       </div>

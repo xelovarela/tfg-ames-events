@@ -1,7 +1,7 @@
 /**
- * Este archivo centraliza la persistencia de sesion en el frontend.
+ * Este archivo centraliza la persistencia de sesión en el frontend.
  * Guarda y recupera token y usuario autenticado desde localStorage para
- * mantener la sesion entre recargas sin anadir dependencias externas.
+ * mantener la sesión entre recargas sin añadir dependencias externas.
  */
 const AUTH_STORAGE_KEY = 'ames_events_auth_session';
 const AUTH_SESSION_EVENT = 'ames_events_auth_session_changed';

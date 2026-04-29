@@ -7,7 +7,7 @@ function AccessibilityPage() {
     <StaticPageLayout
       eyebrow="Compromiso"
       title="Accesibilidad"
-      subtitle="La interfaz de Ames Events se diseña para ser clara, responsive y comoda de usar con teclado, raton o pantalla tactil."
+      subtitle="La interfaz de Ames Events se diseña para ser clara, responsive y cómoda de usar con teclado, ratón o pantalla tactil."
       aside={(
         <div className="static-page-facts">
           <div className="static-page-fact">
@@ -24,7 +24,7 @@ function AccessibilityPage() {
       <StaticPageSection icon={Accessibility} title="Compromiso de diseño">
         <p>
           La interfaz mantiene jerarquia visual clara, espaciado suficiente y componentes faciles de reconocer para
-          facilitar la navegacion en distintos tamaños de pantalla.
+          facilitar la navegación en distintos tamaños de pantalla.
         </p>
       </StaticPageSection>
 
@@ -32,21 +32,21 @@ function AccessibilityPage() {
         <ul className="static-page-bullets">
           <li>Los elementos interactivos pueden recorrerse con Tab y activarse con teclado.</li>
           <li>Los formularios usan etiquetas visibles para no depender solo de placeholders.</li>
-          <li>Los estados de foco son perceptibles para seguir el recorrido de navegacion.</li>
+          <li>Los estados de foco son perceptibles para seguir el recorrido de navegación.</li>
         </ul>
       </StaticPageSection>
 
       <StaticPageSection icon={Type} title="Legibilidad">
         <p>
-          Se priorizan tipografias claras, tamaño suficiente, bloques de texto breves y contraste adecuado para que la
-          lectura sea comoda tanto en movil como en escritorio.
+          Se priorizan tipografías claras, tamaño suficiente, bloques de texto breves y contraste adecuado para que la
+          lectura sea cómoda tanto en movil como en escritorio.
         </p>
       </StaticPageSection>
 
       <StaticPageSection icon={MessageSquareText} title="Contacto por accesibilidad">
         <p>
-          Si detectas una barrera de uso o una pantalla poco accesible, escribe a admin@anxovarela.es indicando la pagina,
-          el dispositivo utilizado y una breve descripcion del problema.
+          Si detectas una barrera de uso o una pantalla poco accesible, escribe a admin@anxovarela.es indicando la página,
+          el dispositivo utilizado y una breve descripción del problema.
         </p>
       </StaticPageSection>
     </StaticPageLayout>

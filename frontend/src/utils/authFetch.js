@@ -1,6 +1,6 @@
 /**
- * Este archivo define helpers minimos para peticiones autenticadas.
- * Permite anadir el token JWT actual en la cabecera Authorization sin
+ * Este archivo define helpers mínimos para peticiones autenticadas.
+ * Permite añadir el token JWT actual en la cabecera Authorization sin
  * introducir una capa de abstraccion compleja sobre fetch.
  */
 import { getAuthToken } from './authStorage';

@@ -1,7 +1,7 @@
 /**
  * Este archivo contiene el controlador de organizadores.
- * Valida la informacion basica de contacto y coordina las operaciones CRUD
- * relacionadas con los organizadores almacenados en la aplicacion.
+ * Valida la información basica de contacto y coordina las operaciones CRUD
+ * relacionadas con los organizadores almacenados en la aplicación.
  */
 const organizersService = require('../services/organizersService');
 const { toPositiveInt } = require('../utils/validation');
@@ -11,7 +11,7 @@ const MAX_ORGANIZER_NAME_LENGTH = 100;
 const MAX_ORGANIZER_EMAIL_LENGTH = 100;
 const MAX_ORGANIZER_PHONE_LENGTH = 30;
 
-// Normaliza nombre, email y telefono antes de crear o actualizar registros.
+// Normaliza nombre, email y teléfono antes de crear o actualizar registros.
 function parseOrganizerPayload(body) {
   const name = typeof body.name === 'string' ? body.name.trim() : '';
   const emailValue = typeof body.email === 'string' ? body.email.trim() : '';
@@ -65,7 +65,7 @@ async function getById(req, res) {
   }
 }
 
-// Inserta un nuevo organizador cuando el payload es correcto.
+// Inserta un nuevo organizador cuándo el payload es correcto.
 async function create(req, res) {
   const payload = parseOrganizerPayload(req.body);
   if (payload.error) {
@@ -81,7 +81,7 @@ async function create(req, res) {
   }
 }
 
-// Modifica un organizador existente con la informacion recibida.
+// Modifica un organizador existente con la información recibida.
 async function update(req, res) {
   const id = toPositiveInt(req.params.id);
   if (!id) {
@@ -106,7 +106,7 @@ async function update(req, res) {
   }
 }
 
-// Elimina un organizador solo si no esta enlazado a eventos.
+// Elimina un organizador solo si no está enlazado a eventos.
 async function remove(req, res) {
   const id = toPositiveInt(req.params.id);
   if (!id) {
