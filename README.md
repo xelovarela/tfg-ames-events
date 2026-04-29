@@ -1,6 +1,6 @@
 # Ames Events - TFG
 
-Aplicacion web para consultar, proponer y gestionar eventos infantiles y familiares geolocalizados en Ames.
+Aplicación web para consultar, proponer y gestionar eventos infantiles y familiares geolocalizados en Ames.
 
 ## Stack
 
@@ -14,14 +14,14 @@ Aplicacion web para consultar, proponer y gestionar eventos infantiles y familia
 
 Dependencias de ejecucion definidas en `backend/package.json`:
 
-- `bcrypt`: hash y verificacion de contrasenas.
-- `cors`: configuracion CORS para permitir peticiones desde el frontend.
+- `bcrypt`: hash y verificación de contraseñas.
+- `cors`: configuración CORS para permitir peticiones desde el frontend.
 - `dotenv`: carga de variables desde `backend/.env`.
 - `express`: servidor HTTP y API REST.
-- `jsonwebtoken`: emision y validacion de tokens JWT.
+- `jsonwebtoken`: emisión y validación de tokens JWT.
 - `multer`: recepcion de imagenes subidas en formularios `multipart/form-data`.
 - `mysql2`: conexion a MySQL/MariaDB con promesas.
-- `nodemailer`: envio de emails de verificacion, alertas y recordatorios.
+- `nodemailer`: envio de emails de verificación, alertas y recordatorios.
 
 Scripts disponibles:
 
@@ -37,9 +37,9 @@ Dependencias de ejecucion definidas en `frontend/package.json`:
 - `react-dom`: renderizado de React en navegador.
 - `react-router-dom`: rutas de la SPA.
 - `leaflet`: motor del mapa.
-- `react-leaflet`: integracion de Leaflet con React.
+- `react-leaflet`: integración de Leaflet con React.
 - `lucide-react`: iconos de la interfaz.
-- `web-vitals`: metricas de rendimiento web.
+- `web-vitals`: métricas de rendimiento web.
 
 Dependencias de testing y tooling incluidas por Create React App:
 
@@ -51,25 +51,25 @@ Dependencias de testing y tooling incluidas por Create React App:
 
 ## Estado actual
 
-- Pagina de inicio con un evento destacado, proximos eventos y CTA para proponer eventos.
-- Mapa interactivo con Leaflet y agrupacion de eventos por ubicacion.
+- Pagina de inicio con un evento destacado, próximos eventos y CTA para proponer eventos.
+- Mapa interactivo con Leaflet y agrupación de eventos por ubicación.
 - **Capas contextuales del mapa**: Límite del Concello de Ames (GeoJSON), zonas de Bertamiráns y O Milladoiro (círculos aprox.), con etiquetas legibles.
-- Listado, detalle, alta, edicion y borrado de eventos segun permisos.
+- Listado, detalle, alta, edición y borrado de eventos según permisos.
 - Subida de imagenes para eventos mediante `multipart/form-data`.
-- Registro, verificacion de email, login JWT, recuperacion de contrasena y perfil propio.
+- Registro, verificación de email, login JWT, recuperación de contraseña y perfil propio.
 - Control de acceso por roles: `admin`, `content_manager` y `user`.
-- Gestion de usuarios y revision de solicitudes de acceso como creador de contenido.
+- Gestión de usuarios y revisión de solicitudes de acceso como creador de contenido.
 - Flujo para que usuarios registrados soliciten acceso como creadores de contenido.
-- Bandeja admin de solicitudes con filtros por estado y notas de revision.
+- Bandeja admin de solicitudes con filtros por estado y notas de revisión.
 - Favoritos para usuarios registrados.
 - Contadores de `favs` visibles en portada, listado y detalle de evento.
 - Páginas informativas y legales estáticas enlazadas desde el footer: acerca de, contacto, ayuda, accesibilidad, privacidad, aviso legal y mapa del sitio.
 - Header principal rediseñado con barra cálida tipo tarjeta, buscador con icono, accesos rápidos con iconos y avatar desplegable.
 - Footer reorganizado en columnas con enlaces informativos, aviso de no uso de cookies y licencia Creative Commons BY-NC 4.0.
 - Portada ajustada a una paleta cálida coherente con el resto de la web e insignia destacada para el siguiente plan.
-- Alertas por email cuando se crean eventos que coinciden con criterios guardados.
+- Alertas por email cuándo se crean eventos que coinciden con criterios guardados.
 - Recordatorios por email de eventos favoritos.
-- CRUD de categorias, ubicaciones, audiencias y organizadores.
+- CRUD de categorías, ubicaciones, audiencias y organizadores.
 - Validaciones backend y frontend para los campos principales.
 
 ## Estructura
@@ -79,9 +79,92 @@ Dependencias de testing y tooling incluidas por Create React App:
 - `database/`: esquema, datos iniciales y scripts auxiliares SQL.
 - `docs/`: documentacion auxiliar del proyecto.
 
+## Arquitectura de la aplicación
+
+### Frontend React
+
+El frontend es una SPA construida con React y React Router. `App` configura el `BrowserRouter`, mantiene la sesión autenticada y compone la estructura común con `AppHeader`, `AppRoutes` y `AppFooter`.
+
+La navegación principal se concentra en `frontend/src/AppRoutes.js`, donde se separan rutas públicas, rutas autenticadas y rutas protegidas por rol mediante `ProtectedRoute`. Las pantallas viven en `frontend/src/pages`, y los componentes reutilizables como `EventList`, `EventFilters`, `EventForm` y `AmesMap` se mantienen en `frontend/src`.
+
+El frontend consume la API con `fetch` y utilidades como `authFetch`, `favoritesApi`, `contentManagerRequestsApi` y `useFilteredEvents`. Los filtros de eventos se sincronizan con la URL para que agenda y mapa compartan búsquedas y enlaces.
+
+### Backend Express
+
+El backend es una API REST con Node.js y Express. `backend/server.js` configura CORS, JSON, rutas de autenticación, recursos principales y publicación de imágenes subidas. La estructura separa responsabilidades:
+
+- `routes/`: endpoints HTTP y middleware de protección.
+- `controllers/`: validación de entrada, respuestas HTTP y coordinación de servicios.
+- `services/`: consultas SQL y reglas de persistencia.
+- `middleware/`: validación JWT y permisos.
+- `utils/`: funciones puras de validación y normalización.
+
+La autenticación se basa en JWT. El backend adjunta el usuario autenticado a cada petición protegida y aplica restricciones de rol antes de ejecutar operaciones sensibles.
+
+### Base de datos MySQL
+
+La base de datos MySQL/MariaDB almacena usuarios, roles, eventos, catálogos, favoritos, alertas y solicitudes de creación de contenido. `database/schema.sql` define tablas y relaciones, y `database/seed.sql` carga datos iniciales para probar la aplicación.
+
+Entidades principales:
+
+- `users`, `roles`: autenticación, estado de cuenta y autorización.
+- `events`: agenda con fecha, precio, edades, imagen y relaciones.
+- `categories`, `locations`, `audiences`, `organizers`: catálogos auxiliares.
+- `favorites`: relación usuario-evento.
+- `alerts`: criterios guardados por usuario.
+- `content_manager_requests`: solicitudes para obtener permisos de creador.
+
+### Roles
+
+- `user`: consulta eventos, gestiona favoritos y alertas, edita su perfil y solicita acceso como creador.
+- `content_manager`: crea y edita eventos y gestiona catálogos necesarios para mantener la agenda.
+- `admin`: acceso completo, incluida eliminación de eventos, gestión de usuarios, revisión de solicitudes y administración de catálogos.
+
+Los permisos se aplican en frontend para mostrar u ocultar accesos, y en backend para bloquear peticiones no autorizadas aunque se llamen directamente a la API.
+
+### Flujo de eventos
+
+1. El usuario consulta la agenda o el mapa.
+2. `useFilteredEvents` carga eventos y catálogos auxiliares desde la API.
+3. Los filtros de búsqueda, fecha, categoría, ubicación, audiencia y gratuitos se sincronizan con la query string.
+4. `EventList` muestra eventos filtrados y `AmesMap` representa los mismos datos agrupados por ubicación.
+5. `admin` y `content_manager` pueden crear y editar eventos con `EventForm`.
+6. El backend valida datos, relaciones, imágenes y permisos antes de insertar o actualizar en MySQL.
+7. Al crear eventos, el backend evalúa alertas activas y puede enviar emails si hay coincidencias.
+
+### Flujo de ubicaciones y mapa
+
+Las ubicaciones se gestionan desde su CRUD y se almacenan con nombre, localidad y coordenadas. El formulario permite seleccionar coordenadas sobre el mapa y valida que la ubicación tenga datos consistentes antes de enviarla.
+
+El mapa consume eventos ya filtrados y los agrupa por coordenadas para evitar marcadores duplicados. Además, incluye capas contextuales para identificar el límite del Concello de Ames y zonas de referencia como Bertamiráns y O Milladoiro.
+
+### Flujo de favoritos
+
+1. Un usuario autenticado con rol `user` o `admin` puede marcar eventos como favoritos.
+2. El frontend consulta `GET /favorites/ids` para saber qué eventos están marcados.
+3. Al pulsar favorito, llama a `POST /favorites/:eventId` o `DELETE /favorites/:eventId`.
+4. El backend comprueba JWT, permisos y existencia del evento antes de modificar `favorites`.
+5. Los favoritos se muestran en `/favorites` y sirven para enviar recordatorios cuando el proceso está activo.
+
+### Flujo de alertas
+
+1. Un usuario autenticado crea una alerta con nombre y al menos un criterio: categoría, ubicación, audiencia, edad o palabra clave.
+2. Las alertas se guardan asociadas al usuario y pueden activarse, editarse o eliminarse.
+3. Cuando se crea un evento, el backend compara ese evento con las alertas activas.
+4. Si hay coincidencia y la cuenta está activa y verificada, se envía un email informativo.
+5. Si el envío falla, el error queda registrado pero la creación del evento no se cancela.
+
+### Flujo de solicitudes de creación de contenido
+
+1. Un usuario con rol `user` accede a `/propose-event` y envía una solicitud explicando por qué quiere publicar eventos.
+2. La solicitud queda en estado `pending` en `content_manager_requests`.
+3. El administrador revisa solicitudes desde el panel de usuarios, puede filtrar por estado y escribir notas.
+4. Si aprueba la solicitud, el backend cambia el estado a `approved` y actualiza el rol del usuario a `content_manager` en una transacción.
+5. Si la rechaza, la solicitud queda como `rejected`, el usuario mantiene su rol y puede consultar las notas.
+
 ## Mantenimiento de documentacion
 
-Cada cambio funcional, tecnico o de configuracion debe reflejarse en este `README.md` cuando afecte a:
+Cada cambio funcional, tecnico o de configuración debe reflejarse en este `README.md` cuándo afecte a:
 
 - Dependencias instaladas o scripts de `npm`.
 - Variables de entorno.
@@ -90,7 +173,7 @@ Cada cambio funcional, tecnico o de configuracion debe reflejarse en este `READM
 - Endpoints backend.
 - Roles, permisos o flujos de usuario.
 - Modelo de datos, scripts SQL o migraciones.
-- Funcionalidades visibles de la aplicacion.
+- Funcionalidades visibles de la aplicación.
 
 La idea es que el README sea siempre la referencia rapida del estado real del proyecto.
 
@@ -144,7 +227,7 @@ Copia `frontend/.env.example` como `frontend/.env`:
 REACT_APP_API_BASE_URL=http://localhost:3001
 ```
 
-En produccion, apunta esta variable al dominio de la API.
+En producción, apunta esta variable al dominio de la API.
 
 ## Base de datos
 
@@ -162,7 +245,7 @@ mysql -u usuario -p nombre_base_hosting < database/schema.sql
 mysql -u usuario -p nombre_base_hosting < database/seed.sql
 ```
 
-La tabla `content_manager_requests` forma parte de `schema.sql`. El backend tambien ejecuta una comprobacion defensiva y la crea automaticamente si faltase.
+La tabla `content_manager_requests` forma parte de `schema.sql`. El backend tambien ejecuta una comprobación defensiva y la crea automáticamente si faltase.
 
 ## Ejecucion local
 
@@ -210,12 +293,12 @@ npm test
 
 ### Backend
 
-`cd backend && npm test` ejecuta pruebas unitarias sobre utilidades puras de validacion:
+`cd backend && npm test` ejecuta pruebas unitarias sobre utilidades puras de validación:
 
 - Identificadores enteros positivos usados en parametros y cuerpos HTTP.
-- Coordenadas geograficas de ubicaciones.
+- Coordenadas geográficas de ubicaciones.
 - Fechas locales de eventos en formato MySQL sin desplazamiento horario.
-- Normalizacion de booleanos y precios antes de persistirlos.
+- Normalización de booleanos y precios antes de persistirlos.
 
 Estas pruebas no necesitan servidor, base de datos ni variables `.env`.
 
@@ -223,8 +306,8 @@ Estas pruebas no necesitan servidor, base de datos ni variables `.env`.
 
 `cd frontend && npm test` ejecuta Jest y React Testing Library. La suite actual comprueba:
 
-- Que la aplicacion renderiza la home inicial y muestra accesos principales.
-- Que las URLs de imagenes de eventos se resuelven correctamente segun su origen.
+- Que la aplicación renderiza la home inicial y muestra accesos principales.
+- Que las URLs de imagenes de eventos se resuelven correctamente según su origen.
 - Que las respuestas JSON de la API se leen bien y que los errores devuelven mensajes utiles.
 
 Para forzar una ejecucion serial si el entorno restringe procesos worker:
@@ -237,7 +320,7 @@ npm test -- --runInBand
 
 - `/`: home.
 - `/map`: mapa de eventos con capas contextuales (límite de Ames, Bertamiráns, O Milladoiro).
-- `/events`: listado y gestion de eventos.
+- `/events`: listado y gestión de eventos.
 - `/events/new`: crear evento, solo `admin` o `content_manager`.
 - `/events/:id`: detalle de evento.
 - `/events/:id/edit`: editar evento, solo `admin` o `content_manager`.
@@ -245,23 +328,23 @@ npm test -- --runInBand
 - `/alerts`: alertas del usuario autenticado.
 - `/profile`: perfil propio.
 - `/propose-event`: solicitud de acceso como creador de contenido.
-- `/acerca-de`, `/contacto`, `/aviso-legal`, `/privacidad`, `/accesibilidad`, `/ayuda`, `/mapa-del-sitio`: paginas informativas y legales enlazadas desde el footer.
-- `/admin/users`: gestion de usuarios y solicitudes de acceso como creador de contenido, solo `admin`.
-- `/categories`, `/locations`, `/organizers`: catalogos para `admin` o `content_manager`.
+- `/acerca-de`, `/contacto`, `/aviso-legal`, `/privacidad`, `/accesibilidad`, `/ayuda`, `/mapa-del-sitio`: páginas informativas y legales enlazadas desde el footer.
+- `/admin/users`: gestión de usuarios y solicitudes de acceso como creador de contenido, solo `admin`.
+- `/categories`, `/locations`, `/organizers`: catálogos para `admin` o `content_manager`.
 - `/audiences`: audiencias, solo `admin`.
-- `/login`, `/register`, `/verify-email`, `/forgot-password`, `/reset-password`: autenticacion.
+- `/login`, `/register`, `/verify-email`, `/forgot-password`, `/reset-password`: autenticación.
 
-## Interfaz publica y paginas estaticas
+## Interfaz pública y páginas estaticas
 
-La zona publica de la aplicacion se ha reforzado para que la experiencia sea mas completa y coherente:
+La zona pública de la aplicación se ha reforzado para que la experiencia sea más completa y coherente:
 
-- La cabecera mantiene el menu lateral, marca, buscador, accesos a agenda/mapa y menu de usuario, pero con una presentacion mas clara, responsive y accesible.
+- La cabecera mantiene el menu lateral, marca, buscador, accesos a agenda/mapa y menu de usuario, pero con una presentación más clara, responsive y accesible.
 - La home usa colores calidos, tarjetas suaves y un distintivo visual para el bloque "Siguiente plan".
-- El footer se organiza en columnas: proyecto, explorar, informacion y legal.
-- La web no utiliza cookies; por ello no existe pagina de politica de cookies ni enlace de configuracion de cookies.
+- El footer se organiza en columnas: proyecto, explorar, información y legal.
+- La web no utiliza cookies; por ello no existe página de política de cookies ni enlace de configuración de cookies.
 - El aviso legal identifica como titular a Manuel Angel Varela Martinez y como contacto legal `admin@anxovarela.es`.
 - Los contenidos propios se publican bajo licencia Creative Commons BY-NC 4.0.
-- Las paginas estaticas no incluyen mensajes provisionales ni textos de tipo "[pendiente de completar]".
+- Las páginas estaticas no incluyen mensajes provisionales ni textos de tipo "[pendiente de completar]".
 
 ## Endpoints principales
 
@@ -275,7 +358,7 @@ La zona publica de la aplicacion se ha reforzado para que la experiencia sea mas
 - `POST /auth/login`
 - `GET /auth/me`
 
-El login devuelve un JWT y bloquea el acceso si la cuenta no esta verificada o si `is_active = 0`.
+El login devuelve un JWT y bloquea el acceso si la cuenta no está verificada o si `is_active = 0`.
 
 ### Events
 
@@ -285,11 +368,11 @@ El login devuelve un JWT y bloquea el acceso si la cuenta no esta verificada o s
 - `PUT /events/:id` - `admin` o `content_manager`
 - `DELETE /events/:id` - `admin`
 
-Los endpoints de creacion y edicion aceptan imagen en el campo `image`.
+Los endpoints de creación y edición aceptan imagen en el campo `image`.
 
 ### Catalogos
 
-Categorias:
+Categorías:
 
 - `GET /categories`
 - `GET /categories/:id`
@@ -344,7 +427,7 @@ Defensas implementadas:
 - Un admin no puede quitarse a si mismo el rol `admin`.
 - Un admin no puede desactivar su propia cuenta.
 - No se asignan roles inexistentes.
-- No se devuelven `password_hash`, tokens de verificacion ni fechas de expiracion de token.
+- No se devuelven `password_hash`, tokens de verificación ni fechas de expiracion de token.
 
 ### Content manager requests (Solicitudes de acceso como creador de contenido)
 
@@ -440,7 +523,7 @@ Una alerta debe tener nombre y al menos un criterio:
 }
 ```
 
-Cuando se crea un evento nuevo, el backend evalua las alertas activas. Si una alerta coincide, envia un email al usuario siempre que la cuenta este activa y el email verificado. Si falla el envio, se registra el error y la creacion del evento no se cancela.
+Cuando se crea un evento nuevo, el backend evalua las alertas activas. Si una alerta coincide, envia un email al usuario siempre que la cuenta este activa y el email verificado. Si falla el envio, se registra el error y la creación del evento no se cancela.
 
 ## Modelo de evento
 
@@ -461,9 +544,9 @@ Campos principales de `events`:
 ## Notas de despliegue
 
 - Configura `CORS_ORIGINS` con los origenes reales del frontend.
-- Usa un `JWT_SECRET` fuerte en produccion. El backend no arranca en `NODE_ENV=production` si esta variable no existe.
+- Usa un `JWT_SECRET` fuerte en producción. El backend no arranca en `NODE_ENV=production` si esta variable no existe.
 - El directorio configurado en `EVENT_IMAGES_DIR` debe existir o poder crearse, y ser escribible por el proceso Node.
-- Si el frontend se publica en una subruta, React usa `PUBLIC_URL` como `basename` del router y para resolver recursos publicos.
+- Si el frontend se pública en una subruta, React usa `PUBLIC_URL` como `basename` del router y para resolver recursos públicos.
 - El build de frontend se genera con:
 
 ```powershell
