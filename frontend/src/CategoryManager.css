@@ -18,7 +18,7 @@
 /* Distribucion del formulario de alta y edición. */
 .categories-form {
   display: grid;
-  grid-template-columns: 1fr auto;
+  grid-template-columns: minmax(220px, 1fr) minmax(220px, 1fr) auto;
   gap: 0.6rem;
   align-items: center;
 }
@@ -29,6 +29,49 @@
   border: 1px solid #cdcdcd;
   border-radius: 6px;
   font-size: 0.95rem;
+}
+
+.categories-image-field,
+.categories-remove-image {
+  display: grid;
+  gap: 0.35rem;
+  color: #333;
+  font-size: 0.88rem;
+}
+
+.categories-remove-image {
+  display: inline-flex;
+  align-items: center;
+  min-height: 42px;
+}
+
+.categories-image-preview,
+.categories-item-image {
+  overflow: hidden;
+  border: 1px solid #e0d5ca;
+  border-radius: 8px;
+  background: #f4eee8;
+  aspect-ratio: 16 / 9;
+}
+
+.categories-image-preview {
+  max-width: 260px;
+}
+
+.categories-image-preview img,
+.categories-item-image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.categories-item-image {
+  display: grid;
+  place-items: center;
+  margin-bottom: 0.65rem;
+  color: #6a5a4f;
+  font-size: 0.82rem;
 }
 
 /* Grupo de botones principales del formulario. */

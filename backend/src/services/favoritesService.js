@@ -21,6 +21,7 @@ async function listFavoritesByUserId(userId) {
       e.audience_id,
       e.organizer_id,
       c.name AS category,
+      c.image_url AS category_image_url,
       a.name AS audience,
       o.name AS organizer,
       l.name AS location,

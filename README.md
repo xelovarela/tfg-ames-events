@@ -5,7 +5,7 @@ Aplicación web para consultar, proponer y gestionar eventos infantiles y famili
 ## Stack
 
 - Frontend: React, React Router, Leaflet, Lucide React
-- Backend: Node.js, Express, JWT, Multer, Nodemailer
+- Backend: Node.js, Express, JWT, Multer, Sharp, Nodemailer
 - Base de datos: MySQL/MariaDB con `mysql2`
 
 ## Dependencias instaladas
@@ -22,6 +22,7 @@ Dependencias de ejecucion definidas en `backend/package.json`:
 - `multer`: recepcion de imagenes subidas en formularios `multipart/form-data`.
 - `mysql2`: conexion a MySQL/MariaDB con promesas.
 - `nodemailer`: envio de emails de verificación, alertas y recordatorios.
+- `sharp`: optimizacion de imagenes subidas a formato WebP 16:9.
 
 Scripts disponibles:
 
@@ -56,8 +57,8 @@ Dependencias de testing y tooling incluidas por Create React App:
 - **Capas contextuales del mapa**: Límite del Concello de Ames (GeoJSON), zonas de Bertamiráns y O Milladoiro (círculos aprox.), con etiquetas legibles.
 - Calendario mensual de eventos en `/events/calendar`, reutilizando los filtros compartidos.
 - Listado, detalle, alta, edición y borrado de eventos según permisos.
-- Subida de imagenes para eventos mediante `multipart/form-data`.
-- Imagenes fallback por categoria para eventos sin imagen propia, con fallback generico final.
+- Subida de imagenes para eventos mediante `multipart/form-data`, con conversion a WebP 16:9.
+- Imagenes fallback por categoria para eventos sin imagen propia, mostradas en formato 16:9, con fallback generico final.
 - Registro, verificación de email, login JWT, recuperación de contraseña y perfil propio.
 - Control de acceso por roles: `admin`, `content_manager` y `user`.
 - Gestión de usuarios y revisión de solicitudes de acceso como creador de contenido.
@@ -217,9 +218,11 @@ Variables opcionales para hosting de imagenes:
 ```env
 EVENT_IMAGES_DIR=/home/your-user/api/uploads/events
 EVENT_IMAGES_PUBLIC_BASE_URL=https://api.anxovarela.es
+CATEGORY_IMAGES_DIR=/home/your-user/api/uploads/categories
+CATEGORY_IMAGES_PUBLIC_BASE_URL=https://api.anxovarela.es
 ```
 
-Si no se definen, las imagenes se guardan en `backend/uploads/events` y se sirven desde `/uploads/events/...`.
+Si no se definen, las imagenes se guardan en `backend/uploads/events` y `backend/uploads/categories`, y se sirven desde `/uploads/events/...` o `/uploads/categories/...`.
 
 ### Frontend
 
@@ -353,7 +356,7 @@ La zona pública de la aplicación se ha reforzado para que la experiencia sea m
 
 Los eventos pueden tener una imagen subida por el gestor en `image_url`. Si un evento no tiene imagen propia, el frontend usa una imagen de demostracion segun su categoria y, si no existe una categoria reconocida, utiliza `default-event.svg` como fallback final.
 
-La logica esta centralizada en `frontend/src/utils/eventImages.js` para que listado, portada, detalle, favoritos y otras vistas mantengan el mismo criterio visual. Las imagenes se almacenan en `frontend/public/event-images` y se documentan en `frontend/public/event-images/README.md`.
+La ruta de la imagen fallback puede venir de `categories.image_url`, editable desde el gestor de categorias. La logica esta centralizada en `frontend/src/utils/eventImages.js` para que listado, portada, detalle, favoritos y otras vistas mantengan el mismo criterio visual. Las imagenes base se almacenan en `frontend/public/event-images`, se muestran en formato 16:9 y se documentan en `frontend/public/event-images/README.md`.
 
 ## Endpoints principales
 
@@ -377,7 +380,7 @@ El login devuelve un JWT y bloquea el acceso si la cuenta no está verificada o 
 - `PUT /events/:id` - `admin` o `content_manager`
 - `DELETE /events/:id` - `admin`
 
-Los endpoints de creación y edición aceptan imagen en el campo `image`. En edición también se puede enviar `remove_image=1` para dejar el evento sin imagen propia y permitir que el frontend muestre el fallback por categoría.
+Los endpoints de creación y edición aceptan imagen en el campo `image`. El backend procesa las imagenes subidas con `sharp`, las recorta a relacion 16:9, las redimensiona a 900x506 y las guarda como `.webp`. En edición también se puede enviar `remove_image=1` para dejar el evento sin imagen propia y permitir que el frontend muestre el fallback por categoría.
 
 ### Catalogos
 

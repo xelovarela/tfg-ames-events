@@ -17,6 +17,8 @@ frontend/build/
 /backend/logs/
 /backend/uploads/events/*
 !/backend/uploads/events/.gitkeep
+/backend/uploads/categories/*
+!/backend/uploads/categories/.gitkeep
 /frontend/public/uploads/events/*
 !/frontend/public/uploads/events/.gitkeep
 

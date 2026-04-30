@@ -4,6 +4,10 @@
  * para responder a las peticiones CRUD relacionadas con las categorías.
  */
 const categoriesService = require('../services/categoriesService');
+const {
+  saveUploadedCategoryImage,
+  deleteCategoryImageFile
+} = require('../middleware/eventImageUpload');
 const { toPositiveInt } = require('../utils/validation');
 
 // Límite maximo permitido para el nombre de una categoría.
@@ -53,22 +57,32 @@ async function getById(req, res) {
 // Inserta una nueva categoría cuándo el nombre es valido.
 async function create(req, res) {
   const payload = parseCategoryPayload(req.body);
+
   if (payload.error) {
     return res.status(400).json({ error: payload.error });
   }
 
+  let uploadedImageUrl = null;
+
   try {
-    const id = await categoriesService.createCategory(payload.name);
+    uploadedImageUrl = await saveUploadedCategoryImage(req.file);
+    payload.imageUrl = uploadedImageUrl || null;
+
+    const id = await categoriesService.createCategory(payload);
     return res.status(201).json({ message: 'Category created successfully', id });
   } catch (error) {
+    if (uploadedImageUrl) {
+      deleteCategoryImageFile(uploadedImageUrl);
+    }
     console.error('Error creating category:', error);
     return res.status(500).json({ error: 'Error creating category in database' });
   }
 }
 
-// Modifica el nombre de una categoría ya existente.
+// Modifica una categoría: su nombre e imagen.
 async function update(req, res) {
   const id = toPositiveInt(req.params.id);
+
   if (!id) {
     return res.status(400).json({ error: 'Invalid category id' });
   }
@@ -78,13 +92,52 @@ async function update(req, res) {
     return res.status(400).json({ error: payload.error });
   }
 
+  let uploadedImageUrl = null;
+
   try {
-    const wasUpdated = await categoriesService.updateCategory(id, payload.name);
-    if (!wasUpdated) {
+    const existingCategory = await categoriesService.getCategoryById(id);
+    if (!existingCategory) {
       return res.status(404).json({ error: 'Category not found' });
     }
+
+    // Procesar la imagen
+    uploadedImageUrl = await saveUploadedCategoryImage(req.file);
+    const shouldRemoveImage = req.body.remove_image === '1' || req.body.remove_image === 'true';
+
+    if (uploadedImageUrl) {
+      // Hay imagen nueva, usarla
+      payload.imageUrl = uploadedImageUrl;
+    } else if (shouldRemoveImage) {
+      // Se solicita eliminar imagen
+      payload.imageUrl = null;
+    } else {
+      // No hay cambios en imagen, mantener la existente
+      payload.imageUrl = existingCategory.image_url;
+    }
+
+    const wasUpdated = await categoriesService.updateCategory(id, payload);
+    if (!wasUpdated) {
+      if (uploadedImageUrl) {
+        deleteCategoryImageFile(uploadedImageUrl);
+      }
+      return res.status(404).json({ error: 'Category not found' });
+    }
+
+    // Eliminar imagen anterior si se subió una nueva
+    if (uploadedImageUrl && existingCategory.image_url) {
+      deleteCategoryImageFile(existingCategory.image_url);
+    }
+
+    // Eliminar imagen si se solicitó
+    if (shouldRemoveImage && existingCategory.image_url) {
+      deleteCategoryImageFile(existingCategory.image_url);
+    }
+
     return res.json({ message: 'Category updated successfully' });
   } catch (error) {
+    if (uploadedImageUrl) {
+      deleteCategoryImageFile(uploadedImageUrl);
+    }
     console.error('Error updating category:', error);
     return res.status(500).json({ error: 'Error updating category in database' });
   }
@@ -109,6 +162,7 @@ async function remove(req, res) {
     }
 
     await categoriesService.deleteCategory(id);
+    deleteCategoryImageFile(existingCategory.image_url);
     return res.json({ message: 'Category deleted successfully' });
   } catch (error) {
     console.error('Error deleting category:', error);

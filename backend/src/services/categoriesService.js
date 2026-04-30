@@ -6,25 +6,31 @@ const db = require('../config/db');
 
 // Devuelve todas las categorías ordenadas alfabeticamente.
 async function listCategories() {
-  const [rows] = await db.query('SELECT id, name FROM categories ORDER BY name');
+  const [rows] = await db.query('SELECT id, name, image_url FROM categories ORDER BY name');
   return rows;
 }
 
 // Recupera una categoría por su identificador.
 async function getCategoryById(id) {
-  const [rows] = await db.query('SELECT id, name FROM categories WHERE id = ?', [id]);
+  const [rows] = await db.query('SELECT id, name, image_url FROM categories WHERE id = ?', [id]);
   return rows[0] || null;
 }
 
 // Inserta una nueva categoría y devuelve su id generado.
-async function createCategory(name) {
-  const [result] = await db.query('INSERT INTO categories (name) VALUES (?)', [name]);
+async function createCategory({ name, imageUrl }) {
+  const [result] = await db.query(
+    'INSERT INTO categories (name, image_url) VALUES (?, ?)',
+    [name, imageUrl]
+  );
   return result.insertId;
 }
 
 // Actualiza el nombre de una categoría existente.
-async function updateCategory(id, name) {
-  const [result] = await db.query('UPDATE categories SET name = ? WHERE id = ?', [name, id]);
+async function updateCategory(id, { name, imageUrl }) {
+  const [result] = await db.query(
+    'UPDATE categories SET name = ?, image_url = ? WHERE id = ?',
+    [name, imageUrl, id]
+  );
   return result.affectedRows > 0;
 }
 

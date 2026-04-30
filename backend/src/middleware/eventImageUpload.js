@@ -1,14 +1,23 @@
 const fs = require('fs');
 const path = require('path');
 const multer = require('multer');
+const sharp = require('sharp');
 
-// Las imagenes subidas se guardan en la carpeta que Express sirve como /uploads.
+// Las imagenes subidas se optimizan y se guardan en la carpeta que Express sirve como /uploads.
 const DEFAULT_EVENT_IMAGES_DIR = path.resolve(__dirname, '../../uploads/events');
+const DEFAULT_CATEGORY_IMAGES_DIR = path.resolve(__dirname, '../../uploads/categories');
 const EVENT_IMAGES_DIR = process.env.EVENT_IMAGES_DIR
   ? path.resolve(process.env.EVENT_IMAGES_DIR)
   : DEFAULT_EVENT_IMAGES_DIR;
+const CATEGORY_IMAGES_DIR = process.env.CATEGORY_IMAGES_DIR
+  ? path.resolve(process.env.CATEGORY_IMAGES_DIR)
+  : DEFAULT_CATEGORY_IMAGES_DIR;
 const EVENT_IMAGES_PUBLIC_BASE_URL = (process.env.EVENT_IMAGES_PUBLIC_BASE_URL || '').replace(/\/$/, '');
-const MAX_IMAGE_SIZE_BYTES = 3 * 1024 * 1024;
+const CATEGORY_IMAGES_PUBLIC_BASE_URL = (process.env.CATEGORY_IMAGES_PUBLIC_BASE_URL || '').replace(/\/$/, '');
+const MAX_IMAGE_SIZE_BYTES = 8 * 1024 * 1024;
+const EVENT_IMAGE_WIDTH = 900;
+const EVENT_IMAGE_HEIGHT = 506;
+const EVENT_IMAGE_QUALITY = 82;
 const ALLOWED_MIME_TYPES = new Set([
   'image/jpeg',
   'image/png',
@@ -17,21 +26,10 @@ const ALLOWED_MIME_TYPES = new Set([
 ]);
 
 fs.mkdirSync(EVENT_IMAGES_DIR, { recursive: true });
+fs.mkdirSync(CATEGORY_IMAGES_DIR, { recursive: true });
 
-const storage = multer.diskStorage({
-  destination(req, file, callback) {
-    callback(null, EVENT_IMAGES_DIR);
-  },
-  filename(req, file, callback) {
-    const extension = path.extname(file.originalname || '').toLowerCase();
-    const safeExtension = ['.jpg', '.jpeg', '.png', '.webp', '.gif'].includes(extension) ? extension : '.jpg';
-    const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
-    callback(null, `event-${uniqueSuffix}${safeExtension}`);
-  }
-});
-
-const eventImageUpload = multer({
-  storage,
+const imageUpload = multer({
+  storage: multer.memoryStorage(),
   limits: {
     fileSize: MAX_IMAGE_SIZE_BYTES
   },
@@ -44,18 +42,53 @@ const eventImageUpload = multer({
   }
 });
 
-function getUploadedEventImageUrl(file) {
+function getUploadedImagePublicUrl(uploadType, filename, publicBaseUrl) {
+  const relativeUrl = `/uploads/${uploadType}/${filename}`;
+  return publicBaseUrl
+    ? `${publicBaseUrl}${relativeUrl}`
+    : relativeUrl;
+}
+
+async function saveUploadedImage(file, { directory, uploadType, filenamePrefix, publicBaseUrl }) {
   if (!file) {
     return null;
   }
 
-  const relativeUrl = `/uploads/events/${file.filename}`;
-  return EVENT_IMAGES_PUBLIC_BASE_URL
-    ? `${EVENT_IMAGES_PUBLIC_BASE_URL}${relativeUrl}`
-    : relativeUrl;
+  const uniqueSuffix = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
+  const filename = `${filenamePrefix}-${uniqueSuffix}.webp`;
+  const outputPath = path.join(directory, filename);
+
+  await sharp(file.buffer)
+    .rotate()
+    .resize(EVENT_IMAGE_WIDTH, EVENT_IMAGE_HEIGHT, {
+      fit: 'cover',
+      position: 'centre'
+    })
+    .webp({ quality: EVENT_IMAGE_QUALITY })
+    .toFile(outputPath);
+
+  return getUploadedImagePublicUrl(uploadType, filename, publicBaseUrl);
 }
 
-function deleteEventImageFile(imageUrl) {
+async function saveUploadedEventImage(file) {
+  return saveUploadedImage(file, {
+    directory: EVENT_IMAGES_DIR,
+    uploadType: 'events',
+    filenamePrefix: 'event',
+    publicBaseUrl: EVENT_IMAGES_PUBLIC_BASE_URL
+  });
+}
+
+async function saveUploadedCategoryImage(file) {
+  return saveUploadedImage(file, {
+    directory: CATEGORY_IMAGES_DIR,
+    uploadType: 'categories',
+    filenamePrefix: 'category',
+    publicBaseUrl: CATEGORY_IMAGES_PUBLIC_BASE_URL
+  });
+}
+
+function deleteUploadedImageFile(imageUrl, { directory, uploadType }) {
   if (!imageUrl) {
     return;
   }
@@ -69,26 +102,44 @@ function deleteEventImageFile(imageUrl) {
     }
   }
 
-  if (!imagePath.startsWith('/uploads/events/')) {
+  if (!imagePath.startsWith(`/uploads/${uploadType}/`)) {
     return;
   }
 
   const filename = path.basename(imagePath);
-  const targetPath = path.join(EVENT_IMAGES_DIR, filename);
+  const targetPath = path.join(directory, filename);
+  const relativeTargetPath = path.relative(directory, targetPath);
 
-  if (!targetPath.startsWith(EVENT_IMAGES_DIR)) {
+  if (relativeTargetPath.startsWith('..') || path.isAbsolute(relativeTargetPath)) {
     return;
   }
 
   fs.promises.unlink(targetPath).catch((error) => {
     if (error.code !== 'ENOENT') {
-      console.error('Error deleting event image:', error);
+      console.error(`Error deleting ${uploadType} image:`, error);
     }
   });
 }
 
+function deleteEventImageFile(imageUrl) {
+  deleteUploadedImageFile(imageUrl, {
+    directory: EVENT_IMAGES_DIR,
+    uploadType: 'events'
+  });
+}
+
+function deleteCategoryImageFile(imageUrl) {
+  deleteUploadedImageFile(imageUrl, {
+    directory: CATEGORY_IMAGES_DIR,
+    uploadType: 'categories'
+  });
+}
+
 module.exports = {
-  eventImageUpload,
-  getUploadedEventImageUrl,
+  eventImageUpload: imageUpload,
+  categoryImageUpload: imageUpload,
+  saveUploadedEventImage,
+  saveUploadedCategoryImage,
+  deleteCategoryImageFile,
   deleteEventImageFile
 };

@@ -6,7 +6,7 @@
 const eventsService = require('../services/eventsService');
 const alertsService = require('../services/alertsService');
 const {
-  getUploadedEventImageUrl,
+  saveUploadedEventImage,
   deleteEventImageFile
 } = require('../middleware/eventImageUpload');
 const {
@@ -142,16 +142,16 @@ async function getById(req, res) {
 // Crea un nuevo evento después de validar datos y comprobar relaciones existentes.
 async function create(req, res) {
   const payload = parseEventPayload(req.body);
-  const uploadedImageUrl = getUploadedEventImageUrl(req.file);
+  let uploadedImageUrl = null;
 
   if (payload.error) {
-    deleteEventImageFile(uploadedImageUrl);
     return res.status(400).json({ error: payload.error });
   }
 
-  payload.imageUrl = uploadedImageUrl || payload.imageUrl;
-
   try {
+    uploadedImageUrl = await saveUploadedEventImage(req.file);
+    payload.imageUrl = uploadedImageUrl || payload.imageUrl;
+
     const [hasCategory, hasLocation, hasAudience, hasOrganizer] = await Promise.all([
       eventsService.categoryExists(payload.categoryId),
       eventsService.locationExists(payload.locationId),
@@ -199,20 +199,20 @@ async function create(req, res) {
 // Actualiza un evento existente manteniendo las mismas reglas de validación que en alta.
 async function update(req, res) {
   const id = toPositiveInt(req.params.id);
-  const uploadedImageUrl = getUploadedEventImageUrl(req.file);
+  let uploadedImageUrl = null;
 
   if (!id) {
-    deleteEventImageFile(uploadedImageUrl);
     return res.status(400).json({ error: 'Invalid event id' });
   }
 
   const payload = parseEventPayload(req.body);
   if (payload.error) {
-    deleteEventImageFile(uploadedImageUrl);
     return res.status(400).json({ error: payload.error });
   }
 
   try {
+    uploadedImageUrl = await saveUploadedEventImage(req.file);
+
     const [existingEvent, hasCategory, hasLocation, hasAudience, hasOrganizer] = await Promise.all([
       eventsService.getEventById(id),
       eventsService.categoryExists(payload.categoryId),

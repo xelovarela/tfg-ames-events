@@ -14,15 +14,15 @@ La lógica está centralizada en `frontend/src/utils/eventImages.js`.
 
 ## Imágenes actuales por categoría
 
-- Cultura: `cultura.png`
-- Deporte: `deportes.png`
-- Educación: `cuentacuentos.png`
-- Fiestas: `fiestas.png`
-- Gastronomía: `gastronomía.png`
-- Música: `música.png`
-- Naturaleza: `naturaleza.png`
-- Ocio: `ocio.png`
-- Salud: `salud.png`
+- Cultura: `category-cultura.webp`
+- Deporte: `category-deporte.webp`
+- Educación: `category-educacion.webp`
+- Fiestas: `category-fiestas.webp`
+- Gastronomía: `category-gastronomia.webp`
+- Música: `category-musica.webp`
+- Naturaleza: `category-naturaleza.webp`
+- Ocio: `category-ocio.webp`
+- Salud: `category-salud.webp`
 - Fallback genérico final: `default-event.svg`
 
 Las imágenes antiguas genéricas se han retirado porque el sistema actual usa imágenes específicas por categoría. Esto evita duplicidad de recursos y hace más clara la gestión de assets visuales.
@@ -30,8 +30,9 @@ Las imágenes antiguas genéricas se han retirado porque el sistema actual usa i
 ## Recomendaciones para nuevas imágenes
 
 - Formato recomendado: `.webp` para reducir peso.
-- Relación recomendada: 1:1.
-- Tamaño recomendado: 900x900 o 1024x1024 px.
+- Relación recomendada: 16:9.
+- Tamaño recomendado para imágenes de demostración: 900x506 px.
+- Tamaño recomendado para imágenes subidas por usuarios: el backend las optimiza a 900x506 px en formato `.webp`.
 - Evitar texto dentro de la imagen.
 - Evitar logos, marcas de agua o elementos con derechos dudosos.
 - Mantener un estilo visual coherente, cálido, familiar e infantil.

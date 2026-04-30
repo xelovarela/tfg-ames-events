@@ -6,10 +6,11 @@
 import React, { useEffect, useState } from 'react';
 import { API_BASE_URL } from './config';
 import { withAuthHeaders } from './utils/authFetch';
+import { resolveImageUrl } from './utils/eventImages';
 import './CategoryManager.css';
 
 // Estado base del formulario de categorías.
-const initialForm = { name: '' };
+const initialForm = { name: '', image_url: '', remove_image: false };
 
 // Valida el nombre antes de enviarlo al backend.
 function validateCategory(name) {
@@ -24,6 +25,8 @@ function validateCategory(name) {
 function CategoryManager({ onCategoriesChanged }) {
   const [categories, setCategories] = useState([]);
   const [formData, setFormData] = useState(initialForm);
+  const [imageFile, setImageFile] = useState(null);
+  const [imagePreview, setImagePreview] = useState('');
   const [editingId, setEditingId] = useState(null);
   const [message, setMessage] = useState('');
   const [isSaving, setIsSaving] = useState(false);
@@ -49,9 +52,28 @@ function CategoryManager({ onCategoriesChanged }) {
   }, []);
 
   // Limpia el formulario y sale del modo edición.
+  const clearSelectedImage = () => {
+    setImageFile(null);
+    if (imagePreview) {
+      URL.revokeObjectURL(imagePreview);
+    }
+    setImagePreview('');
+  };
+
   const clearForm = () => {
     setFormData(initialForm);
+    clearSelectedImage();
     setEditingId(null);
+  };
+
+  const handleImageChange = (event) => {
+    const file = event.target.files?.[0] || null;
+    if (imagePreview) {
+      URL.revokeObjectURL(imagePreview);
+    }
+    setImageFile(file);
+    setImagePreview(file ? URL.createObjectURL(file) : '');
+    setFormData((currentForm) => ({ ...currentForm, remove_image: false }));
   };
 
   // Decide si crear o actualizar en funcion de si existe un id en edición.
@@ -68,7 +90,17 @@ function CategoryManager({ onCategoriesChanged }) {
     setIsSaving(true);
     setMessage('');
 
-    const payload = { name: formData.name.trim() };
+    const payload = new FormData();
+    payload.append('name', formData.name.trim());
+
+    if (imageFile) {
+      payload.append('image', imageFile);
+    }
+
+    if (formData.remove_image) {
+      payload.append('remove_image', '1');
+    }
+
     const endpoint = editingId
       ? `${API_BASE_URL}/categories/${editingId}`
       : `${API_BASE_URL}/categories`;
@@ -77,8 +109,8 @@ function CategoryManager({ onCategoriesChanged }) {
     try {
       const response = await fetch(endpoint, {
         method,
-        headers: withAuthHeaders({ 'Content-Type': 'application/json' }),
-        body: JSON.stringify(payload)
+        headers: withAuthHeaders(),
+        body: payload
       });
       const data = await response.json();
       if (!response.ok) {
@@ -133,10 +165,45 @@ function CategoryManager({ onCategoriesChanged }) {
           name="name"
           placeholder="Nombre de la categoría"
           value={formData.name}
-          onChange={(event) => setFormData({ name: event.target.value })}
+          onChange={(event) => setFormData((currentForm) => ({ ...currentForm, name: event.target.value }))}
           maxLength={100}
           required
         />
+
+        <label className="categories-image-field">
+          <span>Imagen</span>
+          <input
+            className="categories-input"
+            type="file"
+            accept="image/jpeg,image/png,image/webp,image/gif"
+            onChange={handleImageChange}
+          />
+        </label>
+
+        {editingId && formData.image_url && (
+          <label className="categories-remove-image">
+            <input
+              type="checkbox"
+              checked={formData.remove_image}
+              onChange={(event) => {
+                setFormData((currentForm) => ({
+                  ...currentForm,
+                  remove_image: event.target.checked
+                }));
+                if (event.target.checked) {
+                  clearSelectedImage();
+                }
+              }}
+            />
+            <span>Quitar imagen actual</span>
+          </label>
+        )}
+
+        {(imagePreview || (!formData.remove_image && formData.image_url)) && (
+          <div className="categories-image-preview">
+            <img src={imagePreview || resolveImageUrl(formData.image_url)} alt="Vista previa de la categoria" />
+          </div>
+        )}
 
         <div className="categories-actions">
           <button className="categories-btn categories-btn-primary" type="submit" disabled={isSaving}>
@@ -158,13 +225,25 @@ function CategoryManager({ onCategoriesChanged }) {
         ) : (
           categories.map((category) => (
             <article className="categories-item" key={category.id}>
+              <div className="categories-item-image">
+                {category.image_url ? (
+                  <img src={resolveImageUrl(category.image_url)} alt={`Imagen de ${category.name}`} />
+                ) : (
+                  <span>Sin imagen</span>
+                )}
+              </div>
               <strong>{category.name}</strong>
               <div className="categories-item-actions">
                 <button
                   className="categories-btn categories-btn-secondary"
                   onClick={() => {
                     setEditingId(category.id);
-                    setFormData({ name: category.name });
+                    setFormData({
+                      name: category.name,
+                      image_url: category.image_url || '',
+                      remove_image: false
+                    });
+                    clearSelectedImage();
                     setMessage('');
                   }}
                 >
