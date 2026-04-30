@@ -29,6 +29,7 @@ const DETAIL_TEXT = {
   favoriteLoading: 'Actualizando...',
   addToCalendar: 'A\u00f1adir al calendario',
   editEvent: 'Editar evento',
+  duplicateEvent: 'Duplicar evento',
   viewOnMap: 'Ver esta ubicaci\u00f3n en el mapa',
   quickSummary: 'Resumen r\u00e1pido'
 };
@@ -399,9 +400,15 @@ function EventDetailPage({ session }) {
 
               <div className="event-detail-head-actions">
                 {canManageEvents && (
-                  <Link to={`/events/${event.id}/edit`} className="event-detail-calendar-btn">
-                    {DETAIL_TEXT.editEvent}
-                  </Link>
+                  <>
+                    <Link to={`/events/new?duplicateFrom=${event.id}`} className="event-detail-calendar-btn">
+                      {DETAIL_TEXT.duplicateEvent}
+                    </Link>
+
+                    <Link to={`/events/${event.id}/edit`} className="event-detail-calendar-btn">
+                      {DETAIL_TEXT.editEvent}
+                    </Link>
+                  </>
                 )}
 
                 <button

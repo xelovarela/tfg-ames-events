@@ -28,6 +28,7 @@ async function listFavoritesByUserId(userId) {
       l.locality AS location_locality,
       l.lat,
       l.lng,
+      (SELECT COUNT(*) FROM favorites fav_count WHERE fav_count.event_id = e.id) AS favorite_count,
       ${buildIsPastSelect('e')},
       f.created_at AS favorited_at
     FROM favorites f

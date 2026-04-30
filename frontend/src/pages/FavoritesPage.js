@@ -1,13 +1,11 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import EventList from '../EventList';
 import { addFavorite, listFavorites, removeFavorite } from '../utils/favoritesApi';
-import { splitEventsByTimeState } from '../utils/eventTime';
 
 function FavoritesPage({ session }) {
   const [favorites, setFavorites] = useState([]);
   const [loadError, setLoadError] = useState('');
   const isAuthenticated = Boolean(session?.token);
-  const { upcoming: upcomingFavorites, past: pastFavorites } = splitEventsByTimeState(favorites);
   const favoriteIds = favorites.map((event) => Number(event.id));
 
   const loadFavorites = useCallback(async () => {
@@ -44,35 +42,21 @@ function FavoritesPage({ session }) {
 
   return (
     <main>
-      <h2>Mis Favoritos</h2>
+      <h2>Mis favoritos</h2>
 
       {loadError && <p className="event-filters-feedback event-filters-feedback-error">{loadError}</p>}
 
       <EventList
-        events={upcomingFavorites}
+        events={favorites}
         favoriteEventIds={favoriteIds}
         onToggleFavorite={handleToggleFavorite}
         showFavoriteButton
         canManageEvents={false}
         kicker="Favoritos"
-        title="Próximos"
-        emptyMessage="Aún no tienes eventos favoritos próximos."
+        title="Eventos guardados"
+        emptyMessage="Aun no tienes eventos favoritos."
         showEmptyState={!loadError}
       />
-
-      {pastFavorites.length > 0 && (
-        <EventList
-          events={pastFavorites}
-          favoriteEventIds={favoriteIds}
-          onToggleFavorite={handleToggleFavorite}
-          showFavoriteButton
-          canManageEvents={false}
-          kicker="Histórico"
-          title="Finalizados"
-          emptyMessage="No tienes favoritos finalizados."
-          showEmptyState={false}
-        />
-      )}
     </main>
   );
 }

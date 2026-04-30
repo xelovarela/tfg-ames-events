@@ -45,7 +45,10 @@ async function listEvents({ timeScope = TIME_SCOPES.UPCOMING } = {}) {
     ) fc ON fc.event_id = e.id
     WHERE 1 = 1
       ${timeScopeWhereClause}
-    ORDER BY e.id`
+    ORDER BY
+      CASE WHEN e.event_date IS NULL THEN 1 ELSE 0 END,
+      e.event_date,
+      e.id`
   );
 
   return rows;
