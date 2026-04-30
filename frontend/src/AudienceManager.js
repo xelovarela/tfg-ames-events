@@ -6,6 +6,7 @@
 import React, { useEffect, useState } from 'react';
 import { API_BASE_URL } from './config';
 import { withAuthHeaders } from './utils/authFetch';
+import { sortAudiencesByAge } from './utils/audiences';
 import './AudienceManager.css';
 
 // Estado base del formulario de audiencias.
@@ -56,7 +57,7 @@ function AudienceManager({ onAudiencesChanged }) {
       if (!response.ok) {
         throw new Error(data.error || 'No se pudieron cargar las audiencias');
       }
-      setAudiences(data);
+      setAudiences(sortAudiencesByAge(data));
     } catch (error) {
       console.error(error);
       setMessage(error.message);
@@ -235,7 +236,7 @@ function AudienceManager({ onAudiencesChanged }) {
               <p>
                 Edad:{' '}
                 {audience.age_min === null && audience.age_max === null
-                  ? 'Sin rango especifico'
+                  ? '0-99'
                   : audience.age_min !== null && audience.age_max === null
                   ? `+${audience.age_min}`
                   : audience.age_min === null && audience.age_max !== null

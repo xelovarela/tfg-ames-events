@@ -7,6 +7,7 @@ import {
   filtersFromSearchParams,
   initialEventFilters
 } from '../utils/eventFilters';
+import { sortAudiencesByAge } from '../utils/audiences';
 import { withAuthHeaders } from '../utils/authFetch';
 
 function normalizeOptions(optionsOrMessage) {
@@ -96,7 +97,7 @@ function useFilteredEvents(optionsOrMessage = {}) {
       if (!organizersRes.ok || !Array.isArray(organizersData)) throw new Error('No se pudieron cargar los organizadores');
 
       setCategories(categoriesData);
-      setAudiences(audiencesData);
+      setAudiences(sortAudiencesByAge(audiencesData));
       setLocations(locationsData);
       setOrganizers(organizersData);
     } catch (error) {

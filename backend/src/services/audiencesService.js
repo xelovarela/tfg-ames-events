@@ -5,10 +5,16 @@
  */
 const db = require('../config/db');
 
-// Devuelve todas las audiencias ordenadas por nombre.
+// Devuelve todas las audiencias ordenadas por rango de edad.
 async function listAudiences() {
   const [rows] = await db.query(
-    'SELECT id, name, age_min, age_max FROM audiences ORDER BY name'
+    `SELECT id, name, age_min, age_max
+     FROM audiences
+     ORDER BY
+       CASE WHEN name = 'Todos' THEN 0 ELSE 1 END,
+       age_min,
+       age_max,
+       name`
   );
   return rows;
 }
