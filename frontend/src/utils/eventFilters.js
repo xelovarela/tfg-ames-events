@@ -10,48 +10,11 @@ const initialEventFilters = {
   category: '',
   audienceId: '',
   locality: '',
-  organizerId: '',
-  freeOnly: false,
-  compatibleAge: ''
+  freeOnly: false
 };
 
 // Mensaje comun mostrado cuándo ningun evento supera el filtrado.
 const noFilteredEventsMessage = 'No hay eventos que cumplan los filtros seleccionados.';
-
-// Convierte cadenas o valores vacios a numeros opcionales para comparar filtros.
-function toOptionalNumber(value) {
-  if (value === null || value === undefined || value === '') {
-    return null;
-  }
-
-  const parsed = Number(value);
-  if (!Number.isFinite(parsed)) {
-    return null;
-  }
-
-  return parsed;
-}
-
-// Comprueba si una edad concreta encaja dentro del rango permitido por un evento.
-function isAgeCompatible(event, ageFilter) {
-  const age = toOptionalNumber(ageFilter);
-  if (age === null) {
-    return true;
-  }
-
-  const minAge = toOptionalNumber(event.min_age);
-  const maxAge = toOptionalNumber(event.max_age);
-
-  if (minAge !== null && age < minAge) {
-    return false;
-  }
-
-  if (maxAge !== null && age > maxAge) {
-    return false;
-  }
-
-  return true;
-}
 
 // Comprueba si un evento encaja en el preset temporal seleccionado.
 function isDatePresetMatch(eventDateValue, datePreset) {
@@ -109,8 +72,7 @@ function filterEvents(events, filters) {
         event.category,
         event.location,
         event.location_locality,
-        event.audience,
-        event.organizer
+        event.audience
       ]
         .filter(Boolean)
         .join(' ')
@@ -133,15 +95,7 @@ function filterEvents(events, filters) {
       return false;
     }
 
-    if (filters.organizerId && Number(event.organizer_id) !== Number(filters.organizerId)) {
-      return false;
-    }
-
     if (filters.freeOnly && Number(event.is_free) !== 1) {
-      return false;
-    }
-
-    if (!isAgeCompatible(event, filters.compatibleAge)) {
       return false;
     }
 
@@ -163,9 +117,7 @@ function filtersFromSearchParams(searchParams) {
     category: searchParams.get('category') || '',
     audienceId: searchParams.get('audienceId') || '',
     locality: localityFromUrl,
-    organizerId: searchParams.get('organizerId') || '',
-    freeOnly: searchParams.get('freeOnly') === 'true',
-    compatibleAge: searchParams.get('compatibleAge') || ''
+    freeOnly: searchParams.get('freeOnly') === 'true'
   };
 }
 
@@ -193,16 +145,8 @@ function buildSearchParamsFromFilters(filters) {
     params.set('locality', filters.locality);
   }
 
-  if (filters.organizerId) {
-    params.set('organizerId', filters.organizerId);
-  }
-
   if (filters.freeOnly) {
     params.set('freeOnly', 'true');
-  }
-
-  if (filters.compatibleAge) {
-    params.set('compatibleAge', filters.compatibleAge);
   }
 
   return params;

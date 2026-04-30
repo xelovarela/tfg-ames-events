@@ -41,11 +41,6 @@
   --brand-title: #5a2617;
   --brand-subtitle: #7a655a;
 
-  --search-border: #d9ccbc;
-  --search-text: #32271f;
-  --search-focus-border: var(--primary);
-  --search-focus-ring: rgba(180, 58, 34, 0.17);
-
   --topbar-link: var(--earth);
   --topbar-link-hover: var(--primary-strong);
 

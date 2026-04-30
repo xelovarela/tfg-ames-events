@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { CalendarDays, ChevronDown, ListFilter, LogOut, MapPin, Search, UserRound } from 'lucide-react';
-import { Link, NavLink, useLocation, useSearchParams } from 'react-router-dom';
+import { CalendarDays, ChevronDown, ListFilter, LogOut, MapPin, UserRound } from 'lucide-react';
+import { Link, NavLink, useLocation } from 'react-router-dom';
 import './styles/topbar.css';
 
 const PUBLIC_URL = process.env.PUBLIC_URL || '';
@@ -32,8 +32,6 @@ function AppHeader({ session, onLogout }) {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const userMenuRef = useRef(null);
   const location = useLocation();
-  const [searchParams, setSearchParams] = useSearchParams();
-  const searchValue = searchParams.get('search') || '';
   const isAuthenticated = Boolean(session?.token);
   const isAdmin = session?.user?.role === 'admin';
   const userRole = session?.user?.role;
@@ -71,19 +69,6 @@ function AppHeader({ session, onLogout }) {
     };
   }, []);
 
-  const handleSearchChange = (event) => {
-    const nextValue = event.target.value;
-    const nextSearchParams = new URLSearchParams(searchParams);
-
-    if (nextValue.trim()) {
-      nextSearchParams.set('search', nextValue);
-    } else {
-      nextSearchParams.delete('search');
-    }
-
-    setSearchParams(nextSearchParams);
-  };
-
   const handleLogoutClick = () => {
     setIsUserMenuOpen(false);
     onLogout();
@@ -113,19 +98,6 @@ function AppHeader({ session, onLogout }) {
               <span>Agenda municipal y familiar</span>
             </span>
           </Link>
-
-          <div className="app-search-wrap">
-            <span className="app-search-icon" aria-hidden="true">
-              <Search />
-            </span>
-            <input
-              type="text"
-              placeholder="Buscar eventos, lugares o categorías..."
-              className="app-search"
-              value={searchValue}
-              onChange={handleSearchChange}
-            />
-          </div>
 
           <nav className="app-topbar-links" aria-label="Enlaces rápidos">
             <NavLink end to="/events" className={({ isActive }) => `app-topbar-link${isActive ? ' active' : ''}`}>

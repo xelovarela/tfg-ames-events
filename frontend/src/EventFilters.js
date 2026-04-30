@@ -17,11 +17,14 @@ import {
   Music2,
   Palette,
   PartyPopper,
+  Search,
+  SlidersHorizontal,
   ShoppingBasket,
   Tag,
   Trophy,
   UtensilsCrossed,
-  Users
+  Users,
+  X
 } from 'lucide-react';
 import './EventFilters.css';
 
@@ -33,6 +36,29 @@ const DATE_OPTIONS = [
   { value: 'week', label: 'Esta semana' },
   { value: 'month', label: 'Este mes' }
 ];
+
+function formatAudienceAgeRange(audience) {
+  const ageMin = audience.age_min ?? null;
+  const ageMax = audience.age_max ?? null;
+
+  if (ageMin === null && ageMax === null) {
+    return '0-99';
+  }
+
+  if (ageMin !== null && ageMax === null) {
+    return `+${ageMin}`;
+  }
+
+  if (ageMin === null && ageMax !== null) {
+    return `Hasta ${ageMax}`;
+  }
+
+  return `${ageMin}-${ageMax}`;
+}
+
+function formatAudienceLabel(audience) {
+  return `${audience.name} (${formatAudienceAgeRange(audience)})`;
+}
 
 function getCategoryIcon(categoryName) {
   const normalized = String(categoryName || '')
@@ -66,6 +92,18 @@ function IconLocation() {
 
 function IconUsers() {
   return <Users aria-hidden="true" focusable="false" />;
+}
+
+function IconSearch() {
+  return <Search aria-hidden="true" focusable="false" />;
+}
+
+function IconMoreFilters() {
+  return <SlidersHorizontal aria-hidden="true" focusable="false" />;
+}
+
+function IconClear() {
+  return <X aria-hidden="true" focusable="false" />;
 }
 
 function IconGrid() {
@@ -130,14 +168,11 @@ function EventFilters({
     category: '',
     audienceId: '',
     locality: '',
-    organizerId: '',
-    freeOnly: false,
-    compatibleAge: ''
+    freeOnly: false
   },
   categories = [],
   audiences = [],
   locations = [],
-  organizers = [],
   totalCount,
   filteredCount,
   onChange = () => {},
@@ -155,17 +190,37 @@ function EventFilters({
     { value: '', label: 'Todos' },
     ...categories.map((category) => ({ value: category.name, label: category.name }))
   ];
-
+  const audienceOptions = audiences.map((audience) => ({
+    value: String(audience.id),
+    label: formatAudienceLabel(audience)
+  }));
   const safeDateSelection = DATE_OPTIONS.some((option) => option.value === filters.datePreset) ? filters.datePreset : '';
   const safeCategorySelection = categoryOptions.some((option) => option.value === filters.category) ? filters.category : '';
   const safeAudienceSelection = audiences.some((audience) => String(audience.id) === String(filters.audienceId))
     ? String(filters.audienceId)
     : '';
   const safeLocalitySelection = localityOptions.includes(filters.locality) ? filters.locality : '';
+  const searchValue = filters.search || '';
 
-  const hasAnyChipFilter = Boolean(
-    filters.datePreset || filters.category || filters.audienceId || filters.locality || filters.freeOnly
+  const hasAnyFilter = Boolean(
+    filters.search ||
+    filters.datePreset ||
+    filters.category ||
+    filters.audienceId ||
+    filters.locality ||
+    filters.freeOnly
   );
+  const hasMoreFilters = Boolean(
+    filters.audienceId ||
+    filters.locality
+  );
+  const [isMoreOpen, setIsMoreOpen] = React.useState(hasMoreFilters);
+
+  React.useEffect(() => {
+    if (hasMoreFilters) {
+      setIsMoreOpen(true);
+    }
+  }, [hasMoreFilters]);
 
   const emitChange = ({ name, value, type = 'text', checked = false }) => {
     onChange({
@@ -189,25 +244,26 @@ function EventFilters({
   };
 
   const handleDateSelect = (value) => {
-    emitChange({ name: 'datePreset', value });
+    emitChange({ name: 'datePreset', value: safeDateSelection === value ? '' : value });
   };
 
   const handleCategorySelect = (value) => {
     emitPatch({
-      category: value
+      category: safeCategorySelection === value ? '' : value
     });
   };
 
   const handleAudienceSelect = (value) => {
-    emitChange({ name: 'audienceId', value });
+    emitChange({ name: 'audienceId', value: safeAudienceSelection === value ? '' : value });
   };
 
   const handleLocalitySelect = (value) => {
-    emitChange({ name: 'locality', value });
+    emitChange({ name: 'locality', value: safeLocalitySelection === value ? '' : value });
   };
 
   const handleAllSelect = () => {
     emitPatch({
+      search: '',
       datePreset: '',
       category: '',
       audienceId: '',
@@ -221,6 +277,22 @@ function EventFilters({
       freeOnly: !filters.freeOnly
     });
   };
+
+  const handleSearchChange = (event) => {
+    emitChange({ name: 'search', value: event.target.value });
+  };
+
+  const getAudienceLabel = (value) => audienceOptions.find((option) => option.value === String(value))?.label || value;
+  const getDateLabel = (value) => DATE_OPTIONS.find((option) => option.value === value)?.label || value;
+
+  const activeFilters = [
+    filters.search && { key: 'search', label: `Texto: ${filters.search}`, patch: { search: '' } },
+    filters.datePreset && { key: 'datePreset', label: getDateLabel(filters.datePreset), patch: { datePreset: '' } },
+    filters.category && { key: 'category', label: filters.category, patch: { category: '' } },
+    filters.freeOnly && { key: 'freeOnly', label: 'Gratis', patch: { freeOnly: false } },
+    filters.locality && { key: 'locality', label: `Ubicacion: ${filters.locality}`, patch: { locality: '' } },
+    filters.audienceId && { key: 'audienceId', label: `Publico: ${getAudienceLabel(filters.audienceId)}`, patch: { audienceId: '' } }
+  ].filter(Boolean);
 
   const renderChipSection = ({ label, icon, options, selectedValue, onSelect }) => (
     <section className="event-filter-section" aria-label={label}>
@@ -248,8 +320,6 @@ function EventFilters({
     </section>
   );
 
-  void organizers;
-
   return (
     <section className="event-filters-card">
       <div className="event-filters-topline">
@@ -261,12 +331,13 @@ function EventFilters({
         <div className="event-filters-quick-actions">
           <button
             type="button"
-            className={`event-filter-chip event-filter-chip-main${!hasAnyChipFilter ? ' is-active' : ''}`}
+            className={`event-filter-chip event-filter-chip-main${!hasAnyFilter ? ' is-active' : ''}`}
             onClick={handleAllSelect}
-            aria-pressed={!hasAnyChipFilter}
+            aria-pressed={!hasAnyFilter}
+            disabled={!hasAnyFilter}
           >
             <span className="event-filter-chip-icon" aria-hidden="true"><IconGrid /></span>
-            Todos
+            Limpiar
           </button>
 
           <button
@@ -280,6 +351,62 @@ function EventFilters({
           </button>
         </div>
       </div>
+
+      <div className="event-filter-search-row">
+        <label className="event-filter-search-label" htmlFor="event-filter-search">
+          <span className="event-filter-search-icon" aria-hidden="true"><IconSearch /></span>
+          <span className="event-filter-search-text">Buscar eventos</span>
+        </label>
+        <input
+          id="event-filter-search"
+          className="event-filter-search-input"
+          type="search"
+          name="search"
+          placeholder="Buscar por titulo, lugar o descripcion"
+          value={searchValue}
+          onChange={handleSearchChange}
+        />
+      </div>
+
+      {activeFilters.length > 0 && (
+        <div className="event-filter-active-summary" aria-label="Filtros activos">
+          <span className="event-filter-active-title">Activos</span>
+          {activeFilters.map((filter) => (
+            <button
+              key={filter.key}
+              type="button"
+              className="event-filter-active-chip"
+              onClick={() => emitPatch(filter.patch)}
+            >
+              {filter.label}
+              <span className="event-filter-active-icon" aria-hidden="true"><IconClear /></span>
+            </button>
+          ))}
+        </div>
+      )}
+
+      <section className="event-filter-section event-filter-section-date" aria-label="Fecha">
+        <div className="event-filter-section-head">
+          <span className="event-filter-section-icon" aria-hidden="true"><IconCalendar /></span>
+          <span className="event-filter-chip-label">Fecha</span>
+        </div>
+        <div className="event-filter-chip-group" role="group" aria-label="Fechas de eventos">
+          {DATE_OPTIONS.filter((option) => option.value).map((option) => {
+            const isActive = safeDateSelection === option.value;
+            return (
+              <button
+                key={option.value}
+                type="button"
+                className={`event-filter-chip${isActive ? ' is-active' : ''}`}
+                onClick={() => handleDateSelect(option.value)}
+                aria-pressed={isActive}
+              >
+                {option.label}
+              </button>
+            );
+          })}
+        </div>
+      </section>
 
       <section className="event-filter-section event-filter-section-categories" aria-label="Categorias">
         <div className="event-filter-section-head">
@@ -306,37 +433,34 @@ function EventFilters({
         </div>
       </section>
 
-      <div className="event-filters-sections">
-        {renderChipSection({
-          label: 'Fecha',
-          icon: <IconCalendar />,
-          options: DATE_OPTIONS,
-          selectedValue: safeDateSelection,
-          onSelect: handleDateSelect
-        })}
+      <details
+        className="event-filters-more"
+        open={isMoreOpen}
+        onToggle={(event) => setIsMoreOpen(event.currentTarget.open)}
+      >
+        <summary>
+          <span className="event-filter-section-icon" aria-hidden="true"><IconMoreFilters /></span>
+          <span>Mas filtros</span>
+        </summary>
 
-        {renderChipSection({
-          label: 'Ubicacion',
-          icon: <IconLocation />,
-          options: [
-            { value: '', label: 'Todos' },
-            ...localityOptions.map((locality) => ({ value: locality, label: locality }))
-          ],
-          selectedValue: safeLocalitySelection,
-          onSelect: handleLocalitySelect
-        })}
+        <div className="event-filters-sections">
+          {renderChipSection({
+            label: 'Ubicacion',
+            icon: <IconLocation />,
+            options: localityOptions.map((locality) => ({ value: locality, label: locality })),
+            selectedValue: safeLocalitySelection,
+            onSelect: handleLocalitySelect
+          })}
 
-        {renderChipSection({
-          label: 'Publico',
-          icon: <IconUsers />,
-          options: [
-            { value: '', label: 'Todos' },
-            ...audiences.map((audience) => ({ value: String(audience.id), label: audience.name }))
-          ],
-          selectedValue: safeAudienceSelection,
-          onSelect: handleAudienceSelect
-        })}
-      </div>
+          {renderChipSection({
+            label: 'Publico',
+            icon: <IconUsers />,
+            options: audienceOptions,
+            selectedValue: safeAudienceSelection,
+            onSelect: handleAudienceSelect
+          })}
+        </div>
+      </details>
     </section>
   );
 }
