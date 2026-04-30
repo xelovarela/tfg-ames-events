@@ -31,6 +31,20 @@ function toNullablePositiveInt(value) {
   return toPositiveInt(value);
 }
 
+// Permite edades como 0 anos para eventos de primera infancia.
+function toNullableNonNegativeInt(value) {
+  if (value === null || value === undefined || value === '') {
+    return null;
+  }
+
+  const parsed = Number(value);
+  if (!Number.isInteger(parsed) || parsed < 0) {
+    return null;
+  }
+
+  return parsed;
+}
+
 // Valida una latitud dentro del rango geografico permitido.
 function toLatitude(value) {
   const parsed = Number(value);
@@ -145,6 +159,7 @@ module.exports = {
   toPositiveInt,
   toPositiveIntParam,
   toNullablePositiveInt,
+  toNullableNonNegativeInt,
   toLatitude,
   toLongitude,
   toNullableMysqlDateTime,

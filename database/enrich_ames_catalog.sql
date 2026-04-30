@@ -1,3 +1,25 @@
+-- ============================================================
+-- AMES Events - Enriquecimiento del Catálogo
+-- ============================================================
+-- Este script normaliza y enriquece los datos de ubicaciones
+-- para reflejar la geografía real del Concello de Ames.
+-- 
+-- Operaciones realizadas:
+-- 1. Normalizar ubicaciones existentes (casas de cultura, auditorios)
+-- 2. Añadir centros educativos (CEIP, EI)
+-- 3. Añadir espacios deportivos (pabellones, campos)
+-- 4. Añadir espacios públicos (parques, plazas)
+-- 5. Añadir coordenadas GPS precisas para mapas
+-- 
+-- Parroquias de Ames:
+-- - Bertamiráns (principal)
+-- - Milladoiro
+-- - Barouta y otras
+-- 
+-- Las coordenadas se usan en AmesMap.js para mostrar ubicaciones
+-- en el mapa interactivo con Leaflet.
+-- ============================================================
+
 SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 START TRANSACTION;

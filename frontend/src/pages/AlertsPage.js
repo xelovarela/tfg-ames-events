@@ -40,12 +40,12 @@ function validateAlertForm(form) {
     return 'La palabra clave debe tener como maximo 150 caracteres.';
   }
 
-  if (form.min_age !== '' && (!Number.isInteger(minAge) || minAge <= 0)) {
-    return 'La edad minima debe ser un entero positivo.';
+  if (form.min_age !== '' && (!Number.isInteger(minAge) || minAge < 0)) {
+    return 'La edad minima debe ser un entero positivo o cero.';
   }
 
-  if (form.max_age !== '' && (!Number.isInteger(maxAge) || maxAge <= 0)) {
-    return 'La edad maxima debe ser un entero positivo.';
+  if (form.max_age !== '' && (!Number.isInteger(maxAge) || maxAge < 0)) {
+    return 'La edad maxima debe ser un entero positivo o cero.';
   }
 
   if (minAge !== null && maxAge !== null && minAge > maxAge) {
@@ -74,8 +74,8 @@ function buildPayload(form) {
     category_id: form.category_id ? Number(form.category_id) : null,
     location_id: form.location_id ? Number(form.location_id) : null,
     audience_id: form.audience_id ? Number(form.audience_id) : null,
-    min_age: form.min_age ? Number(form.min_age) : null,
-    max_age: form.max_age ? Number(form.max_age) : null,
+    min_age: form.min_age === '' ? null : Number(form.min_age),
+    max_age: form.max_age === '' ? null : Number(form.max_age),
     keyword: form.keyword.trim() || null,
     is_active: form.is_active
   };
@@ -299,7 +299,7 @@ function AlertsPage() {
             type="number"
             name="min_age"
             placeholder="Edad minima"
-            min="1"
+            min="0"
             value={formData.min_age}
             onChange={handleChange}
           />
@@ -309,7 +309,7 @@ function AlertsPage() {
             type="number"
             name="max_age"
             placeholder="Edad maxima"
-            min="1"
+            min="0"
             value={formData.max_age}
             onChange={handleChange}
           />

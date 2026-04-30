@@ -12,6 +12,7 @@ const {
 const {
   toPositiveInt,
   toNullablePositiveInt,
+  toNullableNonNegativeInt,
   toNullableMysqlDateTime,
   toBooleanFlag,
   toNullableMoney
@@ -38,8 +39,8 @@ function parseEventPayload(body = {}) {
   const eventDate = toNullableMysqlDateTime(body.event_date);
   const isFree = toBooleanFlag(body.is_free);
   let price = toNullableMoney(body.price);
-  const minAge = toNullablePositiveInt(body.min_age);
-  const maxAge = toNullablePositiveInt(body.max_age);
+  const minAge = toNullableNonNegativeInt(body.min_age);
+  const maxAge = toNullableNonNegativeInt(body.max_age);
   const imageUrl = typeof body.image_url === 'string' ? body.image_url.trim() : '';
 
   if (!title || title.length > MAX_TITLE_LENGTH) {
@@ -82,8 +83,12 @@ function parseEventPayload(body = {}) {
     return { error: 'price must be greater than 0 when is_free is false.' };
   }
 
-  if ((minAge !== null && maxAge === null) || (minAge === null && maxAge !== null)) {
-    return { error: 'min_age and max_age must be provided together.' };
+  if (body.min_age !== null && body.min_age !== undefined && body.min_age !== '' && minAge === null) {
+    return { error: 'min_age must be a non-negative integer when provided.' };
+  }
+
+  if (body.max_age !== null && body.max_age !== undefined && body.max_age !== '' && maxAge === null) {
+    return { error: 'max_age must be a non-negative integer when provided.' };
   }
 
   if (minAge !== null && maxAge !== null && minAge > maxAge) {

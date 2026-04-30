@@ -234,8 +234,12 @@ function AudienceManager({ onAudiencesChanged }) {
               <strong>{audience.name}</strong>
               <p>
                 Edad:{' '}
-                {audience.age_min === null || audience.age_max === null
+                {audience.age_min === null && audience.age_max === null
                   ? 'Sin rango especifico'
+                  : audience.age_min !== null && audience.age_max === null
+                  ? `+${audience.age_min}`
+                  : audience.age_min === null && audience.age_max !== null
+                  ? `Hasta ${audience.age_max}`
                   : `${audience.age_min}-${audience.age_max}`}
               </p>
               <div className="audiences-item-actions">

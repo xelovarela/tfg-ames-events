@@ -42,11 +42,15 @@ function isAgeCompatible(event, ageFilter) {
   const minAge = toOptionalNumber(event.min_age);
   const maxAge = toOptionalNumber(event.max_age);
 
-  if (minAge === null || maxAge === null) {
-    return true;
+  if (minAge !== null && age < minAge) {
+    return false;
   }
 
-  return age >= minAge && age <= maxAge;
+  if (maxAge !== null && age > maxAge) {
+    return false;
+  }
+
+  return true;
 }
 
 // Comprueba si un evento encaja en el preset temporal seleccionado.

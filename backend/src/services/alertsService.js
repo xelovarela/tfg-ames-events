@@ -234,14 +234,10 @@ function ageMatches(alert, event) {
     return true;
   }
 
-  if (event.min_age === null || event.max_age === null) {
-    return false;
-  }
-
   const alertMin = alert.min_age !== null ? Number(alert.min_age) : Number.NEGATIVE_INFINITY;
   const alertMax = alert.max_age !== null ? Number(alert.max_age) : Number.POSITIVE_INFINITY;
-  const eventMin = Number(event.min_age);
-  const eventMax = Number(event.max_age);
+  const eventMin = event.min_age !== null ? Number(event.min_age) : Number.NEGATIVE_INFINITY;
+  const eventMax = event.max_age !== null ? Number(event.max_age) : Number.POSITIVE_INFINITY;
 
   return eventMin <= alertMax && eventMax >= alertMin;
 }

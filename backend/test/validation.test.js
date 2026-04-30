@@ -4,6 +4,7 @@ const {
   toPositiveInt,
   toPositiveIntParam,
   toNullablePositiveInt,
+  toNullableNonNegativeInt,
   toLatitude,
   toLongitude,
   toNullableMysqlDateTime,
@@ -23,6 +24,10 @@ test('normalizes positive integer values used by route and body validation', () 
   assert.equal(toNullablePositiveInt(''), null);
   assert.equal(toNullablePositiveInt(undefined), null);
   assert.equal(toNullablePositiveInt('9'), 9);
+
+  assert.equal(toNullableNonNegativeInt('0'), 0);
+  assert.equal(toNullableNonNegativeInt('9'), 9);
+  assert.equal(toNullableNonNegativeInt('-1'), null);
 });
 
 test('validates geographic coordinates within accepted ranges', () => {

@@ -194,17 +194,20 @@ const EventForm = ({
       return;
     }
 
-    if ((minAge === null && maxAge !== null) || (minAge !== null && maxAge === null)) {
-      setMessage('Debes indicar edad minima y maxima juntas.');
+    if (
+      minAge !== null &&
+      maxAge !== null &&
+      (!Number.isInteger(minAge) || !Number.isInteger(maxAge) || minAge < 0 || maxAge < 0 || minAge > maxAge)
+    ) {
+      setMessage('Rango de edad invalido.');
       return;
     }
 
     if (
-      minAge !== null &&
-      maxAge !== null &&
-      (!Number.isInteger(minAge) || !Number.isInteger(maxAge) || minAge <= 0 || maxAge <= 0 || minAge > maxAge)
+      (minAge !== null && (!Number.isInteger(minAge) || minAge < 0)) ||
+      (maxAge !== null && (!Number.isInteger(maxAge) || maxAge < 0))
     ) {
-      setMessage('Rango de edad invalido.');
+      setMessage('Las edades deben ser numeros enteros positivos o cero.');
       return;
     }
 
@@ -381,7 +384,7 @@ const EventForm = ({
               name="min_age"
               value={formData.min_age}
               onChange={handleChange}
-              min="1"
+              min="0"
               step="1"
               placeholder="Ej: 4"
             />
@@ -396,7 +399,7 @@ const EventForm = ({
               name="max_age"
               value={formData.max_age}
               onChange={handleChange}
-              min="1"
+              min="0"
               step="1"
               placeholder="Ej: 12"
             />
