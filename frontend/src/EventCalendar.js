@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { isPastEvent } from './utils/eventTime';
 import './EventCalendar.css';
 
@@ -81,6 +81,7 @@ function getCategoryColor(categoryName) {
 
 function EventCalendar({ events = [], emptyMessage = 'No hay eventos para mostrar en este mes.' }) {
   const [visibleMonth, setVisibleMonth] = useState(() => startOfMonth(new Date()));
+  const location = useLocation();
   const todayKey = toDateKey(new Date());
   const visibleMonthKey = `${visibleMonth.getFullYear()}-${visibleMonth.getMonth()}`;
 
@@ -113,6 +114,10 @@ function EventCalendar({ events = [], emptyMessage = 'No hay eventos para mostra
 
     return count + (eventsByDate.get(toDateKey(day))?.length || 0);
   }, 0);
+  const detailBackState = {
+    from: `${location.pathname}${location.search}`,
+    fromLabel: 'calendario'
+  };
 
   return (
     <section className="event-calendar-panel">
@@ -168,6 +173,7 @@ function EventCalendar({ events = [], emptyMessage = 'No hay eventos para mostra
                     <Link
                       key={event.id}
                       to={`/events/${event.id}`}
+                      state={detailBackState}
                       className={`event-calendar-event${isPast ? ' is-past' : ''}`}
                       style={{ '--event-category-color': getCategoryColor(event.category) }}
                       title={event.title}

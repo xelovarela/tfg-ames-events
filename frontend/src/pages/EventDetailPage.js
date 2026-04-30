@@ -4,16 +4,15 @@
  * y muestra una ficha legible con su información principal.
  */
 import React, { useEffect, useState } from 'react';
-import { Baby, Building2, CalendarClock, CalendarPlus, Heart, MapPin } from 'lucide-react';
-import { Link, useParams } from 'react-router-dom';
+import { ArrowLeft, Baby, Building2, CalendarClock, CalendarPlus, Heart, MapPin } from 'lucide-react';
+import { Link, useLocation, useParams } from 'react-router-dom';
 import { API_BASE_URL } from '../config';
 import { addFavorite, listFavoriteIds, removeFavorite } from '../utils/favoritesApi';
 import { getEventImageAlt, getEventImageUrl } from '../utils/eventImages';
 
 const DETAIL_TEXT = {
   title: 'Detalle del evento',
-  backMap: 'Volver al mapa',
-  backEvents: 'Ver todos los eventos',
+  backDefault: 'Volver al listado',
   loading: 'Cargando evento...',
   when: 'Cu\u00e1ndo',
   where: 'D\u00f3nde',
@@ -105,8 +104,14 @@ function formatPrice(event) {
 
 // Construye un texto amigable para el rango de edad del evento.
 function formatAgeRange(event) {
-  if (event.min_age === null || event.max_age === null) {
+  if (event.min_age === null && event.max_age === null) {
     return 'Todas las edades';
+  }
+  if (event.min_age !== null && event.max_age === null) {
+    return `Desde ${event.min_age} a\u00f1os`;
+  }
+  if (event.min_age === null && event.max_age !== null) {
+    return `Hasta ${event.max_age} a\u00f1os`;
   }
 
   return `${event.min_age}-${event.max_age} a\u00f1os`;
@@ -219,9 +224,18 @@ function buildMapLocationUrl(event) {
   return query ? `/map?${query}` : '/map';
 }
 
+function getBackLabel(sourceLabel) {
+  if (sourceLabel === 'favoritos') {
+    return 'Volver a favoritos';
+  }
+
+  return sourceLabel ? `Volver al ${sourceLabel}` : DETAIL_TEXT.backDefault;
+}
+
 // Este componente carga el evento indicado en la ruta y muestra su detalle.
 function EventDetailPage({ session }) {
   const { id } = useParams();
+  const location = useLocation();
   const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -235,6 +249,8 @@ function EventDetailPage({ session }) {
   const dateBadge = event ? formatDateBadgeParts(event.event_date) : null;
   const favoriteCountLabel = formatFavoriteCountLabel(event?.favorite_count);
   const googleCalendarUrl = event ? buildGoogleCalendarUrl(event) : '';
+  const backTarget = typeof location.state?.from === 'string' ? location.state.from : '/events';
+  const backLabel = getBackLabel(location.state?.fromLabel);
 
   // Al cambiar el id de la URL se vuelve a pedir el evento correspondiente.
   useEffect(() => {
@@ -338,8 +354,10 @@ function EventDetailPage({ session }) {
   return (
     <main className="event-detail-page">
       <div className="event-detail-nav">
-        <Link to="/map" className="event-detail-back-link">{DETAIL_TEXT.backMap}</Link>
-        <Link to="/events" className="event-detail-back-link">{DETAIL_TEXT.backEvents}</Link>
+        <Link to={backTarget} className="event-detail-back-link">
+          <span className="event-detail-back-icon" aria-hidden="true"><ArrowLeft /></span>
+          {backLabel}
+        </Link>
       </div>
 
       {loading && <p className="event-detail-loading">{DETAIL_TEXT.loading}</p>}
@@ -353,14 +371,29 @@ function EventDetailPage({ session }) {
       {!loading && !error && event && (
         <section className="event-detail-card">
           <div className="event-detail-layout">
-            <div className="event-detail-head">
-              <aside className="event-detail-date-inline" aria-label={DETAIL_TEXT.when}>
+            <div className="event-detail-media">
+              <img src={getEventImageUrl(event)} alt={getEventImageAlt(event)} className="event-detail-image" loading="lazy" />
+              <aside className="event-detail-date-overlay" aria-label={DETAIL_TEXT.when}>
                 <span className="event-detail-date-icon"><IconCalendarClock /></span>
                 <strong>{dateBadge.day}</strong>
                 <span>{dateBadge.month}</span>
                 <small>{dateBadge.time}</small>
               </aside>
+              <div className="event-detail-tags event-detail-tags-overlay">
+                <span className="event-detail-tag event-detail-tag-strong">{event.category || DETAIL_TEXT.categoryFallback}</span>
+                <span className="event-detail-tag">{event.audience || DETAIL_TEXT.audienceFallback}</span>
+                <span className="event-detail-tag">{formatPrice(event)}</span>
+                {event.location_locality && <span className="event-detail-tag">{event.location_locality}</span>}
+              </div>
+              {favoriteCountLabel && (
+                <div className="event-detail-popularity" aria-label={favoriteCountLabel}>
+                  <Heart aria-hidden="true" focusable="false" />
+                  <span>{favoriteCountLabel}</span>
+                </div>
+              )}
+            </div>
 
+            <div className="event-detail-head">
               <p className="event-detail-kicker">{DETAIL_TEXT.title}</p>
               <h2>{event.title}</h2>
 
@@ -397,23 +430,6 @@ function EventDetailPage({ session }) {
                   </button>
                 )}
               </div>
-
-              <div className="event-detail-tags">
-                <span className="event-detail-tag event-detail-tag-strong">{event.category || DETAIL_TEXT.categoryFallback}</span>
-                <span className="event-detail-tag">{event.audience || DETAIL_TEXT.audienceFallback}</span>
-                <span className="event-detail-tag">{formatPrice(event)}</span>
-                {event.location_locality && <span className="event-detail-tag">{event.location_locality}</span>}
-              </div>
-            </div>
-
-            <div className="event-detail-media">
-              <img src={getEventImageUrl(event)} alt={getEventImageAlt(event)} className="event-detail-image" loading="lazy" />
-              {favoriteCountLabel && (
-                <div className="event-detail-popularity" aria-label={favoriteCountLabel}>
-                  <Heart aria-hidden="true" focusable="false" />
-                  <span>{favoriteCountLabel}</span>
-                </div>
-              )}
             </div>
 
             <div className="event-detail-side">

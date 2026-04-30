@@ -9,7 +9,7 @@ import { Baby, Building2, CalendarDays, Tags } from 'lucide-react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { API_BASE_URL } from './config';
 import MapContextLayers from './MapContextLayers';
 
@@ -62,6 +62,7 @@ const AmesMap = ({ refreshTrigger, events: externalEvents, showContextLayers = t
   const amesCenter = [42.8595, -8.65];
   const [groupedLocations, setGroupedLocations] = useState([]);
   const navigate = useNavigate();
+  const location = useLocation();
   const isControlled = Array.isArray(externalEvents);
 
   // Formatea fechas de evento para mostrarlas dentro del popup del mapa.
@@ -87,7 +88,9 @@ const AmesMap = ({ refreshTrigger, events: externalEvents, showContextLayers = t
 
   // Resume el rango de edad de cada evento mostrado en el popup.
   const formatAgeRange = (event) => {
-    if (event.min_age === null || event.max_age === null) return 'Todas las edades';
+    if (event.min_age === null && event.max_age === null) return 'Todas las edades';
+    if (event.min_age !== null && event.max_age === null) return `Desde ${event.min_age} años`;
+    if (event.min_age === null && event.max_age !== null) return `Hasta ${event.max_age} años`;
     return `${event.min_age}-${event.max_age} años`;
   };
 
@@ -169,6 +172,10 @@ const AmesMap = ({ refreshTrigger, events: externalEvents, showContextLayers = t
   }, [externalEvents, isControlled]);
 
   const totalEvents = groupedLocations.reduce((sum, locationGroup) => sum + locationGroup.events.length, 0);
+  const detailBackState = {
+    from: `${location.pathname}${location.search}`,
+    fromLabel: 'mapa'
+  };
 
   return (
     <section className="map-shell" aria-label="Mapa de eventos en Ames">
@@ -210,7 +217,7 @@ const AmesMap = ({ refreshTrigger, events: externalEvents, showContextLayers = t
                         key={event.id}
                         type="button"
                         className="map-event-card"
-                        onClick={() => navigate(`/events/${event.id}`)}
+                        onClick={() => navigate(`/events/${event.id}`, { state: detailBackState })}
                       >
                         <span className="map-event-card-topline">
                           <span className="map-event-icon-text">

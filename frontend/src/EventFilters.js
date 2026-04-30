@@ -8,14 +8,19 @@ import {
   Baby,
   CalendarDays,
   CircleDot,
+  GamepadIcon,
   GraduationCap,
   Grid2x2,
+  Heart,
+  Leaf,
   MapPin,
   Music2,
   Palette,
+  PartyPopper,
   ShoppingBasket,
   Tag,
   Trophy,
+  UtensilsCrossed,
   Users
 } from 'lucide-react';
 import './EventFilters.css';
@@ -40,8 +45,13 @@ function getCategoryIcon(categoryName) {
   if (normalized.includes('cultur')) return <IconCulture />;
   if (normalized.includes('infant')) return <IconKids />;
   if (normalized.includes('educ')) return <IconEducation />;
+  if (normalized.includes('fiest')) return <IconParty />;
+  if (normalized.includes('gastr')) return <IconFood />;
   if (normalized.includes('mercad')) return <IconStore />;
   if (normalized.includes('teatr')) return <IconCulture />;
+  if (normalized.includes('naturaleza') || normalized.includes('naturaleza')) return <IconNature />;
+  if (normalized.includes('ocio')) return <IconLeisure />;
+  if (normalized.includes('salud')) return <IconHealth />;
 
   return <IconDot />;
 }
@@ -82,6 +92,14 @@ function IconCulture() {
   return <Palette aria-hidden="true" focusable="false" />;
 }
 
+function IconParty() {
+  return <PartyPopper aria-hidden="true" focusable="false" />;
+}
+
+function IconFood() {
+  return <UtensilsCrossed aria-hidden="true" focusable="false" />;
+}
+
 function IconEducation() {
   return <GraduationCap aria-hidden="true" focusable="false" />;
 }
@@ -92,6 +110,18 @@ function IconKids() {
 
 function IconStore() {
   return <ShoppingBasket aria-hidden="true" focusable="false" />;
+}
+
+function IconNature() {
+  return <Leaf aria-hidden="true" focusable="false" />;
+}
+
+function IconLeisure() {
+  return <GamepadIcon aria-hidden="true" focusable="false" />;
+}
+
+function IconHealth() {
+  return <Heart aria-hidden="true" focusable="false" />;
 }
 
 function EventFilters({
@@ -164,8 +194,7 @@ function EventFilters({
 
   const handleCategorySelect = (value) => {
     emitPatch({
-      category: value,
-      freeOnly: false
+      category: value
     });
   };
 
@@ -189,8 +218,7 @@ function EventFilters({
 
   const handleFreeSelect = () => {
     emitPatch({
-      freeOnly: !filters.freeOnly,
-      category: filters.freeOnly ? filters.category : ''
+      freeOnly: !filters.freeOnly
     });
   };
 
@@ -225,7 +253,12 @@ function EventFilters({
   return (
     <section className="event-filters-card">
       <div className="event-filters-topline">
-        <div className="event-filters-chip-toolbar">
+        <div className="event-filters-header">
+          <h3>Filtros de eventos</h3>
+          <p>Mostrando {filteredCount} de {totalCount} eventos</p>
+        </div>
+
+        <div className="event-filters-quick-actions">
           <button
             type="button"
             className={`event-filter-chip event-filter-chip-main${!hasAnyChipFilter ? ' is-active' : ''}`}
@@ -245,7 +278,16 @@ function EventFilters({
             <span className="event-filter-chip-icon" aria-hidden="true"><IconTag /></span>
             Gratis
           </button>
+        </div>
+      </div>
 
+      <section className="event-filter-section event-filter-section-categories" aria-label="Categorias">
+        <div className="event-filter-section-head">
+          <span className="event-filter-section-icon" aria-hidden="true"><IconTag /></span>
+          <span className="event-filter-chip-label">Categorias</span>
+        </div>
+
+        <div className="event-filters-category-grid" role="group" aria-label="Categorias de eventos">
           {categories.map((category) => {
             const isActive = safeCategorySelection === category.name;
             return (
@@ -262,12 +304,7 @@ function EventFilters({
             );
           })}
         </div>
-
-        <div className="event-filters-header">
-          <h3>Filtros de eventos</h3>
-          <p>Mostrando {filteredCount} de {totalCount} eventos</p>
-        </div>
-      </div>
+      </section>
 
       <div className="event-filters-sections">
         {renderChipSection({

@@ -246,6 +246,14 @@
   gap: 0.8rem;
 }
 
+.home-section-links {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+
 .home-inline-link {
   color: var(--color-brand-dark);
   font-size: 0.9rem;
@@ -524,13 +532,15 @@
 
   .home-hero-actions,
   .home-section-head,
+  .home-section-links,
   .home-proposal-cta {
     align-items: stretch;
     flex-direction: column;
   }
 
   .home-hero-actions,
-  .home-section-head {
+  .home-section-head,
+  .home-section-links {
     display: flex;
   }
 

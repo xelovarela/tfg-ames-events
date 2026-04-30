@@ -6,7 +6,7 @@
 import React, { useEffect, useState } from 'react';
 import { Baby, Building2, Copy, Heart, MapPin, Users } from 'lucide-react';
 import { API_BASE_URL } from './config';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { withAuthHeaders } from './utils/authFetch';
 import { getEventImageAlt, getEventImageUrl } from './utils/eventImages';
 import { isPastEvent } from './utils/eventTime';
@@ -42,8 +42,14 @@ function formatPrice(event) {
 
 // Resume el rango de edad admitido por el evento.
 function formatAgeRange(event) {
-  if (event.min_age === null || event.max_age === null) {
+  if (event.min_age === null && event.max_age === null) {
     return 'Todas las edades';
+  }
+  if (event.min_age !== null && event.max_age === null) {
+    return `Desde ${event.min_age} años`;
+  }
+  if (event.min_age === null && event.max_age !== null) {
+    return `Hasta ${event.max_age} años`;
   }
   return `${event.min_age}-${event.max_age} años`;
 }
@@ -121,6 +127,7 @@ const EventList = ({
   title = 'Lista de eventos'
 }) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [events, setEvents] = useState([]);
   const [loadError, setLoadError] = useState('');
   const favoriteIdsSet = new Set((favoriteEventIds || []).map((id) => Number(id)));
@@ -207,8 +214,13 @@ const EventList = ({
     }
   };
 
+  const detailBackState = {
+    from: `${location.pathname}${location.search}`,
+    fromLabel: location.pathname.startsWith('/favorites') ? 'favoritos' : 'listado'
+  };
+
   const handleOpenDetails = (eventId) => {
-    navigate(`/events/${eventId}`);
+    navigate(`/events/${eventId}`, { state: detailBackState });
   };
 
   const handleCardKeyDown = (keyboardEvent, eventId) => {
@@ -260,12 +272,22 @@ const EventList = ({
                 onKeyDown={(keyboardEvent) => handleCardKeyDown(keyboardEvent, event.id)}
                 aria-label={`Ver detalle de ${event.title}`}
               >
-                <Link to={`/events/${event.id}`} className="event-list-image-link" aria-label={`Ver detalle de ${event.title}`}>
+                <Link
+                  to={`/events/${event.id}`}
+                  state={detailBackState}
+                  className="event-list-image-link"
+                  aria-label={`Ver detalle de ${event.title}`}
+                >
                   <img src={getEventImageUrl(event)} alt={getEventImageAlt(event)} className="event-list-image" loading="lazy" />
                   <div className="event-list-date event-list-date-overlay" aria-label={`Fecha: ${formatDate(event.event_date)}`}>
                     <strong>{shortDate.day}</strong>
                     <span>{shortDate.month}</span>
                     {shortDate.time && <small>{shortDate.time}</small>}
+                  </div>
+                  <div className="event-list-card-top event-list-card-top-overlay">
+                    <span className="event-list-chip">{event.category || 'Sin categoría'}</span>
+                    <span className="event-list-chip event-list-chip-soft">{formatPrice(event)}</span>
+                    {isPast && <span className="event-list-chip event-list-chip-ended">Finalizado</span>}
                   </div>
                   {favoriteCount > 0 && (
                     <div className="event-list-popularity" aria-label={`${favoriteCount} favs`}>
@@ -276,14 +298,8 @@ const EventList = ({
                 </Link>
 
                 <div className="event-list-card-body">
-                  <div className="event-list-card-top">
-                    <span className="event-list-chip">{event.category || 'Sin categoría'}</span>
-                    <span className="event-list-chip event-list-chip-soft">{formatPrice(event)}</span>
-                    {isPast && <span className="event-list-chip event-list-chip-ended">Finalizado</span>}
-                  </div>
-
                   <h4>
-                    <Link to={`/events/${event.id}`}>{event.title}</Link>
+                    <Link to={`/events/${event.id}`} state={detailBackState}>{event.title}</Link>
                   </h4>
 
                   <p className="event-list-description">{buildDescriptionPreview(event.description)}</p>

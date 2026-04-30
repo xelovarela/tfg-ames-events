@@ -30,9 +30,10 @@ test('renders the home page by default', async () => {
   render(<App />);
 
   expect(await screen.findByRole('heading', {
-    name: /la agenda local para encontrar el pr[oó]ximo plan/i
+    name: /la gu[ií]a local para encontrar el pr[oó]ximo plan/i
   })).toBeInTheDocument();
-  expect(screen.getByRole('link', { name: /ver agenda/i })).toBeInTheDocument();
+  expect(screen.getByRole('link', { name: /^ver listado$/i })).toBeInTheDocument();
+  expect(screen.getByRole('link', { name: /abrir calendario/i })).toBeInTheDocument();
   expect(screen.getByRole('link', { name: /abrir mapa/i })).toBeInTheDocument();
   expect(screen.getByRole('link', { name: /acerca de/i })).toBeInTheDocument();
 });

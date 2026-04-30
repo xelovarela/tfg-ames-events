@@ -14,8 +14,8 @@
 
 /* Cabecera con título y contador de resultados visibles. */
 .event-filters-header {
-  margin-left: auto;
-  text-align: right;
+  margin-right: auto;
+  text-align: left;
   min-width: 175px;
 }
 
@@ -37,13 +37,48 @@
   display: flex;
   gap: 0.8rem;
   align-items: flex-start;
+  justify-content: space-between;
   margin-bottom: 0.9rem;
 }
 
-.event-filters-chip-toolbar {
+.event-filters-quick-actions {
   display: flex;
   flex-wrap: wrap;
   gap: 0.52rem;
+  justify-content: flex-end;
+}
+
+.event-filter-section-categories {
+  margin-bottom: 1rem;
+}
+
+.event-filters-category-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.48rem;
+}
+
+.event-filters-category-grid .event-filter-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  width: 100%;
+  min-height: 2rem;
+  padding: 0.32rem 0.52rem;
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+.event-filters-category-grid .event-filter-chip-icon {
+  width: 15px;
+  height: 15px;
+  margin-right: 0.25rem;
+}
+
+.event-filters-category-grid .event-filter-chip-icon svg {
+  width: 15px;
+  height: 15px;
 }
 
 .event-filters-sections {
@@ -182,6 +217,14 @@
     text-align: left;
   }
 
+  .event-filters-quick-actions {
+    justify-content: flex-start;
+  }
+
+  .event-filters-category-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
   .event-filters-sections {
     grid-template-columns: 1fr;
     gap: 0.8rem;
@@ -193,5 +236,13 @@
   .event-filters-card {
     padding: 0.95rem;
     border-radius: 16px;
+  }
+
+  .event-filters-category-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .event-filters-category-grid .event-filter-chip {
+    justify-content: flex-start;
   }
 }

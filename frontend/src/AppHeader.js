@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { CalendarDays, CalendarRange, ChevronDown, LogOut, MapPin, Search, UserRound } from 'lucide-react';
+import { CalendarDays, ChevronDown, ListFilter, LogOut, MapPin, Search, UserRound } from 'lucide-react';
 import { Link, NavLink, useLocation, useSearchParams } from 'react-router-dom';
 import './styles/topbar.css';
 
@@ -7,7 +7,7 @@ const PUBLIC_URL = process.env.PUBLIC_URL || '';
 
 const NAV_ITEMS = [
   { to: '/map', label: 'Mapa' },
-  { to: '/events', label: 'Eventos' },
+  { to: '/events', label: 'Listado' },
   { to: '/events/calendar', label: 'Calendario' },
   { to: '/favorites', label: 'Mis favoritos', allowedRoles: ['user', 'admin'] },
   { to: '/alerts', label: 'Alertas', authenticatedOnly: true },
@@ -129,11 +129,11 @@ function AppHeader({ session, onLogout }) {
 
           <nav className="app-topbar-links" aria-label="Enlaces rápidos">
             <NavLink end to="/events" className={({ isActive }) => `app-topbar-link${isActive ? ' active' : ''}`}>
-              <span className="app-topbar-link-icon" aria-hidden="true"><CalendarDays /></span>
-              <span>Agenda</span>
+              <span className="app-topbar-link-icon" aria-hidden="true"><ListFilter /></span>
+              <span>Listado</span>
             </NavLink>
             <NavLink to="/events/calendar" className={({ isActive }) => `app-topbar-link${isActive ? ' active' : ''}`}>
-              <span className="app-topbar-link-icon" aria-hidden="true"><CalendarRange /></span>
+              <span className="app-topbar-link-icon" aria-hidden="true"><CalendarDays /></span>
               <span>Calendario</span>
             </NavLink>
             <NavLink to="/map" className={({ isActive }) => `app-topbar-link${isActive ? ' active' : ''}`}>

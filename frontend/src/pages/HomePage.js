@@ -1,10 +1,10 @@
 /**
  * Este archivo define la portada principal de la aplicación.
- * Sirve como punto de entrada para ir a agenda, mapa y eventos próximos
+ * Sirve como punto de entrada para ir a listado, calendario, mapa y eventos próximos
  * reutilizando el modelo de datos existente sin logica de backend adicional.
  */
 import React, { useEffect, useMemo, useState } from 'react';
-import { ArrowRight, Heart, MapPin, Megaphone } from 'lucide-react';
+import { ArrowRight, CalendarDays, Heart, ListFilter, MapPin, Megaphone } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { API_BASE_URL } from '../config';
 import { getEventImageAlt, getEventImageUrl } from '../utils/eventImages';
@@ -166,16 +166,20 @@ function HomePage({ session }) {
       <section className="home-hero" aria-label="Acceso principal">
         <div className="home-hero-copy">
           <p className="home-kicker">Benvida a Ames</p>
-          <h1>La agenda local para encontrar el próximo plan</h1>
+          <h1>La guía local para encontrar el próximo plan</h1>
           <p className="home-subtitle">
-            Explora actividades municipales, familiares y culturales desde una agenda clara
-            o sobre el mapa del concello.
+            Explora actividades municipales, familiares y culturales como listado,
+            calendario mensual o sobre el mapa del concello.
           </p>
 
           <div className="home-hero-actions">
             <Link to="/events" className="home-cta home-cta-primary">
-              Ver agenda
-              <span aria-hidden="true"><ArrowRight /></span>
+              Ver listado
+              <span aria-hidden="true"><ListFilter /></span>
+            </Link>
+            <Link to="/events/calendar" className="home-cta home-cta-secondary">
+              Abrir calendario
+              <span aria-hidden="true"><CalendarDays /></span>
             </Link>
             <Link to="/map" className="home-cta home-cta-secondary">
               Abrir mapa
@@ -205,7 +209,10 @@ function HomePage({ session }) {
             <p className="home-kicker">Proximamente</p>
             <h2>Eventos próximos</h2>
           </div>
-          <Link to="/events" className="home-inline-link">Ver toda la agenda</Link>
+          <div className="home-section-links">
+            <Link to="/events" className="home-inline-link">Ver listado completo</Link>
+            <Link to="/events/calendar" className="home-inline-link">Ver calendario</Link>
+          </div>
         </div>
 
         {isLoading && <p className="home-feedback">Cargando eventos próximos...</p>}
