@@ -1,37 +1,47 @@
 import React from 'react';
-import { BellRing, CircleHelp, Filter, Heart, MapPinned, Search, TriangleAlert } from 'lucide-react';
+import { BellRing, CalendarDays, CircleHelp, Copy, Filter, Heart, MapPinned, Search, TriangleAlert } from 'lucide-react';
 import StaticPageLayout, { StaticPageSection } from './StaticPageLayout';
 
 const FAQ_ITEMS = [
   {
     icon: Search,
-    question: '¿Cómo busco eventos?',
-    answer: 'Usa la barra principal de búsqueda y entra en la agenda para ver el listado completo con resultados ordenados y filtrables.'
+    question: 'Como busco eventos?',
+    answer: 'Entra en la agenda y usa el buscador del panel de filtros. Puedes buscar por titulo, lugar o descripcion.'
   },
   {
     icon: Filter,
-    question: '¿Cómo uso los filtros?',
-    answer: 'En la agenda puedes combinar filtros por categoría, ubicación, audiencia o rango temporal para reducir el listado a lo que te interesa.'
+    question: 'Como uso los filtros?',
+    answer: 'Puedes combinar busqueda, fecha, gratuito, categoria, ubicacion y audiencia. Los filtros activos aparecen como chips y se pueden quitar uno a uno.'
   },
   {
     icon: MapPinned,
-    question: '¿Cómo veo los eventos en mapa?',
-    answer: 'Abre la vista de mapa desde la navegación principal o el footer y toca sobre cada marcador para ver eventos agrupados por ubicación.'
+    question: 'Como veo los eventos en mapa?',
+    answer: 'Abre la vista de mapa desde la navegacion principal o el footer. Los marcadores agrupan eventos por ubicacion y comparten los mismos filtros que el listado.'
+  },
+  {
+    icon: CalendarDays,
+    question: 'Como uso el calendario?',
+    answer: 'La vista de calendario muestra los eventos por dia. Si eres gestor, tambien puedes alternar entre eventos futuros, pasados o todos.'
   },
   {
     icon: Heart,
-    question: '¿Cómo guardo favoritos?',
-    answer: 'Entra en el detalle o en la agenda y pulsa el icono de favorito. Si tu cuenta lo permite, esos eventos quedarán guardados en tu perfil.'
+    question: 'Como guardo favoritos?',
+    answer: 'Inicia sesion y pulsa el icono de favorito desde el listado o el detalle. Despues puedes revisarlos en Mis favoritos.'
   },
   {
     icon: BellRing,
-    question: '¿Cómo funcionan las alertas?',
-    answer: 'Las alertas permiten recibir avisos cuándo aparezcan eventos que encajen con tus criterios guardados, si la funcionalidad está activa para tu cuenta.'
+    question: 'Como funcionan las alertas?',
+    answer: 'Las alertas permiten recibir avisos cuando se crean eventos que encajan con tus criterios: categoria, ubicacion, audiencia, edad o palabra clave.'
+  },
+  {
+    icon: Copy,
+    question: 'Puedo duplicar eventos?',
+    answer: 'Si eres admin o gestor de contenidos, puedes duplicar eventos pasados o futuros desde el listado o el detalle. El duplicado exige elegir una nueva fecha.'
   },
   {
     icon: TriangleAlert,
-    question: '¿Qué hago si falta información?',
-    answer: 'Consulta el detalle del evento, comprueba si existe un enlace externo o escribe a admin@anxovarela.es para comunicar la correccion.'
+    question: 'Que hago si falta informacion?',
+    answer: 'Consulta el detalle del evento o escribe a admin@anxovarela.es para comunicar la correccion. Si tienes cuenta, tambien puedes solicitar acceso para proponer eventos.'
   }
 ];
 
@@ -40,21 +50,21 @@ function HelpPage() {
     <StaticPageLayout
       eyebrow="Ayuda"
       title="Preguntas frecuentes"
-      subtitle="Una guía rápida para moverte por Ames Events sin perder tiempo."
+      subtitle="Una guia rapida para moverte por Ames Events sin perder tiempo."
       aside={(
         <div className="static-page-facts">
           <div className="static-page-fact">
-            <strong>Atajo rápido</strong>
-            <span>La home, la agenda y el mapa están a un clic en la cabecera y en el footer.</span>
+            <strong>Atajo rapido</strong>
+            <span>La home, la agenda, el calendario y el mapa estan a un clic en la cabecera o en el footer.</span>
           </div>
           <div className="static-page-fact">
             <strong>Si algo no cuadra</strong>
-            <span>Comprueba si estás viendo la versión filtrada del listado o el detalle de un evento concreto.</span>
+            <span>Comprueba si tienes filtros activos o si estas viendo solo eventos futuros, pasados o todos.</span>
           </div>
         </div>
       )}
     >
-      <StaticPageSection icon={CircleHelp} title="Resolvemos lo básico">
+      <StaticPageSection icon={CircleHelp} title="Resolvemos lo basico">
         <div className="static-page-faq-list">
           {FAQ_ITEMS.map((item) => {
             const Icon = item.icon;

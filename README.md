@@ -67,13 +67,21 @@ Dependencias de testing y tooling incluidas por Create React App:
 - Favoritos para usuarios registrados.
 - Contadores de `favs` visibles en portada, listado y detalle de evento.
 - Páginas informativas y legales estáticas enlazadas desde el footer: acerca de, contacto, ayuda, accesibilidad, privacidad, aviso legal y mapa del sitio.
-- Header principal rediseñado con barra cálida tipo tarjeta, buscador con icono, accesos rápidos con iconos y avatar desplegable.
+- Header principal rediseñado con barra cálida tipo tarjeta, accesos rápidos con iconos y avatar desplegable.
 - Footer reorganizado en columnas con enlaces informativos, aviso de no uso de cookies y licencia Creative Commons BY-NC 4.0.
 - Portada ajustada a una paleta cálida coherente con el resto de la web e insignia destacada para el siguiente plan.
 - Alertas por email cuándo se crean eventos que coinciden con criterios guardados.
 - Recordatorios por email de eventos favoritos.
 - CRUD de categorías, ubicaciones, audiencias y organizadores.
 - Validaciones backend y frontend para los campos principales.
+
+### Notas actualizadas de interfaz y datos
+
+- El buscador de eventos esta integrado en el panel de filtros, no en el header.
+- El panel de filtros separa busqueda, fecha, gratuito, categorias y filtros avanzados.
+- Los filtros avanzados visibles son ubicacion y audiencia.
+- Las audiencias semilla quedan ordenadas por uso y edad: Todos, Bebes, Infantil, Escolar, Juvenil y Adultos.
+- Los gestores pueden duplicar eventos pasados y futuros desde el listado o el detalle.
 
 ## Estructura
 
@@ -129,11 +137,13 @@ Los permisos se aplican en frontend para mostrar u ocultar accesos, y en backend
 
 1. El usuario consulta la agenda, el mapa o el calendario.
 2. `useFilteredEvents` carga eventos y catálogos auxiliares desde la API.
-3. Los filtros de búsqueda, fecha, categoría, ubicación, audiencia y gratuitos se sincronizan con la query string.
+3. Los filtros de búsqueda, fecha, categoría, gratuito, ubicación y audiencia se sincronizan con la query string.
 4. `EventList` muestra eventos filtrados, `AmesMap` representa los mismos datos agrupados por ubicación y `EventCalendar` los organiza por día.
-5. `admin` y `content_manager` pueden crear y editar eventos con `EventForm`.
+5. `admin` y `content_manager` pueden crear, editar, borrar y duplicar eventos con `EventForm`.
 6. El backend valida datos, relaciones, imágenes y permisos antes de insertar o actualizar en MySQL.
 7. Al crear eventos, el backend evalúa alertas activas y puede enviar emails si hay coincidencias.
+
+Nota: la busqueda de eventos, los filtros de fecha, gratuito, categoria, ubicacion y audiencia se comparten entre listado, mapa y calendario mediante parametros de URL. Los gestores pueden duplicar cualquier evento para reutilizar sus datos y elegir una nueva fecha.
 
 ### Flujo de ubicaciones y mapa
 
@@ -344,7 +354,7 @@ npm test -- --runInBand
 
 La zona pública de la aplicación se ha reforzado para que la experiencia sea más completa y coherente:
 
-- La cabecera mantiene el menu lateral, marca, buscador, accesos a agenda/mapa y menu de usuario, pero con una presentación más clara, responsive y accesible.
+- La cabecera mantiene el menu lateral, marca, accesos a agenda/mapa y menu de usuario, pero con una presentación más clara, responsive y accesible.
 - La home usa colores calidos, tarjetas suaves y un distintivo visual para el bloque "Siguiente plan".
 - El footer se organiza en columnas: proyecto, explorar, información y legal.
 - La web no utiliza cookies; por ello no existe página de política de cookies ni enlace de configuración de cookies.

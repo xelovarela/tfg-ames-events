@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Link2, MapPinned, MessageSquare, ShieldCheck, Sparkles } from 'lucide-react';
+import { CalendarDays, Link2, LockKeyhole, ShieldCheck, Sparkles } from 'lucide-react';
 import StaticPageLayout, { StaticPageSection } from './StaticPageLayout';
 
 const SITEMAP_GROUPS = [
@@ -9,26 +9,28 @@ const SITEMAP_GROUPS = [
     icon: Sparkles,
     links: [
       { to: '/', label: 'Inicio' },
-      { to: '/events', label: 'Agenda / Eventos' },
+      { to: '/events', label: 'Listado de eventos' },
+      { to: '/events/calendar', label: 'Calendario' },
       { to: '/map', label: 'Mapa' }
     ]
   },
   {
-    title: 'Cuenta',
-    icon: MapPinned,
+    title: 'Acceso',
+    icon: LockKeyhole,
     links: [
-      { to: '/favorites', label: 'Favoritos' },
-      { to: '/alerts', label: 'Alertas' },
-      { to: '/profile', label: 'Mi perfil' }
+      { to: '/login', label: 'Iniciar sesion' },
+      { to: '/register', label: 'Registro' },
+      { to: '/forgot-password', label: 'Recuperar contrasena' }
     ]
   },
   {
     title: 'Informacion',
-    icon: MessageSquare,
+    icon: CalendarDays,
     links: [
       { to: '/acerca-de', label: 'Acerca de' },
       { to: '/contacto', label: 'Contacto' },
-      { to: '/ayuda', label: 'Ayuda' }
+      { to: '/ayuda', label: 'Ayuda' },
+      { to: '/mapa-del-sitio', label: 'Mapa del sitio' }
     ]
   },
   {
