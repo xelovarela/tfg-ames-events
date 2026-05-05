@@ -75,10 +75,10 @@ const useBertamiransGeoJSON = () => {
 
 Si necesitas límites precisos y oficiales:
 
-1. **Usar Overpass API** para consultar límites:
+1. **Usar Overpass API** para consultar límites. La bounding box de esta consulta no forma parte de la ejecución de la app: solo sirve para acotar la descarga de datos si se quiere regenerar o ampliar el GeoJSON en el futuro.
 ```
-[bbox:42.84,−8.72,42.88,−8.53];
-relation["boundary"="administrative"]["admin_level"="8"]["name"="Ames"];
+[bbox:42.82,-8.73,42.96,-8.56];
+relation["boundary"="administrative"]["admin_level"="8"]["wikidata"="Q1353997"];
 out geojson;
 ```
 
@@ -123,7 +123,7 @@ Mismo proceso que Bertamiráns
 
 ### Para Límite de Ames:
 
-El archivo `ames-boundary.geojson` ya existe. Solo necesita:
+El archivo `ames-boundary.geojson` ya existe y la app lo carga como GeoJSON estático desde `MapContextLayers.js`. Si se quiere actualizar en el futuro:
 1. Obtener los datos reales del límite oficial
 2. Reemplazar el contenido del JSON manteniendo la estructura:
 
