@@ -58,7 +58,7 @@ function AppRoutes({ session, onSessionChange }) {
       <Route
         path="/favorites"
         element={(
-          <ProtectedRoute session={session} allowedRoles={['user', 'admin']}>
+          <ProtectedRoute session={session} allowedRoles={['user', 'admin', 'content_manager']}>
             <FavoritesPage session={session} />
           </ProtectedRoute>
         )}

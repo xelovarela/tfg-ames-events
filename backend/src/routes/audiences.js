@@ -4,14 +4,15 @@
  */
 const express = require('express');
 const audiencesController = require('../controllers/audiencesController');
+const { requireAuth, requireAdmin } = require('../middleware/authMiddleware');
 
 const router = express.Router();
 
 // Se exponen las operaciones CRUD de audiencias.
 router.get('/', audiencesController.getAll);
 router.get('/:id', audiencesController.getById);
-router.post('/', audiencesController.create);
-router.put('/:id', audiencesController.update);
-router.delete('/:id', audiencesController.remove);
+router.post('/', requireAuth, requireAdmin, audiencesController.create);
+router.put('/:id', requireAuth, requireAdmin, audiencesController.update);
+router.delete('/:id', requireAuth, requireAdmin, audiencesController.remove);
 
 module.exports = router;
