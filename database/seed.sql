@@ -31,7 +31,7 @@
 -- Insertar alertas de prueba
 LOCK TABLES `alerts` WRITE;
 /*!40000 ALTER TABLE `alerts` DISABLE KEYS */;
-INSERT INTO `alerts` (`id`, `user_id`, `name`, `category_id`, `location_id`, `audience_id`, `keyword`, `is_active`, `created_at`, `updated_at`) VALUES (1,4,'Solo cultura',1,NULL,NULL,NULL,1,'2026-04-17 11:27:26','2026-04-17 11:27:26');
+INSERT INTO `alerts` (`id`, `user_id`, `name`, `category_id`, `location_id`, `locality`, `audience_id`, `keyword`, `is_active`, `created_at`, `updated_at`) VALUES (1,4,'Solo cultura',1,NULL,NULL,NULL,NULL,1,'2026-04-17 11:27:26','2026-04-17 11:27:26');
 /*!40000 ALTER TABLE `alerts` ENABLE KEYS */;
 UNLOCK TABLES;
 

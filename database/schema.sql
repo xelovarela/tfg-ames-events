@@ -38,7 +38,7 @@
 -- ============================================================
 -- Almacena alertas personalizadas de usuarios para recibir
 -- notificaciones sobre eventos que coincidan con sus criterios.
--- Permite filtrar por categoria, ubicacion, audiencia y palabra clave.
+-- Permite filtrar por categoria, localidad, audiencia y palabra clave.
 DROP TABLE IF EXISTS `alerts`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
@@ -48,6 +48,7 @@ CREATE TABLE `alerts` (
   `name` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
   `category_id` int DEFAULT NULL,
   `location_id` int DEFAULT NULL,
+  `locality` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `audience_id` int DEFAULT NULL,
   `keyword` varchar(150) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `is_active` tinyint(1) NOT NULL DEFAULT '1',
@@ -57,6 +58,7 @@ CREATE TABLE `alerts` (
   KEY `fk_alerts_user` (`user_id`),
   KEY `fk_alerts_category` (`category_id`),
   KEY `fk_alerts_location` (`location_id`),
+  KEY `idx_alerts_locality` (`locality`),
   KEY `fk_alerts_audience` (`audience_id`),
   CONSTRAINT `fk_alerts_audience` FOREIGN KEY (`audience_id`) REFERENCES `audiences` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT `fk_alerts_category` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,

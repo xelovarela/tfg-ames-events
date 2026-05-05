@@ -19,6 +19,7 @@ function normalizeAlert(row) {
     category: row.category,
     location_id: row.location_id,
     location: row.location,
+    locality: row.locality,
     audience_id: row.audience_id,
     audience: row.audience,
     keyword: row.keyword,
@@ -32,6 +33,7 @@ function alertHasCriteria(alert) {
   return Boolean(
     alert.category_id !== null ||
     alert.location_id !== null ||
+    alert.locality ||
     alert.audience_id !== null ||
     alert.keyword
   );
@@ -47,6 +49,7 @@ async function listAlertsByUserId(userId) {
       c.name AS category,
       al.location_id,
       l.name AS location,
+      al.locality,
       al.audience_id,
       au.name AS audience,
       al.keyword,
@@ -75,6 +78,7 @@ async function getAlertByIdAndUserId(id, userId) {
       c.name AS category,
       al.location_id,
       l.name AS location,
+      al.locality,
       al.audience_id,
       au.name AS audience,
       al.keyword,
@@ -96,13 +100,14 @@ async function getAlertByIdAndUserId(id, userId) {
 async function createAlert(userId, alert) {
   const [result] = await db.query(
     `INSERT INTO alerts
-      (user_id, name, category_id, location_id, audience_id, keyword, is_active)
-     VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      (user_id, name, category_id, location_id, locality, audience_id, keyword, is_active)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
     [
       userId,
       alert.name,
       alert.categoryId,
       alert.locationId,
+      alert.locality,
       alert.audienceId,
       alert.keyword,
       alert.isActive ? 1 : 0
@@ -118,6 +123,7 @@ async function updateAlert(id, userId, alert) {
      SET name = ?,
          category_id = ?,
          location_id = ?,
+         locality = ?,
          audience_id = ?,
          keyword = ?,
          is_active = ?
@@ -126,6 +132,7 @@ async function updateAlert(id, userId, alert) {
       alert.name,
       alert.categoryId,
       alert.locationId,
+      alert.locality,
       alert.audienceId,
       alert.keyword,
       alert.isActive ? 1 : 0,
@@ -180,6 +187,7 @@ async function listActiveAlertsForNotifications() {
       al.name,
       al.category_id,
       al.location_id,
+      al.locality,
       al.audience_id,
       al.keyword,
       u.id AS user_id,
@@ -193,6 +201,7 @@ async function listActiveAlertsForNotifications() {
        AND (
          al.category_id IS NOT NULL
          OR al.location_id IS NOT NULL
+         OR al.locality IS NOT NULL
          OR al.audience_id IS NOT NULL
          OR al.keyword IS NOT NULL
        )`
@@ -217,6 +226,10 @@ function alertMatchesEvent(alert, event) {
   }
 
   if (alert.location_id !== null && Number(alert.location_id) !== Number(event.location_id)) {
+    return false;
+  }
+
+  if (alert.locality && alert.locality !== event.location_locality) {
     return false;
   }
 

@@ -64,13 +64,13 @@ Dependencias de testing y tooling incluidas por Create React App:
 - Gestión de usuarios y revisión de solicitudes de acceso como creador de contenido.
 - Flujo para que usuarios registrados soliciten acceso como creadores de contenido.
 - Bandeja admin de solicitudes con filtros por estado y notas de revisión.
-- Favoritos para usuarios registrados.
+- Favoritos para usuarios registrados, administradores y gestores de contenido.
 - Contadores de `favs` visibles en portada, listado y detalle de evento.
 - Páginas informativas y legales estáticas enlazadas desde el footer: acerca de, contacto, ayuda, accesibilidad, privacidad, aviso legal y mapa del sitio.
 - Header principal rediseñado con barra cálida tipo tarjeta, accesos rápidos con iconos y avatar desplegable.
 - Footer reorganizado en columnas con enlaces informativos, aviso de no uso de cookies y licencia Creative Commons BY-NC 4.0.
 - Portada ajustada a una paleta cálida coherente con el resto de la web e insignia destacada para el siguiente plan.
-- Alertas por email cuándo se crean eventos que coinciden con criterios guardados.
+- Alertas por email cuándo se crean eventos que coinciden con criterios guardados por categoría, localidad, audiencia o palabra clave.
 - Recordatorios por email de eventos favoritos.
 - CRUD de categorías, ubicaciones, audiencias y organizadores.
 - Validaciones backend y frontend para los campos principales.
@@ -154,7 +154,7 @@ El mapa consume eventos ya filtrados y los agrupa por coordenadas para evitar ma
 
 ### Flujo de favoritos
 
-1. Un usuario autenticado con rol `user` o `admin` puede marcar eventos como favoritos.
+1. Un usuario autenticado con rol `user`, `admin` o `content_manager` puede marcar eventos como favoritos.
 2. El frontend consulta `GET /favorites/ids` para saber qué eventos están marcados.
 3. Al pulsar favorito, llama a `POST /favorites/:eventId` o `DELETE /favorites/:eventId`.
 4. El backend comprueba JWT, permisos y existencia del evento antes de modificar `favorites`.
@@ -162,7 +162,7 @@ El mapa consume eventos ya filtrados y los agrupa por coordenadas para evitar ma
 
 ### Flujo de alertas
 
-1. Un usuario autenticado crea una alerta con nombre y al menos un criterio: categoría, ubicación, audiencia o palabra clave.
+1. Un usuario autenticado crea una alerta con nombre y al menos un criterio: categoría, localidad, audiencia o palabra clave.
 2. Las alertas se guardan asociadas al usuario y pueden activarse, editarse o eliminarse.
 3. Cuando se crea un evento, el backend compara ese evento con las alertas activas.
 4. Si hay coincidencia y la cuenta está activa y verificada, se envía un email informativo.
@@ -263,6 +263,8 @@ mysql -u usuario -p nombre_base_hosting < database/seed.sql
 
 La tabla `content_manager_requests` forma parte de `schema.sql`. El backend tambien ejecuta una comprobación defensiva y la crea automáticamente si faltase.
 
+Para bases de datos ya existentes que no se creen desde cero, `database/add_alert_locality.sql` añade el campo `locality` a `alerts` para que las alertas puedan configurarse por localidad en lugar de limitarse a una ubicación exacta.
+
 ## Ejecucion local
 
 ### Backend
@@ -341,7 +343,7 @@ npm test -- --runInBand
 - `/events/new`: crear evento, solo `admin` o `content_manager`.
 - `/events/:id`: detalle de evento.
 - `/events/:id/edit`: editar evento, solo `admin` o `content_manager`.
-- `/favorites`: favoritos, solo `user` o `admin`.
+- `/favorites`: favoritos, solo `user`, `admin` o `content_manager`.
 - `/alerts`: alertas del usuario autenticado.
 - `/profile`: perfil propio.
 - `/propose-event`: solicitud de acceso como creador de contenido.
@@ -415,9 +417,9 @@ Audiencias:
 
 - `GET /audiences`
 - `GET /audiences/:id`
-- `POST /audiences`
-- `PUT /audiences/:id`
-- `DELETE /audiences/:id`
+- `POST /audiences` - `admin`
+- `PUT /audiences/:id` - `admin`
+- `DELETE /audiences/:id` - `admin`
 
 Organizadores:
 
@@ -514,7 +516,7 @@ En solicitudes pendientes, los administradores pueden:
 
 ### Favorites
 
-Endpoints protegidos con JWT y rol `user` o `admin`.
+Endpoints protegidos con JWT y rol `user`, `admin` o `content_manager`.
 
 - `GET /favorites`
 - `GET /favorites/ids`
@@ -537,14 +539,14 @@ Una alerta debe tener nombre y al menos un criterio:
 {
   "name": "Teatro cerca",
   "category_id": 1,
-  "location_id": null,
+  "locality": "Bertamiráns",
   "audience_id": null,
   "keyword": "teatro",
   "is_active": true
 }
 ```
 
-Cuando se crea un evento nuevo, el backend evalua las alertas activas. Si una alerta coincide, envia un email al usuario siempre que la cuenta este activa y el email verificado. Si falla el envio, se registra el error y la creación del evento no se cancela.
+Cuando se crea un evento nuevo, el backend evalua las alertas activas. La localidad de la alerta se compara con la localidad de la ubicación del evento (`location_locality`), por lo que una misma alerta puede cubrir todos los espacios de Bertamiráns, Milladoiro u otras parroquias sin seleccionar un lugar exacto. Si una alerta coincide, envia un email al usuario siempre que la cuenta este activa y el email verificado. Si falla el envio, se registra el error y la creación del evento no se cancela.
 
 ## Modelo de evento
 

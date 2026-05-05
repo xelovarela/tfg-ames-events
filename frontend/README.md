@@ -49,8 +49,8 @@ npm test       # Ejecutar tests
 - `/events/:id` - Detalle de evento
 - `/events/new` - Crear evento (admin/content_manager)
 - `/events/:id/edit` - Editar evento (admin/content_manager)
-- `/favorites` - Eventos marcados como favoritos (autenticado)
-- `/alerts` - Alertas personalizadas (autenticado)
+- `/favorites` - Eventos marcados como favoritos (`user`, `admin` o `content_manager`)
+- `/alerts` - Alertas personalizadas por categoria, localidad, audiencia o palabra clave (autenticado)
 - `/profile` - Mi perfil (autenticado)
 - `/login` - Inicio de sesión
 - `/register` - Registro de usuario
@@ -59,6 +59,11 @@ npm test       # Ejecutar tests
 - `/reset-password` - Restablecer contraseña
 - `/admin/users` - Gestión de usuarios (admin)
 - `/categories`, `/locations`, `/organizers` - Gestores de catálogos (admin/content_manager)
+
+
+## Alertas
+
+La pantalla `/alerts` permite crear criterios guardados para recibir avisos por email cuando se publiquen eventos que coincidan. El filtro geografico principal es la localidad, no la ubicacion exacta, para que una alerta pueda cubrir todos los espacios de `Bertamiráns`, `Milladoiro` u `Otras parroquias`.
 
 ## Listado de eventos
 

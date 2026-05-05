@@ -11,6 +11,7 @@ const initialForm = {
   name: '',
   category_id: '',
   location_id: '',
+  locality: '',
   audience_id: '',
   keyword: '',
   is_active: true
@@ -39,6 +40,7 @@ function validateAlertForm(form) {
   const hasCriteria = Boolean(
     form.category_id ||
     form.location_id ||
+    form.locality ||
     form.audience_id ||
     keyword
   );
@@ -55,6 +57,7 @@ function buildPayload(form) {
     name: form.name.trim(),
     category_id: form.category_id ? Number(form.category_id) : null,
     location_id: form.location_id ? Number(form.location_id) : null,
+    locality: form.locality || null,
     audience_id: form.audience_id ? Number(form.audience_id) : null,
     keyword: form.keyword.trim() || null,
     is_active: form.is_active
@@ -65,6 +68,7 @@ function describeCriteria(alert) {
   const parts = [];
 
   if (alert.category) parts.push(`Categoría: ${alert.category}`);
+  if (alert.locality) parts.push(`Localidad: ${alert.locality}`);
   if (alert.location) parts.push(`Ubicación: ${alert.location}`);
   if (alert.audience) parts.push(`Audiencia: ${alert.audience}`);
   if (alert.keyword) parts.push(`Texto: "${alert.keyword}"`);
@@ -82,6 +86,9 @@ function AlertsPage() {
   const [message, setMessage] = useState('');
   const [loadError, setLoadError] = useState('');
   const [isSaving, setIsSaving] = useState(false);
+  const localityOptions = Array.from(
+    new Set(locations.map((location) => location.locality).filter(Boolean))
+  ).sort((a, b) => a.localeCompare(b, 'es'));
 
   const loadAlerts = async () => {
     try {
@@ -184,6 +191,7 @@ function AlertsPage() {
       name: alert.name || '',
       category_id: alert.category_id ? String(alert.category_id) : '',
       location_id: alert.location_id ? String(alert.location_id) : '',
+      locality: alert.locality || '',
       audience_id: alert.audience_id ? String(alert.audience_id) : '',
       keyword: alert.keyword || '',
       is_active: Boolean(alert.is_active)
@@ -256,10 +264,10 @@ function AlertsPage() {
             ))}
           </select>
 
-          <select className="alerts-input" name="location_id" value={formData.location_id} onChange={handleChange}>
-            <option value="">Cualquier ubicación</option>
-            {locations.map((location) => (
-              <option key={location.id} value={location.id}>{location.name}</option>
+          <select className="alerts-input" name="locality" value={formData.locality} onChange={handleChange}>
+            <option value="">Cualquier localidad</option>
+            {localityOptions.map((locality) => (
+              <option key={locality} value={locality}>{locality}</option>
             ))}
           </select>
 

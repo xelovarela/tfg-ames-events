@@ -11,6 +11,7 @@ const {
 
 const MAX_ALERT_NAME_LENGTH = 100;
 const MAX_KEYWORD_LENGTH = 150;
+const ALLOWED_LOCALITIES = ['Bertamiráns', 'Milladoiro', 'Otras parroquias'];
 
 function hasRawValue(value) {
   return value !== null && value !== undefined && value !== '';
@@ -20,6 +21,7 @@ function parseAlertPayload(body) {
   const name = typeof body.name === 'string' ? body.name.trim() : '';
   const categoryId = toNullablePositiveInt(body.category_id);
   const locationId = toNullablePositiveInt(body.location_id);
+  const locality = typeof body.locality === 'string' ? body.locality.trim() : '';
   const audienceId = toNullablePositiveInt(body.audience_id);
   const keyword = typeof body.keyword === 'string' ? body.keyword.trim() : '';
   const isActive = body.is_active === undefined ? 1 : toBooleanFlag(body.is_active);
@@ -34,6 +36,10 @@ function parseAlertPayload(body) {
 
   if (hasRawValue(body.location_id) && !locationId) {
     return { error: 'location_id must be a positive integer when provided.' };
+  }
+
+  if (locality && !ALLOWED_LOCALITIES.includes(locality)) {
+    return { error: 'locality must be one of: Bertamiráns, Milladoiro, Otras parroquias.' };
   }
 
   if (hasRawValue(body.audience_id) && !audienceId) {
@@ -51,6 +57,7 @@ function parseAlertPayload(body) {
   const hasCriteria = Boolean(
     categoryId ||
     locationId ||
+    locality ||
     audienceId ||
     keyword
   );
@@ -62,6 +69,7 @@ function parseAlertPayload(body) {
     name,
     categoryId,
     locationId,
+    locality: locality || null,
     audienceId,
     keyword: keyword || null,
     isActive: isActive === 1

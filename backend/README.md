@@ -79,16 +79,26 @@ npm test                          # Ejecutar tests
 - `GET /auth/me` - Mi perfil (autenticado)
 
 ### Favoritos
-- `GET /favorites` - Mis favoritos (autenticado)
+- `GET /favorites` - Mis favoritos (`user`, `admin` o `content_manager`)
 - `GET /favorites/ids` - Solo IDs de favoritos
-- `POST /favorites/:eventId` - Añadir a favoritos
-- `DELETE /favorites/:eventId` - Eliminar de favoritos
+- `POST /favorites/:eventId` - Añadir a favoritos (`user`, `admin` o `content_manager`)
+- `DELETE /favorites/:eventId` - Eliminar de favoritos (`user`, `admin` o `content_manager`)
 
 ### Alertas
 - `GET /alerts` - Mis alertas (autenticado)
-- `POST /alerts` - Crear alerta
+- `POST /alerts` - Crear alerta por categoria, localidad, audiencia o palabra clave
 - `PUT /alerts/:id` - Editar alerta
+- `PATCH /alerts/:id/status` - Activar o desactivar alerta
 - `DELETE /alerts/:id` - Eliminar alerta
+
+
+Las alertas nuevas usan `locality` para cubrir una zona completa (`Bertamiráns`, `Milladoiro` u `Otras parroquias`) en lugar de limitarse a una ubicacion exacta. `location_id` se mantiene en la API y la base de datos solo por compatibilidad con alertas antiguas.
+
+Si la base de datos ya existia antes de este cambio, aplicar:
+
+```bash
+mysql -u usuario -p nombre_base < ../database/add_alert_locality.sql
+```
 
 ### Admin
 - `GET /users` - Listar usuarios (admin)
@@ -97,6 +107,7 @@ npm test                          # Ejecutar tests
 - `GET /locations` - Ubicaciones
 - `POST /locations` - Crear ubicación (admin/content_manager)
 - `GET /audiences` - Audiencias/rangos de edad
+- `POST /audiences`, `PUT /audiences/:id`, `DELETE /audiences/:id` - Gestión de audiencias (admin)
 - `GET /organizers` - Organizadores
 
 ## Despliegue en cPanel
