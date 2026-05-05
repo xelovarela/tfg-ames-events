@@ -9,6 +9,13 @@ frontend/build/
 # Local documentation drafts
 /docs/
 
+# Local/non-deliverable test drafts
+/tests/
+/backend/test/
+/frontend/src/__tests__/
+/package.json
+/package-lock.json
+
 # Private hosting backups
 /database/backup_hosting.sql
 /database/backups/
