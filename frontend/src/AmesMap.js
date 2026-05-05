@@ -5,7 +5,7 @@
  * Incluye capas contextuales de zonas geográficas (Bertamiráns, O Milladoiro, límite de Ames).
  */
 import React, { useEffect, useState } from 'react';
-import { Baby, Building2, CalendarDays, Tags } from 'lucide-react';
+import { Building2, CalendarDays, Tags } from 'lucide-react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
@@ -52,10 +52,6 @@ function IconOrganizer() {
   return <Building2 aria-hidden="true" focusable="false" />;
 }
 
-function IconAge() {
-  return <Baby aria-hidden="true" focusable="false" />;
-}
-
 // El componente admite modo controlado y no controlado para reutilizarlo en distintas páginas.
 // También admite props opcionales para controlar las capas contextuales.
 const AmesMap = ({ refreshTrigger, events: externalEvents, showContextLayers = true }) => {
@@ -84,14 +80,6 @@ const AmesMap = ({ refreshTrigger, events: externalEvents, showContextLayers = t
     if (Number(event.is_free) === 1) return 'Gratis';
     if (event.price === null || event.price === undefined) return 'De pago';
     return `${Number(event.price).toFixed(2)} EUR`;
-  };
-
-  // Resume el rango de edad de cada evento mostrado en el popup.
-  const formatAgeRange = (event) => {
-    if (event.min_age === null && event.max_age === null) return 'Todas las edades';
-    if (event.min_age !== null && event.max_age === null) return `Desde ${event.min_age} años`;
-    if (event.min_age === null && event.max_age !== null) return `Hasta ${event.max_age} años`;
-    return `${event.min_age}-${event.max_age} años`;
   };
 
   // Agrupa eventos por ubicación para evitar varios marcadores superpuestos en el mismo punto.
@@ -130,9 +118,7 @@ const AmesMap = ({ refreshTrigger, events: externalEvents, showContextLayers = t
         organizer: event.organizer,
         event_date: event.event_date,
         is_free: event.is_free,
-        price: event.price,
-        min_age: event.min_age,
-        max_age: event.max_age
+        price: event.price
       });
     });
 
@@ -234,10 +220,6 @@ const AmesMap = ({ refreshTrigger, events: externalEvents, showContextLayers = t
                         <span className="map-event-meta">
                           <span className="map-event-icon"><IconOrganizer /></span>
                           {event.organizer || 'Organizador no especificado'}
-                        </span>
-                        <span className="map-event-meta map-event-age">
-                          <span className="map-event-icon"><IconAge /></span>
-                          {formatAgeRange(event)}
                         </span>
                         <span className="map-event-link">Ver detalle</span>
                       </button>

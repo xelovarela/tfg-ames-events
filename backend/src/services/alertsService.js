@@ -21,8 +21,6 @@ function normalizeAlert(row) {
     location: row.location,
     audience_id: row.audience_id,
     audience: row.audience,
-    min_age: row.min_age,
-    max_age: row.max_age,
     keyword: row.keyword,
     is_active: Number(row.is_active) === 1,
     created_at: row.created_at,
@@ -35,8 +33,6 @@ function alertHasCriteria(alert) {
     alert.category_id !== null ||
     alert.location_id !== null ||
     alert.audience_id !== null ||
-    alert.min_age !== null ||
-    alert.max_age !== null ||
     alert.keyword
   );
 }
@@ -53,8 +49,6 @@ async function listAlertsByUserId(userId) {
       l.name AS location,
       al.audience_id,
       au.name AS audience,
-      al.min_age,
-      al.max_age,
       al.keyword,
       al.is_active,
       al.created_at,
@@ -83,8 +77,6 @@ async function getAlertByIdAndUserId(id, userId) {
       l.name AS location,
       al.audience_id,
       au.name AS audience,
-      al.min_age,
-      al.max_age,
       al.keyword,
       al.is_active,
       al.created_at,
@@ -104,16 +96,14 @@ async function getAlertByIdAndUserId(id, userId) {
 async function createAlert(userId, alert) {
   const [result] = await db.query(
     `INSERT INTO alerts
-      (user_id, name, category_id, location_id, audience_id, min_age, max_age, keyword, is_active)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      (user_id, name, category_id, location_id, audience_id, keyword, is_active)
+     VALUES (?, ?, ?, ?, ?, ?, ?)`,
     [
       userId,
       alert.name,
       alert.categoryId,
       alert.locationId,
       alert.audienceId,
-      alert.minAge,
-      alert.maxAge,
       alert.keyword,
       alert.isActive ? 1 : 0
     ]
@@ -129,8 +119,6 @@ async function updateAlert(id, userId, alert) {
          category_id = ?,
          location_id = ?,
          audience_id = ?,
-         min_age = ?,
-         max_age = ?,
          keyword = ?,
          is_active = ?
      WHERE id = ? AND user_id = ?`,
@@ -139,8 +127,6 @@ async function updateAlert(id, userId, alert) {
       alert.categoryId,
       alert.locationId,
       alert.audienceId,
-      alert.minAge,
-      alert.maxAge,
       alert.keyword,
       alert.isActive ? 1 : 0,
       id,
@@ -195,8 +181,6 @@ async function listActiveAlertsForNotifications() {
       al.category_id,
       al.location_id,
       al.audience_id,
-      al.min_age,
-      al.max_age,
       al.keyword,
       u.id AS user_id,
       u.username,
@@ -210,8 +194,6 @@ async function listActiveAlertsForNotifications() {
          al.category_id IS NOT NULL
          OR al.location_id IS NOT NULL
          OR al.audience_id IS NOT NULL
-         OR al.min_age IS NOT NULL
-         OR al.max_age IS NOT NULL
          OR al.keyword IS NOT NULL
        )`
   );
@@ -229,19 +211,6 @@ function keywordMatches(alert, event) {
   return searchableText.includes(keyword);
 }
 
-function ageMatches(alert, event) {
-  if (alert.min_age === null && alert.max_age === null) {
-    return true;
-  }
-
-  const alertMin = alert.min_age !== null ? Number(alert.min_age) : Number.NEGATIVE_INFINITY;
-  const alertMax = alert.max_age !== null ? Number(alert.max_age) : Number.POSITIVE_INFINITY;
-  const eventMin = event.min_age !== null ? Number(event.min_age) : Number.NEGATIVE_INFINITY;
-  const eventMax = event.max_age !== null ? Number(event.max_age) : Number.POSITIVE_INFINITY;
-
-  return eventMin <= alertMax && eventMax >= alertMin;
-}
-
 function alertMatchesEvent(alert, event) {
   if (alert.category_id !== null && Number(alert.category_id) !== Number(event.category_id)) {
     return false;
@@ -255,7 +224,7 @@ function alertMatchesEvent(alert, event) {
     return false;
   }
 
-  return keywordMatches(alert, event) && ageMatches(alert, event);
+  return keywordMatches(alert, event);
 }
 
 async function notifyMatchingAlertsForEvent(event) {

@@ -3,8 +3,8 @@
  * Puede cargar sus propios datos o recibirlos ya preparados, y ofrece acciones
  * para editar, borrar y navegar al detalle de cada evento.
  */
-import React, { useEffect, useState } from 'react';
-import { Baby, Building2, Copy, Heart, MapPin, Users } from 'lucide-react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { Building2, Copy, Heart, MapPin, Users } from 'lucide-react';
 import { API_BASE_URL } from './config';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { withAuthHeaders } from './utils/authFetch';
@@ -38,20 +38,6 @@ function formatPrice(event) {
     return 'De pago';
   }
   return `${Number(event.price).toFixed(2)} EUR`;
-}
-
-// Resume el rango de edad admitido por el evento.
-function formatAgeRange(event) {
-  if (event.min_age === null && event.max_age === null) {
-    return 'Todas las edades';
-  }
-  if (event.min_age !== null && event.max_age === null) {
-    return `Desde ${event.min_age} años`;
-  }
-  if (event.min_age === null && event.max_age !== null) {
-    return `Hasta ${event.max_age} años`;
-  }
-  return `${event.min_age}-${event.max_age} años`;
 }
 
 function formatShortDate(value) {
@@ -99,10 +85,6 @@ function IconAudience() {
   return <Users aria-hidden="true" focusable="false" />;
 }
 
-function IconAge() {
-  return <Baby aria-hidden="true" focusable="false" />;
-}
-
 function IconHeart() {
   return <Heart aria-hidden="true" focusable="false" />;
 }
@@ -110,6 +92,8 @@ function IconHeart() {
 function IconCopy() {
   return <Copy aria-hidden="true" focusable="false" />;
 }
+
+const EVENTS_PER_PAGE = 9;
 
 // El componente admite modo controlado para reutilizarlo con eventos ya filtrados.
 const EventList = ({
@@ -130,8 +114,17 @@ const EventList = ({
   const location = useLocation();
   const [events, setEvents] = useState([]);
   const [loadError, setLoadError] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
   const favoriteIdsSet = new Set((favoriteEventIds || []).map((id) => Number(id)));
   const isControlled = Array.isArray(externalEvents);
+  const totalPages = Math.max(1, Math.ceil(events.length / EVENTS_PER_PAGE));
+  const activePage = Math.min(currentPage, totalPages);
+  const pageStartIndex = (activePage - 1) * EVENTS_PER_PAGE;
+  const pageEndIndex = Math.min(pageStartIndex + EVENTS_PER_PAGE, events.length);
+  const visibleEvents = useMemo(
+    () => events.slice(pageStartIndex, pageEndIndex),
+    [events, pageEndIndex, pageStartIndex]
+  );
 
   // En modo no controlado el propio componente recupera los eventos desde la API.
   const loadEvents = () => {
@@ -172,6 +165,10 @@ const EventList = ({
     setEvents(externalEvents);
     setLoadError('');
   }, [externalEvents, isControlled]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [events]);
 
   // El borrado pide confirmación y después actualiza el listado visible.
   const handleDelete = async (id) => {
@@ -255,8 +252,9 @@ const EventList = ({
           <span>{emptyMessage}</span>
         </div>
       ) : events.length > 0 ? (
+        <>
         <div className="event-list-grid">
-          {events.map((event) => {
+          {visibleEvents.map((event) => {
             const shortDate = formatShortDate(event.event_date);
             const isFavorite = favoriteIdsSet.has(Number(event.id));
             const favoriteCount = Number(event.favorite_count);
@@ -317,10 +315,6 @@ const EventList = ({
                       <dt><span className="event-list-meta-title-icon" title="Audiencia"><IconAudience /></span></dt>
                       <dd>{event.audience || 'General'}</dd>
                     </div>
-                    <div>
-                      <dt><span className="event-list-meta-title-icon" title="Edad"><IconAge /></span></dt>
-                      <dd>{formatAgeRange(event)}</dd>
-                    </div>
                   </dl>
 
                   {(showFavoriteButton || canManageEvents) && (
@@ -378,6 +372,36 @@ const EventList = ({
             );
           })}
         </div>
+
+        {events.length > EVENTS_PER_PAGE && (
+          <nav className="event-list-pagination" aria-label="Paginacion de eventos">
+            <span>
+              Mostrando {pageStartIndex + 1}-{pageEndIndex} de {events.length}
+            </span>
+            <div>
+              <button
+                type="button"
+                className="event-list-page-btn"
+                onClick={() => setCurrentPage((page) => Math.max(1, page - 1))}
+                disabled={activePage === 1}
+              >
+                Anterior
+              </button>
+              <span className="event-list-page-status">
+                Pagina {activePage} de {totalPages}
+              </span>
+              <button
+                type="button"
+                className="event-list-page-btn"
+                onClick={() => setCurrentPage((page) => Math.min(totalPages, page + 1))}
+                disabled={activePage === totalPages}
+              >
+                Siguiente
+              </button>
+            </div>
+          </nav>
+        )}
+        </>
       ) : null}
     </section>
   );

@@ -5,7 +5,6 @@
 const alertsService = require('../services/alertsService');
 const {
   toBooleanFlag,
-  toNullableNonNegativeInt,
   toNullablePositiveInt,
   toPositiveIntParam
 } = require('../utils/validation');
@@ -22,8 +21,6 @@ function parseAlertPayload(body) {
   const categoryId = toNullablePositiveInt(body.category_id);
   const locationId = toNullablePositiveInt(body.location_id);
   const audienceId = toNullablePositiveInt(body.audience_id);
-  const minAge = toNullableNonNegativeInt(body.min_age);
-  const maxAge = toNullableNonNegativeInt(body.max_age);
   const keyword = typeof body.keyword === 'string' ? body.keyword.trim() : '';
   const isActive = body.is_active === undefined ? 1 : toBooleanFlag(body.is_active);
 
@@ -43,18 +40,6 @@ function parseAlertPayload(body) {
     return { error: 'audience_id must be a positive integer when provided.' };
   }
 
-  if (hasRawValue(body.min_age) && minAge === null) {
-    return { error: 'min_age must be a non-negative integer when provided.' };
-  }
-
-  if (hasRawValue(body.max_age) && maxAge === null) {
-    return { error: 'max_age must be a non-negative integer when provided.' };
-  }
-
-  if (minAge !== null && maxAge !== null && minAge > maxAge) {
-    return { error: 'min_age cannot be greater than max_age.' };
-  }
-
   if (keyword.length > MAX_KEYWORD_LENGTH) {
     return { error: 'keyword must be at most 150 characters.' };
   }
@@ -67,8 +52,6 @@ function parseAlertPayload(body) {
     categoryId ||
     locationId ||
     audienceId ||
-    hasRawValue(body.min_age) ||
-    hasRawValue(body.max_age) ||
     keyword
   );
   if (!hasCriteria) {
@@ -80,8 +63,6 @@ function parseAlertPayload(body) {
     categoryId,
     locationId,
     audienceId,
-    minAge,
-    maxAge,
     keyword: keyword || null,
     isActive: isActive === 1
   };

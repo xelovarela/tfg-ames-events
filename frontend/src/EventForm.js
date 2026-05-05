@@ -17,8 +17,6 @@ const initialFormData = {
   event_date: '',
   is_free: '1',
   price: '',
-  min_age: '',
-  max_age: '',
   audience_id: '',
   organizer_id: '',
   category_id: '',
@@ -46,6 +44,29 @@ function toDateTimeLocalInput(value) {
 }
 
 // Este componente encapsula toda la logica del formulario de creación y edición.
+function formatAudienceAgeRange(audience) {
+  const ageMin = audience.age_min ?? null;
+  const ageMax = audience.age_max ?? null;
+
+  if (ageMin === null && ageMax === null) {
+    return '0-99';
+  }
+
+  if (ageMin !== null && ageMax === null) {
+    return `+${ageMin}`;
+  }
+
+  if (ageMin === null && ageMax !== null) {
+    return `Hasta ${ageMax}`;
+  }
+
+  return `${ageMin}-${ageMax}`;
+}
+
+function formatAudienceOptionLabel(audience) {
+  return `${audience.name} (${formatAudienceAgeRange(audience)})`;
+}
+
 const EventForm = ({
   onEventCreated,
   eventToEdit,
@@ -82,8 +103,12 @@ const EventForm = ({
         setLocations(locationsData);
         setAudiences(audiencesData);
         setOrganizers(organizersData);
+        setMessage(''); // Limpiar mensaje si la carga fue correcta
       })
-      .catch(err => console.error('Error loading form data:', err));
+      .catch(err => {
+        console.error('Error loading form data:', err);
+        setMessage('No se pudieron cargar los catálogos. Recarga la página.');
+      });
   }, [locationRefreshTrigger, categoryRefreshTrigger, audienceRefreshTrigger, organizerRefreshTrigger]);
 
   // Si llega un evento para editar, el formulario se rellena con sus valores actuales.
@@ -98,8 +123,6 @@ const EventForm = ({
       event_date: toDateTimeLocalInput(eventToEdit.event_date),
       is_free: String(eventToEdit.is_free ?? 1),
       price: eventToEdit.price !== null && eventToEdit.price !== undefined ? String(eventToEdit.price) : '',
-      min_age: eventToEdit.min_age !== null && eventToEdit.min_age !== undefined ? String(eventToEdit.min_age) : '',
-      max_age: eventToEdit.max_age !== null && eventToEdit.max_age !== undefined ? String(eventToEdit.max_age) : '',
       audience_id: eventToEdit.audience_id ? String(eventToEdit.audience_id) : '',
       organizer_id: eventToEdit.organizer_id ? String(eventToEdit.organizer_id) : '',
       category_id: eventToEdit.category_id ? String(eventToEdit.category_id) : '',
@@ -123,8 +146,6 @@ const EventForm = ({
       event_date: '',
       is_free: String(duplicateSourceEvent.is_free ?? 1),
       price: duplicateSourceEvent.price !== null && duplicateSourceEvent.price !== undefined ? String(duplicateSourceEvent.price) : '',
-      min_age: duplicateSourceEvent.min_age !== null && duplicateSourceEvent.min_age !== undefined ? String(duplicateSourceEvent.min_age) : '',
-      max_age: duplicateSourceEvent.max_age !== null && duplicateSourceEvent.max_age !== undefined ? String(duplicateSourceEvent.max_age) : '',
       audience_id: duplicateSourceEvent.audience_id ? String(duplicateSourceEvent.audience_id) : '',
       organizer_id: duplicateSourceEvent.organizer_id ? String(duplicateSourceEvent.organizer_id) : '',
       category_id: duplicateSourceEvent.category_id ? String(duplicateSourceEvent.category_id) : '',
@@ -185,29 +206,10 @@ const EventForm = ({
     }
 
     const isFree = Number(formData.is_free) === 1;
-    const minAge = formData.min_age === '' ? null : Number(formData.min_age);
-    const maxAge = formData.max_age === '' ? null : Number(formData.max_age);
     const price = formData.price === '' ? null : Number(formData.price);
 
     if (!isFree && (price === null || Number.isNaN(price) || price <= 0)) {
       setMessage('Para eventos de pago debes indicar un precio mayor que 0.');
-      return;
-    }
-
-    if (
-      minAge !== null &&
-      maxAge !== null &&
-      (!Number.isInteger(minAge) || !Number.isInteger(maxAge) || minAge < 0 || maxAge < 0 || minAge > maxAge)
-    ) {
-      setMessage('Rango de edad invalido.');
-      return;
-    }
-
-    if (
-      (minAge !== null && (!Number.isInteger(minAge) || minAge < 0)) ||
-      (maxAge !== null && (!Number.isInteger(maxAge) || maxAge < 0))
-    ) {
-      setMessage('Las edades deben ser numeros enteros positivos o cero.');
       return;
     }
 
@@ -220,8 +222,6 @@ const EventForm = ({
     payload.append('event_date', formData.event_date || '');
     payload.append('is_free', isFree ? '1' : '0');
     payload.append('price', isFree || price === null ? '' : String(price));
-    payload.append('min_age', minAge === null ? '' : String(minAge));
-    payload.append('max_age', maxAge === null ? '' : String(maxAge));
     payload.append('audience_id', formData.audience_id === '' ? '' : String(Number(formData.audience_id)));
     payload.append('organizer_id', formData.organizer_id === '' ? '' : String(Number(formData.organizer_id)));
     payload.append('category_id', String(Number(formData.category_id)));
@@ -374,38 +374,6 @@ const EventForm = ({
           </>
         )}
 
-        <div className="event-form-age-grid">
-          <div>
-            <label className="event-form-label" htmlFor="min_age">Edad minima</label>
-            <input
-              id="min_age"
-              className="event-form-input"
-              type="number"
-              name="min_age"
-              value={formData.min_age}
-              onChange={handleChange}
-              min="0"
-              step="1"
-              placeholder="Ej: 4"
-            />
-          </div>
-
-          <div>
-            <label className="event-form-label" htmlFor="max_age">Edad maxima</label>
-            <input
-              id="max_age"
-              className="event-form-input"
-              type="number"
-              name="max_age"
-              value={formData.max_age}
-              onChange={handleChange}
-              min="0"
-              step="1"
-              placeholder="Ej: 12"
-            />
-          </div>
-        </div>
-
         <label className="event-form-label" htmlFor="audience_id">Audiencia</label>
         <select
           id="audience_id"
@@ -417,7 +385,7 @@ const EventForm = ({
           <option value="">Sin audiencia especifica</option>
           {audiences.map(audience => (
             <option key={audience.id} value={audience.id}>
-              {audience.name}
+              {formatAudienceOptionLabel(audience)}
             </option>
           ))}
         </select>

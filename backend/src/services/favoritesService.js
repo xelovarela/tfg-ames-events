@@ -16,8 +16,6 @@ async function listFavoritesByUserId(userId) {
       e.event_date,
       e.is_free,
       e.price,
-      e.min_age,
-      e.max_age,
       e.audience_id,
       e.organizer_id,
       c.name AS category,

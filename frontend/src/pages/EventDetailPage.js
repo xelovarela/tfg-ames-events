@@ -4,7 +4,7 @@
  * y muestra una ficha legible con su información principal.
  */
 import React, { useEffect, useState } from 'react';
-import { ArrowLeft, Baby, Building2, CalendarClock, CalendarPlus, Heart, MapPin } from 'lucide-react';
+import { ArrowLeft, Building2, CalendarClock, CalendarPlus, Heart, MapPin, Users } from 'lucide-react';
 import { Link, useLocation, useParams } from 'react-router-dom';
 import { API_BASE_URL } from '../config';
 import { addFavorite, listFavoriteIds, removeFavorite } from '../utils/favoritesApi';
@@ -103,21 +103,6 @@ function formatPrice(event) {
   return `${Number(event.price).toFixed(2)} EUR`;
 }
 
-// Construye un texto amigable para el rango de edad del evento.
-function formatAgeRange(event) {
-  if (event.min_age === null && event.max_age === null) {
-    return 'Todas las edades';
-  }
-  if (event.min_age !== null && event.max_age === null) {
-    return `Desde ${event.min_age} a\u00f1os`;
-  }
-  if (event.min_age === null && event.max_age !== null) {
-    return `Hasta ${event.max_age} a\u00f1os`;
-  }
-
-  return `${event.min_age}-${event.max_age} a\u00f1os`;
-}
-
 function formatFavoriteCountLabel(value) {
   const count = Number(value);
   if (Number.isNaN(count) || count <= 0) {
@@ -136,7 +121,7 @@ function IconLocation() {
 }
 
 function IconAudience() {
-  return <Baby aria-hidden="true" focusable="false" />;
+  return <Users aria-hidden="true" focusable="false" />;
 }
 
 function IconOrganizer() {
@@ -463,7 +448,7 @@ function EventDetailPage({ session }) {
 
                     <article className="event-detail-block">
                       <h4><span className="event-detail-block-icon"><IconAudience /></span>{DETAIL_TEXT.forWho}</h4>
-                      <p>{formatAgeRange(event)}</p>
+                      <p>{event.audience || DETAIL_TEXT.audienceFallback}</p>
                     </article>
                   </div>
                 </aside>

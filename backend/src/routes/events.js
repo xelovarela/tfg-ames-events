@@ -5,13 +5,13 @@
  */
 const express = require('express');
 const eventsController = require('../controllers/eventsController');
-const { attachUserIfAuthenticated, requireAuth, requireAdmin, requireAnyRole } = require('../middleware/authMiddleware');
+const { optionalAuth, requireAuth, requireAdmin, requireAnyRole } = require('../middleware/authMiddleware');
 const { eventImageUpload } = require('../middleware/eventImageUpload');
 
 const router = express.Router();
 
 // Se registran las operaciones CRUD disponibles para los eventos.
-router.get('/', attachUserIfAuthenticated, eventsController.getAll);
+router.get('/', optionalAuth, eventsController.getAll);
 router.get('/:id', eventsController.getById);
 
 router.post('/', requireAuth, requireAnyRole(['admin', 'content_manager']), eventImageUpload.single('image'), eventsController.create);

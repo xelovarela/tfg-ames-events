@@ -38,7 +38,7 @@
 -- ============================================================
 -- Almacena alertas personalizadas de usuarios para recibir
 -- notificaciones sobre eventos que coincidan con sus criterios.
--- Permite filtrar por categoría, ubicación, audiencia, rango de edad.
+-- Permite filtrar por categoria, ubicacion, audiencia y palabra clave.
 DROP TABLE IF EXISTS `alerts`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
@@ -49,8 +49,6 @@ CREATE TABLE `alerts` (
   `category_id` int DEFAULT NULL,
   `location_id` int DEFAULT NULL,
   `audience_id` int DEFAULT NULL,
-  `min_age` int DEFAULT NULL,
-  `max_age` int DEFAULT NULL,
   `keyword` varchar(150) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `is_active` tinyint(1) NOT NULL DEFAULT '1',
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -105,7 +103,7 @@ CREATE TABLE `categories` (
 -- ============================================================
 -- Tabla principal de eventos. Contiene todos los detalles:
 -- título, descripción, fecha, precio, ubicación, categoría,
--- rango de edades recomendado, audiencia objetivo y organizador.
+-- audiencia objetivo, imagen y organizador.
 DROP TABLE IF EXISTS `events`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
@@ -118,8 +116,6 @@ CREATE TABLE `events` (
   `event_date` datetime DEFAULT NULL,
   `price` decimal(5,2) DEFAULT NULL,
   `is_free` tinyint(1) NOT NULL DEFAULT '1',
-  `min_age` int DEFAULT NULL,
-  `max_age` int DEFAULT NULL,
   `image_url` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

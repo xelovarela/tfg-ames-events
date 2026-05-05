@@ -31,7 +31,7 @@ function toNullablePositiveInt(value) {
   return toPositiveInt(value);
 }
 
-// Permite edades como 0 anos para eventos de primera infancia.
+// Permite edades como 0 anos para audiencias de primera infancia.
 function toNullableNonNegativeInt(value) {
   if (value === null || value === undefined || value === '') {
     return null;

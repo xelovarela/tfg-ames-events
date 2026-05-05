@@ -512,6 +512,53 @@ h1, h2, h3, h4, h5, h6 {
   justify-content: start;
 }
 
+.event-list-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: 1rem;
+  padding-top: 0.9rem;
+  border-top: 1px solid #ead8ca;
+  color: #6f5a4d;
+  font-size: 0.86rem;
+  font-weight: 800;
+}
+
+.event-list-pagination > div {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.event-list-page-btn {
+  min-height: 36px;
+  border: 1px solid #e5d4c6;
+  border-radius: 999px;
+  background: #fffaf6;
+  color: var(--color-brand-dark);
+  padding: 0.4rem 0.8rem;
+  font: inherit;
+  font-size: 0.84rem;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.event-list-page-btn:hover:not(:disabled) {
+  background: #fff0e5;
+  border-color: #d9a184;
+}
+
+.event-list-page-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.event-list-page-status {
+  color: #4c1f12;
+  white-space: nowrap;
+}
+
 .event-list-card {
   display: grid;
   grid-template-columns: 1fr;
@@ -1604,8 +1651,7 @@ h1, h2, h3, h4, h5, h6 {
     font-size: 0.72rem;
   }
 
-  .map-event-meta,
-  .map-event-age {
+  .map-event-meta {
     display: none;
   }
 
@@ -1621,6 +1667,16 @@ h1, h2, h3, h4, h5, h6 {
   .event-list-grid,
   .event-list-card {
     grid-template-columns: 1fr;
+  }
+
+  .event-list-pagination {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .event-list-pagination > div {
+    width: 100%;
+    flex-wrap: wrap;
   }
 
   .event-list-date-overlay {

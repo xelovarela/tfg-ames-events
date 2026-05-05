@@ -1,6 +1,6 @@
 /*
  * Este archivo define los estilos del formulario de eventos.
- * Da formato a la tarjeta, los campos, la rejilla de edades, los botones de acción
+ * Da formato a la tarjeta, los campos, los botones de acción
  * y la adaptacion responsive del componente.
  */
 /* Tarjeta contenedora del formulario completo. */
@@ -78,13 +78,6 @@
   object-fit: cover;
 }
 
-/* Rejilla para mostrar edad minima y maxima en paralelo. */
-.event-form-age-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.6rem;
-}
-
 /* Zona de botones principales del formulario. */
 .event-form-actions {
   display: flex;
@@ -129,10 +122,6 @@
 
   .event-form-actions {
     flex-direction: column;
-  }
-
-  .event-form-age-grid {
-    grid-template-columns: 1fr;
   }
 
   .event-btn {

@@ -56,7 +56,7 @@ Dependencias de testing y tooling incluidas por Create React App:
 - Mapa interactivo con Leaflet y agrupación de eventos por ubicación.
 - **Capas contextuales del mapa**: Límite del Concello de Ames (GeoJSON), zonas de Bertamiráns y O Milladoiro (círculos aprox.), con etiquetas legibles.
 - Calendario mensual de eventos en `/events/calendar`, reutilizando los filtros compartidos.
-- Listado, detalle, alta, edición y borrado de eventos según permisos.
+- Listado paginado, detalle, alta, edición y borrado de eventos según permisos.
 - Subida de imagenes para eventos mediante `multipart/form-data`, con conversion a WebP 16:9.
 - Imagenes fallback por categoria para eventos sin imagen propia, mostradas en formato 16:9, con fallback generico final.
 - Registro, verificación de email, login JWT, recuperación de contraseña y perfil propio.
@@ -79,6 +79,7 @@ Dependencias de testing y tooling incluidas por Create React App:
 
 - El buscador de eventos esta integrado en el panel de filtros, no en el header.
 - El panel de filtros separa busqueda, fecha, gratuito, categorias y filtros avanzados.
+- El listado `/events` pagina en cliente los eventos ya filtrados, con 9 eventos por pagina y reinicio automatico a la primera pagina cuando cambian los resultados.
 - Los filtros avanzados visibles son ubicacion y audiencia.
 - Las audiencias semilla quedan ordenadas por uso y edad: Todos, Bebes, Infantil, Escolar, Juvenil y Adultos.
 - Los gestores pueden duplicar eventos pasados y futuros desde el listado o el detalle.
@@ -87,7 +88,7 @@ Dependencias de testing y tooling incluidas por Create React App:
 
 - `frontend/`: SPA React.
 - `backend/`: API REST Express.
-- `database/`: esquema, datos iniciales y scripts auxiliares SQL.
+- `database/`: esquema y datos iniciales SQL.
 - `docs/`: documentacion auxiliar del proyecto.
 
 ## Arquitectura de la aplicación
@@ -119,7 +120,7 @@ La base de datos MySQL/MariaDB almacena usuarios, roles, eventos, catálogos, fa
 Entidades principales:
 
 - `users`, `roles`: autenticación, estado de cuenta y autorización.
-- `events`: agenda con fecha, precio, edades, imagen y relaciones.
+- `events`: agenda con fecha, precio, audiencia, imagen y relaciones.
 - `categories`, `locations`, `audiences`, `organizers`: catálogos auxiliares.
 - `favorites`: relación usuario-evento.
 - `alerts`: criterios guardados por usuario.
@@ -138,7 +139,7 @@ Los permisos se aplican en frontend para mostrar u ocultar accesos, y en backend
 1. El usuario consulta la agenda, el mapa o el calendario.
 2. `useFilteredEvents` carga eventos y catálogos auxiliares desde la API.
 3. Los filtros de búsqueda, fecha, categoría, gratuito, ubicación y audiencia se sincronizan con la query string.
-4. `EventList` muestra eventos filtrados, `AmesMap` representa los mismos datos agrupados por ubicación y `EventCalendar` los organiza por día.
+4. `EventList` muestra eventos filtrados en paginas de 9 elementos, `AmesMap` representa los mismos datos agrupados por ubicación y `EventCalendar` los organiza por día.
 5. `admin` y `content_manager` pueden crear, editar, borrar y duplicar eventos con `EventForm`.
 6. El backend valida datos, relaciones, imágenes y permisos antes de insertar o actualizar en MySQL.
 7. Al crear eventos, el backend evalúa alertas activas y puede enviar emails si hay coincidencias.
@@ -161,7 +162,7 @@ El mapa consume eventos ya filtrados y los agrupa por coordenadas para evitar ma
 
 ### Flujo de alertas
 
-1. Un usuario autenticado crea una alerta con nombre y al menos un criterio: categoría, ubicación, audiencia, edad o palabra clave.
+1. Un usuario autenticado crea una alerta con nombre y al menos un criterio: categoría, ubicación, audiencia o palabra clave.
 2. Las alertas se guardan asociadas al usuario y pueden activarse, editarse o eliminarse.
 3. Cuando se crea un evento, el backend compara ese evento con las alertas activas.
 4. Si hay coincidencia y la cuenta está activa y verificada, se envía un email informativo.
@@ -538,8 +539,6 @@ Una alerta debe tener nombre y al menos un criterio:
   "category_id": 1,
   "location_id": null,
   "audience_id": null,
-  "min_age": 6,
-  "max_age": 12,
   "keyword": "teatro",
   "is_active": true
 }
@@ -558,7 +557,6 @@ Campos principales de `events`:
 - `event_date`: opcional.
 - `is_free`: obligatorio.
 - `price`: obligatorio y mayor que 0 si `is_free = 0`.
-- `min_age` y `max_age`: opcionales, pero deben ser coherentes si se informan.
 - `audience_id`: opcional, debe existir si se informa.
 - `organizer_id`: opcional, debe existir si se informa.
 - `image_url`: opcional, generado al subir imagen o informado desde datos iniciales. Si queda vacio, el frontend usa la imagen fallback de la categoria y, si no existe, `default-event.svg`.

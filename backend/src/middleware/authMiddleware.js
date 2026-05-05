@@ -25,7 +25,7 @@ function requireAuth(req, res, next) {
   }
 }
 
-function attachUserIfAuthenticated(req, res, next) {
+function optionalAuth(req, res, next) {
   const authHeader = req.headers.authorization || '';
 
   if (!authHeader.startsWith('Bearer ')) {
@@ -45,7 +45,7 @@ function attachUserIfAuthenticated(req, res, next) {
 
     return next();
   } catch (error) {
-    return res.status(401).json({ error: 'Token invÃ¡lido o expirado.' });
+    return res.status(401).json({ error: 'Token inválido o expirado.' });
   }
 }
 
@@ -68,7 +68,8 @@ function requireAnyRole(allowedRoles) {
 }
 
 module.exports = {
-  attachUserIfAuthenticated,
+  optionalAuth,
+  attachUserIfAuthenticated: optionalAuth, // Alias para compatibilidad
   requireAuth,
   requireAdmin,
   requireAnyRole
