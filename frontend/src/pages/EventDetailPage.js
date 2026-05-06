@@ -4,7 +4,7 @@
  * y muestra una ficha legible con su información principal.
  */
 import React, { useEffect, useState } from 'react';
-import { ArrowLeft, Building2, CalendarClock, CalendarPlus, Heart, MapPin, Users } from 'lucide-react';
+import { ArrowLeft, Building2, CalendarClock, CalendarPlus, Heart, MapPin, Share2, Users } from 'lucide-react';
 import { Link, useLocation, useParams } from 'react-router-dom';
 import { API_BASE_URL } from '../config';
 import { addFavorite, listFavoriteIds, removeFavorite } from '../utils/favoritesApi';
@@ -28,6 +28,9 @@ const DETAIL_TEXT = {
   favoriteSave: 'A\u00f1adir a favoritos',
   favoriteLoading: 'Actualizando...',
   addToCalendar: 'A\u00f1adir al calendario',
+  shareEvent: 'Compartir evento',
+  shareCopied: 'Enlace copiado.',
+  shareError: 'No se pudo compartir el evento.',
   editEvent: 'Editar evento',
   duplicateEvent: 'Duplicar evento',
   viewOnMap: 'Ver esta ubicaci\u00f3n en el mapa',
@@ -136,6 +139,10 @@ function IconCalendarPlus() {
   return <CalendarPlus aria-hidden="true" focusable="false" />;
 }
 
+function IconShare() {
+  return <Share2 aria-hidden="true" focusable="false" />;
+}
+
 function formatCalendarDateLocal(value) {
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) {
@@ -227,6 +234,7 @@ function EventDetailPage({ session }) {
   const [error, setError] = useState('');
   const [isFavorite, setIsFavorite] = useState(false);
   const [favoriteMessage, setFavoriteMessage] = useState('');
+  const [shareMessage, setShareMessage] = useState('');
   const [isFavoriteLoading, setIsFavoriteLoading] = useState(false);
   const isAuthenticated = Boolean(session?.token);
   const canUseFavorites = ['user', 'admin'].includes(session?.user?.role);
@@ -337,6 +345,36 @@ function EventDetailPage({ session }) {
     window.open(googleCalendarUrl, '_blank', 'noopener,noreferrer');
   };
 
+  const handleShare = async () => {
+    if (!event) {
+      return;
+    }
+
+    const shareUrl = window.location.href;
+    const shareData = {
+      title: event.title,
+      text: `Mira este evento: ${event.title}`,
+      url: shareUrl
+    };
+
+    setShareMessage('');
+
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+        return;
+      }
+
+      await navigator.clipboard.writeText(shareUrl);
+      setShareMessage(DETAIL_TEXT.shareCopied);
+    } catch (shareError) {
+      console.error(shareError);
+      if (shareError.name !== 'AbortError') {
+        setShareMessage(DETAIL_TEXT.shareError);
+      }
+    }
+  };
+
   return (
     <main className="event-detail-page">
       <div className="event-detail-nav">
@@ -399,10 +437,19 @@ function EventDetailPage({ session }) {
                 <button
                   type="button"
                   className="event-detail-calendar-btn"
+                  onClick={handleShare}
+                >
+                  <span className="event-detail-action-icon" aria-hidden="true"><IconShare /></span>
+                  {DETAIL_TEXT.shareEvent}
+                </button>
+
+                <button
+                  type="button"
+                  className="event-detail-calendar-btn"
                   onClick={handleAddToCalendar}
                   disabled={!googleCalendarUrl}
                 >
-                  <span className="event-detail-calendar-icon" aria-hidden="true"><IconCalendarPlus /></span>
+                  <span className="event-detail-action-icon" aria-hidden="true"><IconCalendarPlus /></span>
                   {DETAIL_TEXT.addToCalendar}
                 </button>
 
@@ -462,6 +509,7 @@ function EventDetailPage({ session }) {
           </div>
 
           {favoriteMessage && <p className="event-detail-message">{favoriteMessage}</p>}
+          {shareMessage && <p className="event-detail-message">{shareMessage}</p>}
 
           <div className="event-detail-map-cta">
             <div>
