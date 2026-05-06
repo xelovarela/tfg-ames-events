@@ -261,6 +261,16 @@ mysql -u usuario -p nombre_base_hosting < database/schema.sql
 mysql -u usuario -p nombre_base_hosting < database/seed.sql
 ```
 
+El seed crea usuarios de prueba con los roles principales. Todos usan la contrasena `tfg2026`:
+
+- `admin` / `admin@example.com`
+- `usuario` / `usuario@example.com`
+- `gestor` / `gestor@example.com`
+- `familia` / `familia@example.com`
+- `vecina` / `vecina@example.com`
+- `deporte` / `deporte@example.com`
+- `cultura` / `cultura@example.com`
+
 La tabla `content_manager_requests` forma parte de `schema.sql`. El backend tambien ejecuta una comprobación defensiva y la crea automáticamente si faltase.
 
 Para bases de datos ya existentes que no se creen desde cero, `database/add_alert_locality.sql` añade el campo `locality` a `alerts` para que las alertas puedan configurarse por localidad en lugar de limitarse a una ubicación exacta.
