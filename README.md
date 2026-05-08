@@ -247,7 +247,11 @@ En producción, apunta esta variable al dominio de la API.
 
 ## Base de datos
 
-Los scripts SQL no fijan el nombre de la base. Ejecutalos sobre la base objetivo:
+Los scripts SQL no fijan el nombre de la base. Para una instalacion limpia, crea primero una base vacia y ejecuta el esquema y los datos iniciales en este orden:
+
+```sql
+CREATE DATABASE ames_events CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+```
 
 ```powershell
 mysql -u root -p ames_events < database/schema.sql
@@ -271,11 +275,22 @@ El seed crea usuarios de prueba con los roles principales. Todos usan la contras
 - `deporte` / `deporte@example.com`
 - `cultura` / `cultura@example.com`
 
+`database/schema.sql` contiene el estado completo de la estructura actual de la base de datos. `database/seed.sql` contiene datos iniciales de prueba. No es necesario ejecutar migraciones adicionales en una instalacion limpia.
+
 La tabla `content_manager_requests` forma parte de `schema.sql`. El backend tambien ejecuta una comprobación defensiva y la crea automáticamente si faltase.
 
 ## Ejecucion local
 
-### Backend
+### Instalacion limpia completa
+
+1. Clona el repositorio y entra en la carpeta del proyecto.
+2. Crea la base MySQL/MariaDB vacia `ames_events`.
+3. Ejecuta `database/schema.sql` y despues `database/seed.sql`.
+4. Copia `backend/.env.example` a `backend/.env` y ajusta credenciales, `JWT_SECRET`, `APP_BASE_URL` y `CORS_ORIGINS`.
+5. Copia `frontend/.env.example` a `frontend/.env` y configura `REACT_APP_API_BASE_URL`.
+6. Instala dependencias y arranca backend y frontend en dos terminales.
+
+### Backend local
 
 ```powershell
 cd backend
@@ -283,7 +298,7 @@ npm install
 npm start
 ```
 
-### Frontend
+### Frontend local
 
 ```powershell
 cd frontend
@@ -319,22 +334,24 @@ npm test
 
 ### Backend
 
-`cd backend && npm test` ejecuta pruebas unitarias sobre utilidades puras de validación:
+`cd backend && npm test` ejecuta pruebas unitarias con el runner nativo de Node.js (`node:test`) y `node:assert/strict`. La suite comprueba:
 
-- Identificadores enteros positivos usados en parametros y cuerpos HTTP.
-- Coordenadas geográficas de ubicaciones.
-- Fechas locales de eventos en formato MySQL sin desplazamiento horario.
-- Normalización de booleanos y precios antes de persistirlos.
+- Middleware de autenticacion y permisos por rol con JWT.
+- Validacion de payloads de eventos: titulo, relaciones, fecha, precio, gratuidad y rechazo de fechas pasadas en creacion.
+- Validacion de audiencias: rangos de edad completos, enteros, no negativos y orden correcto.
 
 Estas pruebas no necesitan servidor, base de datos ni variables `.env`.
 
 ### Frontend
 
-`cd frontend && npm test` ejecuta Jest y React Testing Library. La suite actual comprueba:
+`cd frontend && npm test` ejecuta Jest y React Testing Library en modo detallado. La suite actual comprueba:
 
-- Que la aplicación renderiza la home inicial y muestra accesos principales.
-- Que las URLs de imagenes de eventos se resuelven correctamente según su origen.
-- Que las respuestas JSON de la API se leen bien y que los errores devuelven mensajes utiles.
+- Renderizado basico de la home y accesos principales.
+- Validaciones de registro, perfil, cambio de contrasena, eventos y audiencias.
+- Filtros compartidos de agenda/mapa/calendario y conversion a query string.
+- Favoritos autenticados, llamadas HTTP esperadas y limpieza de sesion caducada.
+- Resolucion de imagenes de eventos y lectura segura de respuestas HTTP.
+- Ordenacion del catalogo de audiencias.
 
 Para forzar una ejecucion serial si el entorno restringe procesos worker:
 
