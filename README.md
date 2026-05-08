@@ -273,8 +273,6 @@ El seed crea usuarios de prueba con los roles principales. Todos usan la contras
 
 La tabla `content_manager_requests` forma parte de `schema.sql`. El backend tambien ejecuta una comprobación defensiva y la crea automáticamente si faltase.
 
-Para bases de datos ya existentes que no se creen desde cero, `database/add_alert_locality.sql` añade el campo `locality` a `alerts` para que las alertas puedan configurarse por localidad en lugar de limitarse a una ubicación exacta.
-
 ## Ejecucion local
 
 ### Backend
