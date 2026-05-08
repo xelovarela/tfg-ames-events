@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { API_BASE_URL } from '../config';
 import { setAuthSession } from '../utils/authStorage';
 import { withAuthHeaders } from '../utils/authFetch';
+import { validatePasswordChange, validateProfileUsername } from '../utils/accountValidation';
 import './ProfilePage.css';
 
 function getDisplayName(user) {
@@ -72,6 +73,12 @@ function ProfilePage({ session }) {
       return;
     }
 
+    const usernameValidationError = validateProfileUsername(username);
+    if (usernameValidationError) {
+      setProfileMessage(usernameValidationError);
+      return;
+    }
+
     const trimmedUsername = username.trim();
     if (!trimmedUsername) {
       setProfileMessage('El nombre de usuario no puede estar vacio.');
@@ -111,6 +118,12 @@ function ProfilePage({ session }) {
   const handlePasswordSubmit = async (event) => {
     event.preventDefault();
     if (isPasswordSaving) {
+      return;
+    }
+
+    const passwordValidationError = validatePasswordChange({ currentPassword, newPassword, confirmPassword });
+    if (passwordValidationError) {
+      setPasswordMessage(passwordValidationError);
       return;
     }
 

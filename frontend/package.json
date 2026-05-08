@@ -19,7 +19,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test --watchAll=false",
+    "test": "react-scripts test --watchAll=false --verbose",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -33,7 +33,11 @@
       "^react-router$": "<rootDir>/node_modules/react-router/dist/development/index.js",
       "^react-router/dom$": "<rootDir>/node_modules/react-router/dist/development/dom-export.js",
       "^react-router-dom$": "<rootDir>/node_modules/react-router-dom/dist/index.js"
-    }
+    },
+    "testMatch": [
+      "<rootDir>/src/App.test.js",
+      "<rootDir>/src/utils/**/*.test.js"
+    ]
   },
   "browserslist": {
     "production": [

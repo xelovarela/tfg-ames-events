@@ -7,6 +7,7 @@ import React, { useEffect, useState } from 'react';
 import { API_BASE_URL } from './config';
 import { withAuthHeaders } from './utils/authFetch';
 import { sortAudiencesByAge } from './utils/audiences';
+import { buildAudiencePayload, validateAudience } from './utils/audienceValidation';
 import './AudienceManager.css';
 
 // Estado base del formulario de audiencias.
@@ -15,31 +16,6 @@ const initialForm = {
   age_min: '',
   age_max: ''
 };
-
-// Valida nombre y rango de edad antes de enviar datos al backend.
-function validateAudience(form) {
-  const name = form.name.trim();
-  const ageMin = form.age_min === '' ? null : Number(form.age_min);
-  const ageMax = form.age_max === '' ? null : Number(form.age_max);
-
-  if (!name || name.length > 100) {
-    return 'El nombre es obligatorio y debe tener entre 1 y 100 caracteres.';
-  }
-
-  if ((ageMin === null && ageMax !== null) || (ageMin !== null && ageMax === null)) {
-    return 'Debes indicar edad minima y maxima juntas.';
-  }
-
-  if (
-    ageMin !== null &&
-    ageMax !== null &&
-    (!Number.isInteger(ageMin) || !Number.isInteger(ageMax) || ageMin < 0 || ageMax < 0 || ageMin > ageMax)
-  ) {
-    return 'Rango de edad invalido.';
-  }
-
-  return null;
-}
 
 // Este componente concentra la logica CRUD de audiencias.
 function AudienceManager({ onAudiencesChanged }) {
@@ -97,11 +73,7 @@ function AudienceManager({ onAudiencesChanged }) {
     setIsSaving(true);
     setMessage('');
 
-    const payload = {
-      name: formData.name.trim(),
-      age_min: formData.age_min === '' ? null : Number(formData.age_min),
-      age_max: formData.age_max === '' ? null : Number(formData.age_max)
-    };
+    const payload = buildAudiencePayload(formData);
 
     const endpoint = editingId
       ? `${API_BASE_URL}/audiences/${editingId}`

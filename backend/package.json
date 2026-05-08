@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node server.js",
     "send:favorite-reminders": "node scripts/sendFavoriteReminders.js",
-    "test": "node --test"
+    "test": "node --test src/middleware/authMiddleware.test.js src/utils/audiencePayloadValidation.test.js src/utils/eventPayloadValidation.test.js"
   },
   "keywords": [],
   "author": "",

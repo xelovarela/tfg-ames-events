@@ -1,11 +1,8 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { API_BASE_URL } from '../config';
+import { buildRegisterPayload, validateRegisterForm } from '../utils/accountValidation';
 import './RegisterPage.css';
-
-function isValidEmail(email) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-}
 
 function RegisterPage() {
   const [username, setUsername] = useState('');
@@ -19,6 +16,12 @@ function RegisterPage() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (isSubmitting) {
+      return;
+    }
+
+    const validationError = validateRegisterForm({ username, email, password, confirmPassword });
+    if (validationError) {
+      setMessage(validationError);
       return;
     }
 
@@ -55,11 +58,7 @@ function RegisterPage() {
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
-          username: trimmedUsername,
-          email: trimmedEmail,
-          password
-        })
+        body: JSON.stringify(buildRegisterPayload({ username, email, password }))
       });
 
       const data = await response.json();

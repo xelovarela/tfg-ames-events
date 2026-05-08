@@ -7,6 +7,7 @@ import React, { useEffect, useState } from 'react';
 import { API_BASE_URL } from './config';
 import { withAuthHeaders } from './utils/authFetch';
 import { getEventImageUrl } from './utils/eventImages';
+import { validateEventForm } from './utils/eventFormValidation';
 import { readJsonResponse } from './utils/http';
 import './EventForm.css';
 
@@ -193,6 +194,15 @@ const EventForm = ({
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (isSaving) return;
+
+    const validationError = validateEventForm(formData, {
+      isDuplicating,
+      rejectPastDate: !eventToEdit
+    });
+    if (validationError) {
+      setMessage(validationError);
+      return;
+    }
 
     const trimmedTitle = formData.title.trim();
     if (!trimmedTitle || !formData.category_id || !formData.location_id) {

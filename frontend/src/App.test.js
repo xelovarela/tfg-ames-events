@@ -25,15 +25,16 @@ afterEach(() => {
   jest.restoreAllMocks();
 });
 
-// Esta prueba comprueba que la aplicación principal se monta en la home real.
-test('renders the home page by default', async () => {
-  render(<App />);
+describe('App: pantalla inicial publica', () => {
+  test('muestra la home real con accesos principales a listado, calendario, mapa y acerca de', async () => {
+    render(<App />);
 
-  expect(await screen.findByRole('heading', {
-    name: /la gu[ií]a local para encontrar el pr[oó]ximo plan/i
-  })).toBeInTheDocument();
-  expect(screen.getByRole('link', { name: /^ver listado$/i })).toBeInTheDocument();
-  expect(screen.getByRole('link', { name: /abrir calendario/i })).toBeInTheDocument();
-  expect(screen.getByRole('link', { name: /abrir mapa/i })).toBeInTheDocument();
-  expect(screen.getByRole('link', { name: /acerca de/i })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', {
+      name: /la gu[ií]a local para encontrar el pr[oó]ximo plan/i
+    })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /^ver listado$/i })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /abrir calendario/i })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /abrir mapa/i })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /acerca de/i })).toBeInTheDocument();
+  });
 });

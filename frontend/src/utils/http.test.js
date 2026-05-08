@@ -10,31 +10,33 @@ function createResponse({ ok = true, contentType = 'application/json', body = ''
   };
 }
 
-test('reads a successful JSON response', async () => {
-  const response = createResponse({
-    body: JSON.stringify({ message: 'ok' })
+describe('readJsonResponse: lectura segura de respuestas HTTP', () => {
+  test('devuelve el JSON cuando la API responde correctamente', async () => {
+    const response = createResponse({
+      body: JSON.stringify({ message: 'ok' })
+    });
+
+    await expect(readJsonResponse(response, 'Fallback error'))
+      .resolves.toEqual({ message: 'ok' });
   });
 
-  await expect(readJsonResponse(response, 'Fallback error'))
-    .resolves.toEqual({ message: 'ok' });
-});
+  test('rechaza con el mensaje de error devuelto por la API', async () => {
+    const response = createResponse({
+      ok: false,
+      body: JSON.stringify({ error: 'Invalid data' })
+    });
 
-test('uses the API error message when a JSON response is not ok', async () => {
-  const response = createResponse({
-    ok: false,
-    body: JSON.stringify({ error: 'Invalid data' })
+    await expect(readJsonResponse(response, 'Fallback error'))
+      .rejects.toThrow('Invalid data');
   });
 
-  await expect(readJsonResponse(response, 'Fallback error'))
-    .rejects.toThrow('Invalid data');
-});
+  test('explica el problema cuando el frontend recibe HTML en vez de JSON', async () => {
+    const response = createResponse({
+      contentType: 'text/html',
+      body: '<!doctype html><html></html>'
+    });
 
-test('adds a useful hint when the server returns HTML instead of JSON', async () => {
-  const response = createResponse({
-    contentType: 'text/html',
-    body: '<!doctype html><html></html>'
+    await expect(readJsonResponse(response, 'No se pudo cargar'))
+      .rejects.toThrow(/apunte al backend/i);
   });
-
-  await expect(readJsonResponse(response, 'No se pudo cargar'))
-    .rejects.toThrow(/apunte al backend/i);
 });
