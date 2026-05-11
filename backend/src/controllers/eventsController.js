@@ -9,7 +9,7 @@ const {
   saveUploadedEventImage,
   deleteEventImageFile
 } = require('../middleware/eventImageUpload');
-const { toPositiveInt } = require('../utils/validation');
+const { toPositiveInt, toBooleanFlag } = require('../utils/validation');
 const { parseEventPayload } = require('../utils/eventPayloadValidation');
 const {
   TIME_SCOPES,
