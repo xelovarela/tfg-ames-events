@@ -6,13 +6,8 @@
 const rolesService = require('../services/rolesService');
 
 async function getAll(req, res) {
-  try {
-    const roles = await rolesService.listRoles();
-    return res.json(roles);
-  } catch (error) {
-    console.error('Error retrieving roles:', error);
-    return res.status(500).json({ error: 'Error retrieving roles from database' });
-  }
+  const roles = await rolesService.listRoles();
+  return res.json(roles);
 }
 
 module.exports = {

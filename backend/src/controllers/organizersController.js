@@ -36,13 +36,8 @@ function parseOrganizerPayload(body) {
 
 // Devuelve todos los organizadores registrados.
 async function getAll(req, res) {
-  try {
-    const organizers = await organizersService.listOrganizers();
-    return res.json(organizers);
-  } catch (error) {
-    console.error('Error retrieving organizers:', error);
-    return res.status(500).json({ error: 'Error retrieving organizers from database' });
-  }
+  const organizers = await organizersService.listOrganizers();
+  return res.json(organizers);
 }
 
 // Recupera un organizador concreto validando antes su id.
@@ -52,17 +47,12 @@ async function getById(req, res) {
     return res.status(400).json({ error: 'Invalid organizer id' });
   }
 
-  try {
-    const organizer = await organizersService.getOrganizerById(id);
-    if (!organizer) {
-      return res.status(404).json({ error: 'Organizer not found' });
-    }
-
-    return res.json(organizer);
-  } catch (error) {
-    console.error('Error retrieving organizer:', error);
-    return res.status(500).json({ error: 'Error retrieving organizer from database' });
+  const organizer = await organizersService.getOrganizerById(id);
+  if (!organizer) {
+    return res.status(404).json({ error: 'Organizer not found' });
   }
+
+  return res.json(organizer);
 }
 
 // Inserta un nuevo organizador cuándo el payload es correcto.
@@ -72,13 +62,8 @@ async function create(req, res) {
     return res.status(400).json({ error: payload.error });
   }
 
-  try {
-    const id = await organizersService.createOrganizer(payload);
-    return res.status(201).json({ message: 'Organizer created successfully', id });
-  } catch (error) {
-    console.error('Error creating organizer:', error);
-    return res.status(500).json({ error: 'Error creating organizer in database' });
-  }
+  const id = await organizersService.createOrganizer(payload);
+  return res.status(201).json({ message: 'Organizer created successfully', id });
 }
 
 // Modifica un organizador existente con la información recibida.
@@ -93,17 +78,12 @@ async function update(req, res) {
     return res.status(400).json({ error: payload.error });
   }
 
-  try {
-    const wasUpdated = await organizersService.updateOrganizer(id, payload);
-    if (!wasUpdated) {
-      return res.status(404).json({ error: 'Organizer not found' });
-    }
-
-    return res.json({ message: 'Organizer updated successfully' });
-  } catch (error) {
-    console.error('Error updating organizer:', error);
-    return res.status(500).json({ error: 'Error updating organizer in database' });
+  const wasUpdated = await organizersService.updateOrganizer(id, payload);
+  if (!wasUpdated) {
+    return res.status(404).json({ error: 'Organizer not found' });
   }
+
+  return res.json({ message: 'Organizer updated successfully' });
 }
 
 // Elimina un organizador solo si no está enlazado a eventos.
@@ -113,23 +93,18 @@ async function remove(req, res) {
     return res.status(400).json({ error: 'Invalid organizer id' });
   }
 
-  try {
-    const existingOrganizer = await organizersService.getOrganizerById(id);
-    if (!existingOrganizer) {
-      return res.status(404).json({ error: 'Organizer not found' });
-    }
-
-    const hasEvents = await organizersService.hasRelatedEvents(id);
-    if (hasEvents) {
-      return res.status(409).json({ error: 'Organizer cannot be deleted because it has related events' });
-    }
-
-    await organizersService.deleteOrganizer(id);
-    return res.json({ message: 'Organizer deleted successfully' });
-  } catch (error) {
-    console.error('Error deleting organizer:', error);
-    return res.status(500).json({ error: 'Error deleting organizer from database' });
+  const existingOrganizer = await organizersService.getOrganizerById(id);
+  if (!existingOrganizer) {
+    return res.status(404).json({ error: 'Organizer not found' });
   }
+
+  const hasEvents = await organizersService.hasRelatedEvents(id);
+  if (hasEvents) {
+    return res.status(409).json({ error: 'Organizer cannot be deleted because it has related events' });
+  }
+
+  await organizersService.deleteOrganizer(id);
+  return res.json({ message: 'Organizer deleted successfully' });
 }
 
 // Se exportan las acciones CRUD para el router de organizadores.

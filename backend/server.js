@@ -76,14 +76,8 @@ app.use('/favorites', favoritesRoutes);
 app.use('/alerts', alertsRoutes);
 app.use('/content-manager-requests', contentManagerRequestsRoutes);
 
-app.use((err, req, res, next) => {
-  if (err) {
-    console.error('Error en middleware:', err);
-    return res.status(400).json({ error: err.message || 'Error procesando la peticion' });
-  }
-
-  return next();
-});
+const errorHandler = require('./src/middleware/errorHandler');
+app.use(errorHandler);
 
 const pool = require('./src/config/db');
 

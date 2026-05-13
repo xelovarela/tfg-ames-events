@@ -72,62 +72,47 @@ async function create(req, res) {
     return res.status(400).json({ error: parsedPayload.error });
   }
 
-  try {
-    const user = await usersService.getUserById(userId);
-    if (!user) {
-      return res.status(404).json({ error: 'Usuario no encontrado.' });
-    }
-
-    if (!ALLOWED_REQUESTER_ROLES.includes(user.role)) {
-      return res.status(400).json({ error: 'Tu cuenta ya tiene permisos de gestión o administración.' });
-    }
-
-    const pendingRequest = await contentManagerRequestsService.getPendingRequestByUserId(userId);
-    if (pendingRequest) {
-      return res.status(409).json({ error: 'Ya tienes una solicitud pendiente de revisión.' });
-    }
-
-    const requestId = await contentManagerRequestsService.createRequest({
-      userId,
-      ...parsedPayload
-    });
-
-    const requests = await contentManagerRequestsService.listRequestsByUserId(userId);
-    const createdRequest = requests.find((requestItem) => Number(requestItem.id) === Number(requestId)) || null;
-
-    return res.status(201).json({
-      message: 'Solicitud enviada. Administracion la revisara lo antes posible.',
-      request: createdRequest
-    });
-  } catch (error) {
-    console.error('Error creating content manager request:', error);
-    return res.status(500).json({ error: 'Error interno al enviar la solicitud.' });
+  const user = await usersService.getUserById(userId);
+  if (!user) {
+    return res.status(404).json({ error: 'Usuario no encontrado.' });
   }
+
+  if (!ALLOWED_REQUESTER_ROLES.includes(user.role)) {
+    return res.status(400).json({ error: 'Tu cuenta ya tiene permisos de gestión o administración.' });
+  }
+
+  const pendingRequest = await contentManagerRequestsService.getPendingRequestByUserId(userId);
+  if (pendingRequest) {
+    return res.status(409).json({ error: 'Ya tienes una solicitud pendiente de revisión.' });
+  }
+
+  const requestId = await contentManagerRequestsService.createRequest({
+    userId,
+    ...parsedPayload
+  });
+
+  const requests = await contentManagerRequestsService.listRequestsByUserId(userId);
+  const createdRequest = requests.find((requestItem) => Number(requestItem.id) === Number(requestId)) || null;
+
+  return res.status(201).json({
+    message: 'Solicitud enviada. Administracion la revisara lo antes posible.',
+    request: createdRequest
+  });
 }
 
 async function listMine(req, res) {
   const userId = Number(req.user?.id);
 
-  try {
-    const requests = await contentManagerRequestsService.listRequestsByUserId(userId);
-    return res.json({ requests });
-  } catch (error) {
-    console.error('Error listing own content manager requests:', error);
-    return res.status(500).json({ error: 'Error interno al consultar tus solicitudes.' });
-  }
+  const requests = await contentManagerRequestsService.listRequestsByUserId(userId);
+  return res.json({ requests });
 }
 
 async function listAll(req, res) {
   const statusRaw = typeof req.query.status === 'string' ? req.query.status.trim().toLowerCase() : '';
   const status = statusRaw && ['pending', 'approved', 'rejected'].includes(statusRaw) ? statusRaw : null;
 
-  try {
-    const requests = await contentManagerRequestsService.listRequests(status);
-    return res.json({ requests });
-  } catch (error) {
-    console.error('Error listing content manager requests:', error);
-    return res.status(500).json({ error: 'Error interno al consultar solicitudes.' });
-  }
+  const requests = await contentManagerRequestsService.listRequests(status);
+  return res.json({ requests });
 }
 
 async function review(req, res) {
@@ -141,38 +126,35 @@ async function review(req, res) {
     return res.status(400).json({ error: parsedPayload.error });
   }
 
-  try {
-    const contentManagerRole = await rolesService.getRoleByName('content_manager');
-    if (!contentManagerRole) {
-      return res.status(500).json({ error: 'No existe el rol content_manager.' });
-    }
-
-    const reviewResult = await contentManagerRequestsService.reviewRequest({
-      requestId,
-      nextStatus: parsedPayload.status,
-      adminNotes: parsedPayload.adminNotes,
-      reviewerId: Number(req.user.id),
-      contentManagerRoleId: contentManagerRole.id
-    });
-
-    if (reviewResult.notFound) {
-      return res.status(404).json({ error: 'Solicitud no encontrada.' });
-    }
-
-    if (reviewResult.alreadyReviewed) {
-      return res.status(409).json({ error: `La solicitud ya fue revisada (${reviewResult.status}).` });
-    }
-
-    return res.json({
-      message: parsedPayload.status === 'approved'
-        ? 'Solicitud aprobada y rol actualizado a gestor de contenido.'
-        : 'Solicitud rechazada.',
-      request: reviewResult.request
-    });
-  } catch (error) {
-    console.error('Error reviewing content manager request:', error);
-    return res.status(500).json({ error: 'Error interno al revisar la solicitud.' });
+  const contentManagerRole = await rolesService.getRoleByName('content_manager');
+  if (!contentManagerRole) {
+    const error = new Error('No existe el rol content_manager.');
+    error.statusCode = 500;
+    throw error;
   }
+
+  const reviewResult = await contentManagerRequestsService.reviewRequest({
+    requestId,
+    nextStatus: parsedPayload.status,
+    adminNotes: parsedPayload.adminNotes,
+    reviewerId: Number(req.user.id),
+    contentManagerRoleId: contentManagerRole.id
+  });
+
+  if (reviewResult.notFound) {
+    return res.status(404).json({ error: 'Solicitud no encontrada.' });
+  }
+
+  if (reviewResult.alreadyReviewed) {
+    return res.status(409).json({ error: `La solicitud ya fue revisada (${reviewResult.status}).` });
+  }
+
+  return res.json({
+    message: parsedPayload.status === 'approved'
+      ? 'Solicitud aprobada y rol actualizado a gestor de contenido.'
+      : 'Solicitud rechazada.',
+    request: reviewResult.request
+  });
 }
 
 module.exports = {

@@ -34,13 +34,8 @@ function getUnexpectedFields(body, allowedFields) {
 }
 
 async function getAll(req, res) {
-  try {
-    const users = await usersService.listUsers();
-    return res.json(users);
-  } catch (error) {
-    console.error('Error retrieving users:', error);
-    return res.status(500).json({ error: 'Error retrieving users from database' });
-  }
+  const users = await usersService.listUsers();
+  return res.json(users);
 }
 
 async function getById(req, res) {
@@ -49,17 +44,12 @@ async function getById(req, res) {
     return res.status(400).json({ error: 'Invalid user id' });
   }
 
-  try {
-    const user = await usersService.getUserById(id);
-    if (!user) {
-      return res.status(404).json({ error: 'User not found' });
-    }
-
-    return res.json(user);
-  } catch (error) {
-    console.error('Error retrieving user:', error);
-    return res.status(500).json({ error: 'Error retrieving user from database' });
+  const user = await usersService.getUserById(id);
+  if (!user) {
+    return res.status(404).json({ error: 'User not found' });
   }
+
+  return res.json(user);
 }
 
 async function updateRole(req, res) {
@@ -81,35 +71,32 @@ async function updateRole(req, res) {
     return res.status(400).json({ error: 'You cannot remove your own admin role' });
   }
 
-  try {
-    const [existingUser, role] = await Promise.all([
-      usersService.getUserById(id),
-      rolesService.getRoleByName(roleName)
-    ]);
+  const [existingUser, role] = await Promise.all([
+    usersService.getUserById(id),
+    rolesService.getRoleByName(roleName)
+  ]);
 
-    if (!existingUser) {
-      return res.status(404).json({ error: 'User not found' });
-    }
-
-    if (!role) {
-      return res.status(400).json({ error: 'Role does not exist' });
-    }
-
-    await usersService.updateUserRole(id, role.id);
-    const updatedUser = await usersService.getUserById(id);
-    if (!updatedUser || updatedUser.role !== role.name) {
-      return res.status(500).json({ error: 'User role was updated but could not be verified' });
-    }
-
-    return res.json({
-      message: 'User role updated successfully',
-      role: updatedUser.role,
-      user: updatedUser
-    });
-  } catch (error) {
-    console.error('Error updating user role:', error);
-    return res.status(500).json({ error: 'Error updating user role in database' });
+  if (!existingUser) {
+    return res.status(404).json({ error: 'User not found' });
   }
+
+  if (!role) {
+    return res.status(400).json({ error: 'Role does not exist' });
+  }
+
+  await usersService.updateUserRole(id, role.id);
+  const updatedUser = await usersService.getUserById(id);
+  if (!updatedUser || updatedUser.role !== role.name) {
+    const error = new Error('User role was updated but could not be verified');
+    error.statusCode = 500;
+    throw error;
+  }
+
+  return res.json({
+    message: 'User role updated successfully',
+    role: updatedUser.role,
+    user: updatedUser
+  });
 }
 
 async function updateStatus(req, res) {
@@ -127,23 +114,18 @@ async function updateStatus(req, res) {
     return res.status(400).json({ error: 'You cannot deactivate your own account' });
   }
 
-  try {
-    const existingUser = await usersService.getUserById(id);
-    if (!existingUser) {
-      return res.status(404).json({ error: 'User not found' });
-    }
-
-    await usersService.updateUserStatus(id, isActive === 1);
-    const updatedUser = await usersService.getUserById(id);
-
-    return res.json({
-      message: 'User status updated successfully',
-      user: updatedUser
-    });
-  } catch (error) {
-    console.error('Error updating user status:', error);
-    return res.status(500).json({ error: 'Error updating user status in database' });
+  const existingUser = await usersService.getUserById(id);
+  if (!existingUser) {
+    return res.status(404).json({ error: 'User not found' });
   }
+
+  await usersService.updateUserStatus(id, isActive === 1);
+  const updatedUser = await usersService.getUserById(id);
+
+  return res.json({
+    message: 'User status updated successfully',
+    user: updatedUser
+  });
 }
 
 async function updateMe(req, res) {
@@ -159,26 +141,21 @@ async function updateMe(req, res) {
     return res.status(400).json({ error: `El nombre de usuario es obligatorio y debe tener entre 1 y ${MAX_USERNAME_LENGTH} caracteres.` });
   }
 
-  try {
-    const existingUserWithUsername = await usersService.getUserByUsernameExcludingId(username, userId);
-    if (existingUserWithUsername) {
-      return res.status(409).json({ error: 'Ya existe otro usuario con ese nombre de usuario.' });
-    }
-
-    const updated = await usersService.updateOwnUsername(userId, username);
-    if (!updated) {
-      return res.status(404).json({ error: 'Usuario no encontrado.' });
-    }
-
-    const user = await usersService.getUserById(userId);
-    return res.json({
-      message: 'Perfil actualizado correctamente.',
-      user
-    });
-  } catch (error) {
-    console.error('Error updating own profile:', error);
-    return res.status(500).json({ error: 'Error interno al actualizar perfil.' });
+  const existingUserWithUsername = await usersService.getUserByUsernameExcludingId(username, userId);
+  if (existingUserWithUsername) {
+    return res.status(409).json({ error: 'Ya existe otro usuario con ese nombre de usuario.' });
   }
+
+  const updated = await usersService.updateOwnUsername(userId, username);
+  if (!updated) {
+    return res.status(404).json({ error: 'Usuario no encontrado.' });
+  }
+
+  const user = await usersService.getUserById(userId);
+  return res.json({
+    message: 'Perfil actualizado correctamente.',
+    user
+  });
 }
 
 async function updateMyPassword(req, res) {
@@ -199,25 +176,20 @@ async function updateMyPassword(req, res) {
     return res.status(400).json({ error: `La nueva contraseña debe tener al menos ${MIN_PASSWORD_LENGTH} caracteres.` });
   }
 
-  try {
-    const credentials = await usersService.getUserCredentialsById(userId);
-    if (!credentials) {
-      return res.status(404).json({ error: 'Usuario no encontrado.' });
-    }
-
-    const passwordOk = await bcrypt.compare(currentPassword, credentials.password_hash);
-    if (!passwordOk) {
-      return res.status(400).json({ error: 'La contraseña actual no es correcta.' });
-    }
-
-    const passwordHash = await bcrypt.hash(newPassword, SALT_ROUNDS);
-    await usersService.updateOwnPassword(userId, passwordHash);
-
-    return res.json({ message: 'Contrasena actualizada correctamente.' });
-  } catch (error) {
-    console.error('Error updating own password:', error);
-    return res.status(500).json({ error: 'Error interno al cambiar contraseña.' });
+  const credentials = await usersService.getUserCredentialsById(userId);
+  if (!credentials) {
+    return res.status(404).json({ error: 'Usuario no encontrado.' });
   }
+
+  const passwordOk = await bcrypt.compare(currentPassword, credentials.password_hash);
+  if (!passwordOk) {
+    return res.status(400).json({ error: 'La contraseña actual no es correcta.' });
+  }
+
+  const passwordHash = await bcrypt.hash(newPassword, SALT_ROUNDS);
+  await usersService.updateOwnPassword(userId, passwordHash);
+
+  return res.json({ message: 'Contrasena actualizada correctamente.' });
 }
 
 module.exports = {

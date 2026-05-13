@@ -26,13 +26,8 @@ function parseCategoryPayload(body) {
 
 // Devuelve todas las categorías disponibles.
 async function getAll(req, res) {
-  try {
-    const categories = await categoriesService.listCategories();
-    return res.json(categories);
-  } catch (error) {
-    console.error('Error retrieving categories:', error);
-    return res.status(500).json({ error: 'Error retrieving categories from database' });
-  }
+  const categories = await categoriesService.listCategories();
+  return res.json(categories);
 }
 
 // Busca una categoría concreta a partir del id recibido por ruta.
@@ -42,16 +37,11 @@ async function getById(req, res) {
     return res.status(400).json({ error: 'Invalid category id' });
   }
 
-  try {
-    const category = await categoriesService.getCategoryById(id);
-    if (!category) {
-      return res.status(404).json({ error: 'Category not found' });
-    }
-    return res.json(category);
-  } catch (error) {
-    console.error('Error retrieving category:', error);
-    return res.status(500).json({ error: 'Error retrieving category from database' });
+  const category = await categoriesService.getCategoryById(id);
+  if (!category) {
+    return res.status(404).json({ error: 'Category not found' });
   }
+  return res.json(category);
 }
 
 // Inserta una nueva categoría cuándo el nombre es valido.
@@ -74,8 +64,7 @@ async function create(req, res) {
     if (uploadedImageUrl) {
       deleteCategoryImageFile(uploadedImageUrl);
     }
-    console.error('Error creating category:', error);
-    return res.status(500).json({ error: 'Error creating category in database' });
+    throw error;
   }
 }
 
@@ -138,8 +127,7 @@ async function update(req, res) {
     if (uploadedImageUrl) {
       deleteCategoryImageFile(uploadedImageUrl);
     }
-    console.error('Error updating category:', error);
-    return res.status(500).json({ error: 'Error updating category in database' });
+    throw error;
   }
 }
 
@@ -150,24 +138,19 @@ async function remove(req, res) {
     return res.status(400).json({ error: 'Invalid category id' });
   }
 
-  try {
-    const existingCategory = await categoriesService.getCategoryById(id);
-    if (!existingCategory) {
-      return res.status(404).json({ error: 'Category not found' });
-    }
-
-    const hasEvents = await categoriesService.hasRelatedEvents(id);
-    if (hasEvents) {
-      return res.status(409).json({ error: 'Category cannot be deleted because it has related events' });
-    }
-
-    await categoriesService.deleteCategory(id);
-    deleteCategoryImageFile(existingCategory.image_url);
-    return res.json({ message: 'Category deleted successfully' });
-  } catch (error) {
-    console.error('Error deleting category:', error);
-    return res.status(500).json({ error: 'Error deleting category from database' });
+  const existingCategory = await categoriesService.getCategoryById(id);
+  if (!existingCategory) {
+    return res.status(404).json({ error: 'Category not found' });
   }
+
+  const hasEvents = await categoriesService.hasRelatedEvents(id);
+  if (hasEvents) {
+    return res.status(409).json({ error: 'Category cannot be deleted because it has related events' });
+  }
+
+  await categoriesService.deleteCategory(id);
+  deleteCategoryImageFile(existingCategory.image_url);
+  return res.json({ message: 'Category deleted successfully' });
 }
 
 // Se exportan las acciones CRUD para el router de categorías.

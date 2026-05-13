@@ -54,64 +54,61 @@ async function register(req, res) {
     return res.status(400).json({ error: `La contraseña debe tener al menos ${MIN_PASSWORD_LENGTH} caracteres.` });
   }
 
+  const [existingUserByEmail, existingUserByUsername, defaultRole] = await Promise.all([
+    authService.getUserByEmail(email),
+    authService.getUserByLogin(username),
+    authService.getRoleByName('user')
+  ]);
+
+  if (existingUserByEmail || existingUserByUsername) {
+    return res.status(409).json({ error: 'Ya existe una cuenta registrada con ese email o nombre de usuario.' });
+  }
+
+  if (!defaultRole) {
+    const error = new Error('No existe el rol base de usuario.');
+    error.statusCode = 500;
+    throw error;
+  }
+
+  const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
+  const verificationToken = generateVerificationToken();
+  const verificationExpiresAt = buildVerificationExpiryDate();
+
+  await authService.createRegisteredUser({
+    username,
+    email,
+    passwordHash,
+    roleId: defaultRole.id,
+    emailVerified: false,
+    verificationToken,
+    verificationExpiresAt
+  });
+
   try {
-    const [existingUserByEmail, existingUserByUsername, defaultRole] = await Promise.all([
-      authService.getUserByEmail(email),
-      authService.getUserByLogin(username),
-      authService.getRoleByName('user')
-    ]);
-
-    if (existingUserByEmail || existingUserByUsername) {
-      return res.status(409).json({ error: 'Ya existe una cuenta registrada con ese email o nombre de usuario.' });
-    }
-
-    if (!defaultRole) {
-      return res.status(500).json({ error: 'No existe el rol base de usuario.' });
-    }
-
-    const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
-    const verificationToken = generateVerificationToken();
-    const verificationExpiresAt = buildVerificationExpiryDate();
-
-    await authService.createRegisteredUser({
-      username,
-      email,
-      passwordHash,
-      roleId: defaultRole.id,
-      emailVerified: false,
-      verificationToken,
-      verificationExpiresAt
+    const delivery = await emailService.sendVerificationEmail({
+      to: email,
+      name: username,
+      token: verificationToken
     });
 
-    try {
-      const delivery = await emailService.sendVerificationEmail({
-        to: email,
-        name: username,
-        token: verificationToken
-      });
-
-      if (delivery?.delivered === false) {
-        return res.status(201).json({
-          message: VERIFICATION_EMAIL_FAILED_MESSAGE,
-          verification_email_sent: false
-        });
-      }
-    } catch (emailError) {
-      console.error('Error sending verification email after register:', emailError);
+    if (delivery?.delivered === false) {
       return res.status(201).json({
         message: VERIFICATION_EMAIL_FAILED_MESSAGE,
         verification_email_sent: false
       });
     }
-
+  } catch (emailError) {
+    console.error('Error sending verification email after register:', emailError);
     return res.status(201).json({
-      message: 'Cuenta creada correctamente. Revisa tu correo para verificarla antes de iniciar sesión.',
-      verification_email_sent: true
+      message: VERIFICATION_EMAIL_FAILED_MESSAGE,
+      verification_email_sent: false
     });
-  } catch (error) {
-    console.error('Error en register:', error);
-    return res.status(500).json({ error: 'Error interno al registrar usuario.' });
   }
+
+  return res.status(201).json({
+    message: 'Cuenta creada correctamente. Revisa tu correo para verificarla antes de iniciar sesión.',
+    verification_email_sent: true
+  });
 }
 
 async function verifyEmail(req, res) {
@@ -121,24 +118,19 @@ async function verifyEmail(req, res) {
     return res.status(400).json({ error: 'Token de verificación no proporcionado.' });
   }
 
-  try {
-    const user = await authService.getUserByVerificationToken(token);
+  const user = await authService.getUserByVerificationToken(token);
 
-    if (!user) {
-      return res.status(400).json({ error: 'El token de verificación es invalido.' });
-    }
-
-    if (!user.verification_expires_at || new Date(user.verification_expires_at) < new Date()) {
-      await authService.clearVerificationToken(user.id);
-      return res.status(400).json({ error: 'El token de verificación ha expirado. Solicita uno nuevo.' });
-    }
-
-    await authService.markEmailAsVerified(user.id);
-    return res.json({ message: 'Email verificado correctamente. Ya puedes iniciar sesión.' });
-  } catch (error) {
-    console.error('Error en verifyEmail:', error);
-    return res.status(500).json({ error: 'Error interno al verificar email.' });
+  if (!user) {
+    return res.status(400).json({ error: 'El token de verificación es invalido.' });
   }
+
+  if (!user.verification_expires_at || new Date(user.verification_expires_at) < new Date()) {
+    await authService.clearVerificationToken(user.id);
+    return res.status(400).json({ error: 'El token de verificación ha expirado. Solicita uno nuevo.' });
+  }
+
+  await authService.markEmailAsVerified(user.id);
+  return res.json({ message: 'Email verificado correctamente. Ya puedes iniciar sesión.' });
 }
 
 async function resendVerification(req, res) {
@@ -151,25 +143,20 @@ async function resendVerification(req, res) {
     return res.json(genericResponse);
   }
 
-  try {
-    const user = await authService.getUserByEmail(email);
-    if (user && Number(user.email_verified) !== 1) {
-      const verificationToken = generateVerificationToken();
-      const verificationExpiresAt = buildVerificationExpiryDate();
+  const user = await authService.getUserByEmail(email);
+  if (user && Number(user.email_verified) !== 1) {
+    const verificationToken = generateVerificationToken();
+    const verificationExpiresAt = buildVerificationExpiryDate();
 
-      await authService.storeVerificationToken(user.id, verificationToken, verificationExpiresAt);
-      await emailService.sendVerificationEmail({
-        to: user.email,
-        name: user.username,
-        token: verificationToken
-      });
-    }
-
-    return res.json(genericResponse);
-  } catch (error) {
-    console.error('Error en resendVerification:', error);
-    return res.status(500).json({ error: 'Error interno al reenviar verificación.' });
+    await authService.storeVerificationToken(user.id, verificationToken, verificationExpiresAt);
+    await emailService.sendVerificationEmail({
+      to: user.email,
+      name: user.username,
+      token: verificationToken
+    });
   }
+
+  return res.json(genericResponse);
 }
 
 async function forgotPassword(req, res) {
@@ -180,22 +167,17 @@ async function forgotPassword(req, res) {
     return res.json(genericResponse);
   }
 
-  try {
-    const user = await authService.getUserByEmail(email);
+  const user = await authService.getUserByEmail(email);
 
-    if (user) {
-      const resetToken = generatePasswordResetToken();
-      const resetExpiresAt = buildPasswordResetExpiryDate();
+  if (user) {
+    const resetToken = generatePasswordResetToken();
+    const resetExpiresAt = buildPasswordResetExpiryDate();
 
-      await authService.storePasswordResetToken(user.id, resetToken, resetExpiresAt);
-      await emailService.sendPasswordResetEmail(user, resetToken);
-    }
-
-    return res.json(genericResponse);
-  } catch (error) {
-    console.error('Error en forgotPassword:', error);
-    return res.status(500).json({ error: 'Error interno al solicitar recuperación de contraseña.' });
+    await authService.storePasswordResetToken(user.id, resetToken, resetExpiresAt);
+    await emailService.sendPasswordResetEmail(user, resetToken);
   }
+
+  return res.json(genericResponse);
 }
 
 async function resetPassword(req, res) {
@@ -210,26 +192,21 @@ async function resetPassword(req, res) {
     return res.status(400).json({ error: `La contraseña debe tener al menos ${MIN_PASSWORD_LENGTH} caracteres.` });
   }
 
-  try {
-    const user = await authService.getUserByPasswordResetToken(token);
+  const user = await authService.getUserByPasswordResetToken(token);
 
-    if (!user) {
-      return res.status(400).json({ error: 'Token invalido o expirado.' });
-    }
-
-    if (!user.password_reset_expires_at || new Date(user.password_reset_expires_at) < new Date()) {
-      await authService.clearPasswordResetToken(user.id);
-      return res.status(400).json({ error: 'Token invalido o expirado.' });
-    }
-
-    const passwordHash = await bcrypt.hash(newPassword, SALT_ROUNDS);
-    await authService.updatePasswordAndClearResetToken(user.id, passwordHash);
-
-    return res.json({ message: 'Contrasena actualizada correctamente.' });
-  } catch (error) {
-    console.error('Error en resetPassword:', error);
-    return res.status(500).json({ error: 'Error interno al restablecer contraseña.' });
+  if (!user) {
+    return res.status(400).json({ error: 'Token invalido o expirado.' });
   }
+
+  if (!user.password_reset_expires_at || new Date(user.password_reset_expires_at) < new Date()) {
+    await authService.clearPasswordResetToken(user.id);
+    return res.status(400).json({ error: 'Token invalido o expirado.' });
+  }
+
+  const passwordHash = await bcrypt.hash(newPassword, SALT_ROUNDS);
+  await authService.updatePasswordAndClearResetToken(user.id, passwordHash);
+
+  return res.json({ message: 'Contrasena actualizada correctamente.' });
 }
 
 async function login(req, res) {
@@ -240,73 +217,63 @@ async function login(req, res) {
     return res.status(400).json({ error: 'Debes indicar usuario o email y contraseña.' });
   }
 
-  try {
-    const user = await authService.getUserByLogin(loginValue);
+  const user = await authService.getUserByLogin(loginValue);
 
-    if (!user) {
-      return res.status(401).json({ error: 'Credenciales incorrectas.' });
-    }
-
-    const passwordOk = await bcrypt.compare(password, user.password_hash);
-
-    if (!passwordOk) {
-      return res.status(401).json({ error: 'Credenciales incorrectas.' });
-    }
-
-    if (Number(user.is_active) !== 1) {
-      return res.status(403).json({ error: 'Tu cuenta esta desactivada. Contacta con administración.' });
-    }
-
-    if (Number(user.email_verified) !== 1) {
-      return res.status(403).json({ error: 'Debes verificar tu email antes de iniciar sesión.' });
-    }
-
-    const token = jwt.sign(
-      {
-        sub: user.id,
-        username: user.username,
-        role: user.role
-      },
-      JWT_SECRET,
-      { expiresIn: JWT_EXPIRES_IN }
-    );
-
-    return res.json({
-      token,
-      user: {
-        id: user.id,
-        username: user.username,
-        email: user.email,
-        role: user.role,
-        email_verified: Number(user.email_verified) === 1
-      }
-    });
-  } catch (error) {
-    console.error('Error en login:', error);
-    return res.status(500).json({ error: 'Error interno al iniciar sesión.' });
+  if (!user) {
+    return res.status(401).json({ error: 'Credenciales incorrectas.' });
   }
+
+  const passwordOk = await bcrypt.compare(password, user.password_hash);
+
+  if (!passwordOk) {
+    return res.status(401).json({ error: 'Credenciales incorrectas.' });
+  }
+
+  if (Number(user.is_active) !== 1) {
+    return res.status(403).json({ error: 'Tu cuenta esta desactivada. Contacta con administración.' });
+  }
+
+  if (Number(user.email_verified) !== 1) {
+    return res.status(403).json({ error: 'Debes verificar tu email antes de iniciar sesión.' });
+  }
+
+  const tokenValue = jwt.sign(
+    {
+      sub: user.id,
+      username: user.username,
+      role: user.role
+    },
+    JWT_SECRET,
+    { expiresIn: JWT_EXPIRES_IN }
+  );
+
+  return res.json({
+    token: tokenValue,
+    user: {
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      role: user.role,
+      email_verified: Number(user.email_verified) === 1
+    }
+  });
 }
 
 async function me(req, res) {
-  try {
-    const user = await authService.getSafeUserById(req.user.id);
-    if (!user) {
-      return res.status(404).json({ error: 'Usuario no encontrado.' });
-    }
-
-    return res.json({
-      user: {
-        id: user.id,
-        username: user.username,
-        email: user.email,
-        role: user.role,
-        email_verified: Number(user.email_verified) === 1
-      }
-    });
-  } catch (error) {
-    console.error('Error en me:', error);
-    return res.status(500).json({ error: 'Error interno al recuperar perfil.' });
+  const user = await authService.getSafeUserById(req.user.id);
+  if (!user) {
+    return res.status(404).json({ error: 'Usuario no encontrado.' });
   }
+
+  return res.json({
+    user: {
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      role: user.role,
+      email_verified: Number(user.email_verified) === 1
+    }
+  });
 }
 
 module.exports = {

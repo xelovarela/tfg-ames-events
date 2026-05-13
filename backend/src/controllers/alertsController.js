@@ -99,13 +99,8 @@ async function validateRelations(payload) {
 }
 
 async function getAll(req, res) {
-  try {
-    const alerts = await alertsService.listAlertsByUserId(req.user.id);
-    return res.json(alerts);
-  } catch (error) {
-    console.error('Error retrieving alerts:', error);
-    return res.status(500).json({ error: 'Error retrieving alerts from database' });
-  }
+  const alerts = await alertsService.listAlertsByUserId(req.user.id);
+  return res.json(alerts);
 }
 
 async function create(req, res) {
@@ -114,19 +109,13 @@ async function create(req, res) {
     return res.status(400).json({ error: payload.error });
   }
 
-  try {
-    const relationError = await validateRelations(payload);
-    if (relationError) {
-      return res.status(400).json({ error: relationError });
-    }
-
-    const id = await alertsService.createAlert(req.user.id, payload);
-    const alert = await alertsService.getAlertByIdAndUserId(id, req.user.id);
-    return res.status(201).json({ message: 'Alert created successfully', alert });
-  } catch (error) {
-    console.error('Error creating alert:', error);
-    return res.status(500).json({ error: 'Error creating alert in database' });
+  const relationError = await validateRelations(payload);
+  if (relationError) {
+    return res.status(400).json({ error: relationError });
   }
+
+  const id = await alertsService.createAlert(req.user.id, payload);
+  return res.status(201).json({ message: 'Alert created successfully', id });
 }
 
 async function update(req, res) {
@@ -140,24 +129,17 @@ async function update(req, res) {
     return res.status(400).json({ error: payload.error });
   }
 
-  try {
-    const existingAlert = await alertsService.getAlertByIdAndUserId(id, req.user.id);
-    if (!existingAlert) {
-      return res.status(404).json({ error: 'Alert not found' });
-    }
-
-    const relationError = await validateRelations(payload);
-    if (relationError) {
-      return res.status(400).json({ error: relationError });
-    }
-
-    await alertsService.updateAlert(id, req.user.id, payload);
-    const alert = await alertsService.getAlertByIdAndUserId(id, req.user.id);
-    return res.json({ message: 'Alert updated successfully', alert });
-  } catch (error) {
-    console.error('Error updating alert:', error);
-    return res.status(500).json({ error: 'Error updating alert in database' });
+  const relationError = await validateRelations(payload);
+  if (relationError) {
+    return res.status(400).json({ error: relationError });
   }
+
+  const wasUpdated = await alertsService.updateAlert(id, req.user.id, payload);
+  if (!wasUpdated) {
+    return res.status(404).json({ error: 'Alert not found' });
+  }
+
+  return res.json({ message: 'Alert updated successfully' });
 }
 
 async function updateStatus(req, res) {
@@ -168,26 +150,15 @@ async function updateStatus(req, res) {
 
   const isActive = toBooleanFlag(req.body.is_active);
   if (isActive === null) {
-    return res.status(400).json({ error: 'is_active must be a boolean value.' });
+    return res.status(400).json({ error: 'is_active is required and must be boolean.' });
   }
 
-  try {
-    const existingAlert = await alertsService.getAlertByIdAndUserId(id, req.user.id);
-    if (!existingAlert) {
-      return res.status(404).json({ error: 'Alert not found' });
-    }
-
-    if (isActive === 1 && !alertsService.alertHasCriteria(existingAlert)) {
-      return res.status(400).json({ error: 'Cannot activate an alert without criteria' });
-    }
-
-    await alertsService.updateAlertStatus(id, req.user.id, isActive === 1);
-    const alert = await alertsService.getAlertByIdAndUserId(id, req.user.id);
-    return res.json({ message: 'Alert status updated successfully', alert });
-  } catch (error) {
-    console.error('Error updating alert status:', error);
-    return res.status(500).json({ error: 'Error updating alert status in database' });
+  const wasUpdated = await alertsService.updateAlertStatus(id, req.user.id, isActive === 1);
+  if (!wasUpdated) {
+    return res.status(404).json({ error: 'Alert not found' });
   }
+
+  return res.json({ message: 'Alert status updated successfully' });
 }
 
 async function remove(req, res) {
@@ -196,17 +167,12 @@ async function remove(req, res) {
     return res.status(400).json({ error: 'Invalid alert id' });
   }
 
-  try {
-    const wasDeleted = await alertsService.deleteAlert(id, req.user.id);
-    if (!wasDeleted) {
-      return res.status(404).json({ error: 'Alert not found' });
-    }
-
-    return res.json({ message: 'Alert deleted successfully' });
-  } catch (error) {
-    console.error('Error deleting alert:', error);
-    return res.status(500).json({ error: 'Error deleting alert from database' });
+  const wasDeleted = await alertsService.deleteAlert(id, req.user.id);
+  if (!wasDeleted) {
+    return res.status(404).json({ error: 'Alert not found' });
   }
+
+  return res.json({ message: 'Alert deleted successfully' });
 }
 
 module.exports = {

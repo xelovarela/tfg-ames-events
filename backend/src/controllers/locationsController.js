@@ -34,13 +34,8 @@ function parseLocationPayload(body) {
 
 // Devuelve todas las ubicaciones registradas.
 async function getAll(req, res) {
-  try {
-    const locations = await locationsService.listLocations();
-    return res.json(locations);
-  } catch (error) {
-    console.error('Error retrieving locations:', error);
-    return res.status(500).json({ error: 'Error retrieving locations from database' });
-  }
+  const locations = await locationsService.listLocations();
+  return res.json(locations);
 }
 
 // Recupera una ubicación concreta validando previamente su id.
@@ -50,16 +45,11 @@ async function getById(req, res) {
     return res.status(400).json({ error: 'Invalid location id' });
   }
 
-  try {
-    const location = await locationsService.getLocationById(id);
-    if (!location) {
-      return res.status(404).json({ error: 'Location not found' });
-    }
-    return res.json(location);
-  } catch (error) {
-    console.error('Error retrieving location:', error);
-    return res.status(500).json({ error: 'Error retrieving location from database' });
+  const location = await locationsService.getLocationById(id);
+  if (!location) {
+    return res.status(404).json({ error: 'Location not found' });
   }
+  return res.json(location);
 }
 
 // Crea una nueva ubicación con nombre y coordenadas válidas.
@@ -69,13 +59,8 @@ async function create(req, res) {
     return res.status(400).json({ error: payload.error });
   }
 
-  try {
-    const id = await locationsService.createLocation(payload);
-    return res.status(201).json({ message: 'Location created successfully', id });
-  } catch (error) {
-    console.error('Error creating location:', error);
-    return res.status(500).json({ error: 'Error creating location in database' });
-  }
+  const id = await locationsService.createLocation(payload);
+  return res.status(201).json({ message: 'Location created successfully', id });
 }
 
 // Actualiza una ubicación existente con los datos enviados por el cliente.
@@ -90,16 +75,11 @@ async function update(req, res) {
     return res.status(400).json({ error: payload.error });
   }
 
-  try {
-    const wasUpdated = await locationsService.updateLocation(id, payload);
-    if (!wasUpdated) {
-      return res.status(404).json({ error: 'Location not found' });
-    }
-    return res.json({ message: 'Location updated successfully' });
-  } catch (error) {
-    console.error('Error updating location:', error);
-    return res.status(500).json({ error: 'Error updating location in database' });
+  const wasUpdated = await locationsService.updateLocation(id, payload);
+  if (!wasUpdated) {
+    return res.status(404).json({ error: 'Location not found' });
   }
+  return res.json({ message: 'Location updated successfully' });
 }
 
 // Elimina una ubicación solo si no está relacionada con eventos.
@@ -109,23 +89,18 @@ async function remove(req, res) {
     return res.status(400).json({ error: 'Invalid location id' });
   }
 
-  try {
-    const existingLocation = await locationsService.getLocationById(id);
-    if (!existingLocation) {
-      return res.status(404).json({ error: 'Location not found' });
-    }
-
-    const hasEvents = await locationsService.hasRelatedEvents(id);
-    if (hasEvents) {
-      return res.status(409).json({ error: 'Location cannot be deleted because it has related events' });
-    }
-
-    await locationsService.deleteLocation(id);
-    return res.json({ message: 'Location deleted successfully' });
-  } catch (error) {
-    console.error('Error deleting location:', error);
-    return res.status(500).json({ error: 'Error deleting location from database' });
+  const existingLocation = await locationsService.getLocationById(id);
+  if (!existingLocation) {
+    return res.status(404).json({ error: 'Location not found' });
   }
+
+  const hasEvents = await locationsService.hasRelatedEvents(id);
+  if (hasEvents) {
+    return res.status(409).json({ error: 'Location cannot be deleted because it has related events' });
+  }
+
+  await locationsService.deleteLocation(id);
+  return res.json({ message: 'Location deleted successfully' });
 }
 
 // Se exportan las acciones CRUD para el router de ubicaciones.

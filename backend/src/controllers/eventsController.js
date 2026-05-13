@@ -19,15 +19,10 @@ const {
 
 // Devuelve la lista completa de eventos para el frontend.
 async function getAll(req, res) {
-  try {
-    const requestedTimeScope = normalizeTimeScope(req.query.timeScope, TIME_SCOPES.UPCOMING);
-    const timeScope = canUsePrivilegedTimeScope(req.user) ? requestedTimeScope : TIME_SCOPES.UPCOMING;
-    const events = await eventsService.listEvents({ timeScope });
-    return res.json(events);
-  } catch (error) {
-    console.error('Error retrieving events:', error);
-    return res.status(500).json({ error: 'Error retrieving events from database' });
-  }
+  const requestedTimeScope = normalizeTimeScope(req.query.timeScope, TIME_SCOPES.UPCOMING);
+  const timeScope = canUsePrivilegedTimeScope(req.user) ? requestedTimeScope : TIME_SCOPES.UPCOMING;
+  const events = await eventsService.listEvents({ timeScope });
+  return res.json(events);
 }
 
 // Recupera un evento concreto validando antes el identificador recibido por URL.
@@ -37,17 +32,12 @@ async function getById(req, res) {
     return res.status(400).json({ error: 'Invalid event id' });
   }
 
-  try {
-    const event = await eventsService.getEventById(id);
-    if (!event) {
-      return res.status(404).json({ error: 'Event not found' });
-    }
-
-    return res.json(event);
-  } catch (error) {
-    console.error('Error retrieving event:', error);
-    return res.status(500).json({ error: 'Error retrieving event from database' });
+  const event = await eventsService.getEventById(id);
+  if (!event) {
+    return res.status(404).json({ error: 'Event not found' });
   }
+
+  return res.json(event);
 }
 
 // Crea un nuevo evento después de validar datos y comprobar relaciones existentes.
@@ -101,9 +91,11 @@ async function create(req, res) {
 
     return res.status(201).json({ message: 'Event created successfully', id });
   } catch (error) {
-    deleteEventImageFile(uploadedImageUrl);
-    console.error('Error creating event:', error);
-    return res.status(500).json({ error: 'Error creating event in database' });
+    if (uploadedImageUrl) {
+      deleteEventImageFile(uploadedImageUrl);
+    }
+    // Express 5 capturará este error y lo pasará al middleware global
+    throw error;
   }
 }
 
@@ -168,9 +160,10 @@ async function update(req, res) {
     }
     return res.json({ message: 'Event updated successfully' });
   } catch (error) {
-    deleteEventImageFile(uploadedImageUrl);
-    console.error('Error updating event:', error);
-    return res.status(500).json({ error: 'Error updating event in database' });
+    if (uploadedImageUrl) {
+      deleteEventImageFile(uploadedImageUrl);
+    }
+    throw error;
   }
 }
 
@@ -181,19 +174,14 @@ async function remove(req, res) {
     return res.status(400).json({ error: 'Invalid event id' });
   }
 
-  try {
-    const existingEvent = await eventsService.getEventById(id);
-    const wasDeleted = await eventsService.deleteEvent(id);
-    if (!wasDeleted) {
-      return res.status(404).json({ error: 'Event not found' });
-    }
-
-    deleteEventImageFile(existingEvent?.image_url);
-    return res.json({ message: 'Event deleted successfully' });
-  } catch (error) {
-    console.error('Error deleting event:', error);
-    return res.status(500).json({ error: 'Error deleting event from database' });
+  const existingEvent = await eventsService.getEventById(id);
+  const wasDeleted = await eventsService.deleteEvent(id);
+  if (!wasDeleted) {
+    return res.status(404).json({ error: 'Event not found' });
   }
+
+  deleteEventImageFile(existingEvent?.image_url);
+  return res.json({ message: 'Event deleted successfully' });
 }
 
 // Se exportan las acciones para que el router pueda asociarlas a cada endpoint.

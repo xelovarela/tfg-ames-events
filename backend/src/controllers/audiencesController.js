@@ -54,13 +54,8 @@ function parseAudiencePayload(body) {
 
 // Devuelve todas las audiencias definidas.
 async function getAll(req, res) {
-  try {
-    const audiences = await audiencesService.listAudiences();
-    return res.json(audiences);
-  } catch (error) {
-    console.error('Error retrieving audiences:', error);
-    return res.status(500).json({ error: 'Error retrieving audiences from database' });
-  }
+  const audiences = await audiencesService.listAudiences();
+  return res.json(audiences);
 }
 
 // Recupera una audiencia concreta a partir de su identificador.
@@ -70,17 +65,12 @@ async function getById(req, res) {
     return res.status(400).json({ error: 'Invalid audience id' });
   }
 
-  try {
-    const audience = await audiencesService.getAudienceById(id);
-    if (!audience) {
-      return res.status(404).json({ error: 'Audience not found' });
-    }
-
-    return res.json(audience);
-  } catch (error) {
-    console.error('Error retrieving audience:', error);
-    return res.status(500).json({ error: 'Error retrieving audience from database' });
+  const audience = await audiencesService.getAudienceById(id);
+  if (!audience) {
+    return res.status(404).json({ error: 'Audience not found' });
   }
+
+  return res.json(audience);
 }
 
 // Crea una audiencia nueva si los datos cumplen las reglas del dominio.
@@ -90,13 +80,8 @@ async function create(req, res) {
     return res.status(400).json({ error: payload.error });
   }
 
-  try {
-    const id = await audiencesService.createAudience(payload);
-    return res.status(201).json({ message: 'Audience created successfully', id });
-  } catch (error) {
-    console.error('Error creating audience:', error);
-    return res.status(500).json({ error: 'Error creating audience in database' });
-  }
+  const id = await audiencesService.createAudience(payload);
+  return res.status(201).json({ message: 'Audience created successfully', id });
 }
 
 // Actualiza una audiencia existente conservando la validación previa.
@@ -111,17 +96,12 @@ async function update(req, res) {
     return res.status(400).json({ error: payload.error });
   }
 
-  try {
-    const wasUpdated = await audiencesService.updateAudience(id, payload);
-    if (!wasUpdated) {
-      return res.status(404).json({ error: 'Audience not found' });
-    }
-
-    return res.json({ message: 'Audience updated successfully' });
-  } catch (error) {
-    console.error('Error updating audience:', error);
-    return res.status(500).json({ error: 'Error updating audience in database' });
+  const wasUpdated = await audiencesService.updateAudience(id, payload);
+  if (!wasUpdated) {
+    return res.status(404).json({ error: 'Audience not found' });
   }
+
+  return res.json({ message: 'Audience updated successfully' });
 }
 
 // Elimina una audiencia únicamente cuándo no está asociada a eventos.
@@ -131,23 +111,18 @@ async function remove(req, res) {
     return res.status(400).json({ error: 'Invalid audience id' });
   }
 
-  try {
-    const existingAudience = await audiencesService.getAudienceById(id);
-    if (!existingAudience) {
-      return res.status(404).json({ error: 'Audience not found' });
-    }
-
-    const hasEvents = await audiencesService.hasRelatedEvents(id);
-    if (hasEvents) {
-      return res.status(409).json({ error: 'Audience cannot be deleted because it has related events' });
-    }
-
-    await audiencesService.deleteAudience(id);
-    return res.json({ message: 'Audience deleted successfully' });
-  } catch (error) {
-    console.error('Error deleting audience:', error);
-    return res.status(500).json({ error: 'Error deleting audience from database' });
+  const existingAudience = await audiencesService.getAudienceById(id);
+  if (!existingAudience) {
+    return res.status(404).json({ error: 'Audience not found' });
   }
+
+  const hasEvents = await audiencesService.hasRelatedEvents(id);
+  if (hasEvents) {
+    return res.status(409).json({ error: 'Audience cannot be deleted because it has related events' });
+  }
+
+  await audiencesService.deleteAudience(id);
+  return res.json({ message: 'Audience deleted successfully' });
 }
 
 // Se exportan las acciones CRUD para el router de audiencias.
