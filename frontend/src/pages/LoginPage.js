@@ -7,6 +7,7 @@ import React, { useState } from 'react';
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { API_BASE_URL } from '../config';
 import { getAuthSession, setAuthSession } from '../utils/authStorage';
+import { readJsonResponse } from '../utils/http';
 import './LoginPage.css';
 
 function LoginPage({ onLogin }) {
@@ -59,12 +60,7 @@ function LoginPage({ onLogin }) {
         })
       });
 
-      const data = await response.json();
-      if (!response.ok) {
-        const apiError = data?.error || 'No se pudo iniciar sesión.';
-        setShowResend(apiError.toLowerCase().includes('verificar'));
-        throw new Error(apiError);
-      }
+      const data = await readJsonResponse(response, 'No se pudo iniciar sesión.');
 
       setAuthSession({
         token: data.token,
@@ -78,6 +74,7 @@ function LoginPage({ onLogin }) {
       navigate(redirectTarget, { replace: true });
     } catch (error) {
       console.error(error);
+      setShowResend((error.message || '').toLowerCase().includes('verificar'));
       setMessage(error.message || 'No se pudo iniciar sesión.');
     } finally {
       setIsSubmitting(false);
@@ -107,10 +104,7 @@ function LoginPage({ onLogin }) {
         body: JSON.stringify({ email: loginAsEmail })
       });
 
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data?.error || 'No se pudo reenviar la verificación.');
-      }
+      const data = await readJsonResponse(response, 'No se pudo reenviar la verificación.');
 
       setResendMessage(data.message || 'Si la cuenta existe, hemos reenviado el correo.');
     } catch (error) {

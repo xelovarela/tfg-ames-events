@@ -12,6 +12,7 @@ import L from 'leaflet';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { API_BASE_URL } from './config';
 import MapContextLayers from './MapContextLayers';
+import { readJsonResponse } from './utils/http';
 
 const categoryMarkerClass = (category = '') => {
   const normalized = category
@@ -132,7 +133,7 @@ const AmesMap = ({ refreshTrigger, events: externalEvents, showContextLayers = t
     }
 
     fetch(`${API_BASE_URL}/events`)
-      .then((res) => res.json())
+      .then((res) => readJsonResponse(res, 'No se pudieron cargar los eventos para el mapa.'))
       .then((data) => {
         if (!Array.isArray(data)) {
           console.error('Unexpected /events response for map:', data);

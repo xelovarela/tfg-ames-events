@@ -10,6 +10,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { withAuthHeaders } from './utils/authFetch';
 import { getEventImageAlt, getEventImageUrl } from './utils/eventImages';
 import { isPastEvent } from './utils/eventTime';
+import { readJsonResponse } from './utils/http';
 
 // Convierte la fecha tecnica del backend a un formato legible.
 function formatDate(value) {
@@ -129,7 +130,7 @@ const EventList = ({
   // En modo no controlado el propio componente recupera los eventos desde la API.
   const loadEvents = () => {
     fetch(`${API_BASE_URL}/events`)
-      .then((res) => res.json())
+      .then((res) => readJsonResponse(res, 'No se pudieron cargar los eventos.'))
       .then((data) => {
         if (Array.isArray(data)) {
           setEvents(data);
@@ -144,7 +145,7 @@ const EventList = ({
       .catch((err) => {
         console.error('Error loading events:', err);
         setEvents([]);
-        setLoadError('No se pudieron cargar los eventos.');
+        setLoadError(err.message || 'No se pudieron cargar los eventos.');
       });
   };
 
@@ -181,11 +182,7 @@ const EventList = ({
         headers: withAuthHeaders()
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Error deleting event');
-      }
+      await readJsonResponse(response, 'Error deleting event');
 
       if (onEventDeleted) {
         onEventDeleted();

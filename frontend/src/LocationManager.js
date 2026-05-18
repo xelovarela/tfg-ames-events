@@ -10,6 +10,7 @@ import 'leaflet/dist/leaflet.css';
 import { API_BASE_URL } from './config';
 import { withAuthHeaders } from './utils/authFetch';
 import MapContextLayers from './MapContextLayers';
+import { readJsonResponse } from './utils/http';
 import './LocationManager.css';
 
 const AMES_CENTER = [42.8595, -8.65];
@@ -141,10 +142,7 @@ function LocationManager({ onLocationsChanged }) {
   const loadLocations = async () => {
     try {
       const response = await fetch(`${API_BASE_URL}/locations`);
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data.error || 'No se pudieron cargar las ubicaciones');
-      }
+      const data = await readJsonResponse(response, 'No se pudieron cargar las ubicaciones');
       setLocations(data);
     } catch (error) {
       console.error(error);
@@ -212,10 +210,7 @@ function LocationManager({ onLocationsChanged }) {
         headers: withAuthHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify(payload)
       });
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data.error || 'Error guardando ubicación');
-      }
+      await readJsonResponse(response, 'Error guardando ubicación');
 
       setMessage(editingId ? 'Ubicacion actualizada correctamente.' : 'Ubicacion creada correctamente.');
       clearForm();
@@ -255,10 +250,7 @@ function LocationManager({ onLocationsChanged }) {
         method: 'DELETE',
         headers: withAuthHeaders()
       });
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data.error || 'Error eliminando ubicación');
-      }
+      await readJsonResponse(response, 'Error eliminando ubicación');
 
       setMessage('Ubicacion eliminada correctamente.');
       await loadLocations();

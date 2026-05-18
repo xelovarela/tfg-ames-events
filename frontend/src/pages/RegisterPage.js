@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { API_BASE_URL } from '../config';
 import { buildRegisterPayload, validateRegisterForm } from '../utils/accountValidation';
+import { readJsonResponse } from '../utils/http';
 import './RegisterPage.css';
 
 function RegisterPage() {
@@ -25,29 +26,6 @@ function RegisterPage() {
       return;
     }
 
-    const trimmedUsername = username.trim();
-    const trimmedEmail = email.trim().toLowerCase();
-
-    if (!trimmedUsername || !trimmedEmail || !password || !confirmPassword) {
-      setMessage('Todos los campos son obligatorios.');
-      return;
-    }
-
-    if (!isValidEmail(trimmedEmail)) {
-      setMessage('Debes introducir un email valido.');
-      return;
-    }
-
-    if (password.length < 8) {
-      setMessage('La contraseña debe tener al menos 8 caracteres.');
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      setMessage('Las contraseñas no coinciden.');
-      return;
-    }
-
     setIsSubmitting(true);
     setMessage('');
     setIsSuccess(false);
@@ -61,10 +39,7 @@ function RegisterPage() {
         body: JSON.stringify(buildRegisterPayload({ username, email, password }))
       });
 
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data?.error || 'No se pudo registrar la cuenta.');
-      }
+      const data = await readJsonResponse(response, 'No se pudo registrar la cuenta.');
 
       setMessage(data.message || 'Tu cuenta ha sido creada. Revisa tu correo para verificarla.');
       setIsSuccess(true);

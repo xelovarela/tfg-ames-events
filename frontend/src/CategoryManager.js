@@ -7,6 +7,7 @@ import React, { useEffect, useState } from 'react';
 import { API_BASE_URL } from './config';
 import { withAuthHeaders } from './utils/authFetch';
 import { resolveImageUrl } from './utils/eventImages';
+import { readJsonResponse } from './utils/http';
 import './CategoryManager.css';
 
 // Estado base del formulario de categorías.
@@ -35,10 +36,7 @@ function CategoryManager({ onCategoriesChanged }) {
   const loadCategories = async () => {
     try {
       const response = await fetch(`${API_BASE_URL}/categories`);
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data.error || 'No se pudieron cargar las categorías');
-      }
+      const data = await readJsonResponse(response, 'No se pudieron cargar las categorías');
       setCategories(data);
     } catch (error) {
       console.error(error);
@@ -112,10 +110,7 @@ function CategoryManager({ onCategoriesChanged }) {
         headers: withAuthHeaders(),
         body: payload
       });
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data.error || 'Error guardando categoría');
-      }
+      await readJsonResponse(response, 'Error guardando categoría');
 
       setMessage(editingId ? 'Categoria actualizada correctamente.' : 'Categoria creada correctamente.');
       clearForm();
@@ -139,10 +134,7 @@ function CategoryManager({ onCategoriesChanged }) {
         method: 'DELETE',
         headers: withAuthHeaders()
       });
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data.error || 'Error eliminando categoría');
-      }
+      await readJsonResponse(response, 'Error eliminando categoría');
 
       setMessage('Categoria eliminada correctamente.');
       await loadCategories();

@@ -5,6 +5,7 @@
  */
 import React, { useEffect, useState } from 'react';
 import { GeoJSON, Circle, Tooltip } from 'react-leaflet';
+import { readJsonResponse } from './utils/http';
 import './MapContextLayers.css';
 
 /**
@@ -73,7 +74,7 @@ const useBoundaryGeoJSON = () => {
           console.warn('GeoJSON del límite municipal no encontrado (esto es normal en desarrollo)');
           return null;
         }
-        return res.json();
+        return readJsonResponse(res, 'No se pudo cargar el GeoJSON del límite municipal');
       })
       .then((data) => {
         setGeoData(data);

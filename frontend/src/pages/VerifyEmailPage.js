@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { API_BASE_URL } from '../config';
+import { readJsonResponse } from '../utils/http';
 import './VerifyEmailPage.css';
 
 function VerifyEmailPage() {
@@ -19,11 +20,7 @@ function VerifyEmailPage() {
     const verify = async () => {
       try {
         const response = await fetch(`${API_BASE_URL}/auth/verify-email?token=${encodeURIComponent(token)}`);
-        const data = await response.json();
-
-        if (!response.ok) {
-          throw new Error(data?.error || 'No se pudo verificar el email.');
-        }
+        const data = await readJsonResponse(response, 'No se pudo verificar el email.');
 
         setStatus('success');
         setMessage(data.message || 'Email verificado correctamente.');

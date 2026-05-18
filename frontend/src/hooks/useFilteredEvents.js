@@ -9,6 +9,7 @@ import {
 } from '../utils/eventFilters';
 import { sortAudiencesByAge } from '../utils/audiences';
 import { withAuthHeaders } from '../utils/authFetch';
+import { readJsonResponse } from '../utils/http';
 
 function normalizeOptions(optionsOrMessage) {
   if (typeof optionsOrMessage === 'string') {
@@ -62,9 +63,9 @@ function useFilteredEvents(optionsOrMessage = {}) {
       const response = await fetch(`${API_BASE_URL}/events${params.toString() ? `?${params.toString()}` : ''}`, {
         headers: includeAuth ? withAuthHeaders() : undefined
       });
-      const data = await response.json();
-      if (!response.ok || !Array.isArray(data)) {
-        throw new Error(data?.error || eventLoadErrorMessage);
+      const data = await readJsonResponse(response, eventLoadErrorMessage);
+      if (!Array.isArray(data)) {
+        throw new Error(eventLoadErrorMessage);
       }
       setEvents(data);
       setLoadError('');
@@ -85,16 +86,16 @@ function useFilteredEvents(optionsOrMessage = {}) {
       ]);
 
       const [categoriesData, audiencesData, locationsData, organizersData] = await Promise.all([
-        categoriesRes.json(),
-        audiencesRes.json(),
-        locationsRes.json(),
-        organizersRes.json()
+        readJsonResponse(categoriesRes, 'No se pudieron cargar las categorías'),
+        readJsonResponse(audiencesRes, 'No se pudieron cargar las audiencias'),
+        readJsonResponse(locationsRes, 'No se pudieron cargar las ubicaciones'),
+        readJsonResponse(organizersRes, 'No se pudieron cargar los organizadores')
       ]);
 
-      if (!categoriesRes.ok || !Array.isArray(categoriesData)) throw new Error('No se pudieron cargar las categorías');
-      if (!audiencesRes.ok || !Array.isArray(audiencesData)) throw new Error('No se pudieron cargar las audiencias');
-      if (!locationsRes.ok || !Array.isArray(locationsData)) throw new Error('No se pudieron cargar las ubicaciones');
-      if (!organizersRes.ok || !Array.isArray(organizersData)) throw new Error('No se pudieron cargar los organizadores');
+      if (!Array.isArray(categoriesData)) throw new Error('No se pudieron cargar las categorías');
+      if (!Array.isArray(audiencesData)) throw new Error('No se pudieron cargar las audiencias');
+      if (!Array.isArray(locationsData)) throw new Error('No se pudieron cargar las ubicaciones');
+      if (!Array.isArray(organizersData)) throw new Error('No se pudieron cargar los organizadores');
 
       setCategories(categoriesData);
       setAudiences(sortAudiencesByAge(audiencesData));

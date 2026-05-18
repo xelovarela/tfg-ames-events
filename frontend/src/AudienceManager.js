@@ -8,6 +8,7 @@ import { API_BASE_URL } from './config';
 import { withAuthHeaders } from './utils/authFetch';
 import { sortAudiencesByAge } from './utils/audiences';
 import { buildAudiencePayload, validateAudience } from './utils/audienceValidation';
+import { readJsonResponse } from './utils/http';
 import './AudienceManager.css';
 
 // Estado base del formulario de audiencias.
@@ -29,10 +30,7 @@ function AudienceManager({ onAudiencesChanged }) {
   const loadAudiences = async () => {
     try {
       const response = await fetch(`${API_BASE_URL}/audiences`);
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data.error || 'No se pudieron cargar las audiencias');
-      }
+      const data = await readJsonResponse(response, 'No se pudieron cargar las audiencias');
       setAudiences(sortAudiencesByAge(data));
     } catch (error) {
       console.error(error);
@@ -86,10 +84,7 @@ function AudienceManager({ onAudiencesChanged }) {
         headers: withAuthHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify(payload)
       });
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data.error || 'Error guardando audiencia');
-      }
+      await readJsonResponse(response, 'Error guardando audiencia');
 
       setMessage(editingId ? 'Audiencia actualizada correctamente.' : 'Audiencia creada correctamente.');
       clearForm();
@@ -128,10 +123,7 @@ function AudienceManager({ onAudiencesChanged }) {
         method: 'DELETE',
         headers: withAuthHeaders()
       });
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data.error || 'Error eliminando audiencia');
-      }
+      await readJsonResponse(response, 'Error eliminando audiencia');
 
       setMessage('Audiencia eliminada correctamente.');
       await loadAudiences();

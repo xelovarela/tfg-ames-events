@@ -9,6 +9,7 @@ import {
   listContentManagerRequests,
   reviewContentManagerRequest
 } from './utils/contentManagerRequestsApi';
+import { readJsonResponse } from './utils/http';
 import './UserManager.css';
 
 const ROLE_LABELS = {
@@ -48,11 +49,7 @@ const REQUEST_STATUS_LABELS = {
 };
 
 async function readJsonOrThrow(response, fallbackMessage) {
-  const data = await response.json();
-  if (!response.ok) {
-    throw new Error(data?.error || fallbackMessage);
-  }
-  return data;
+  return readJsonResponse(response, fallbackMessage);
 }
 
 function UserManager({ session }) {

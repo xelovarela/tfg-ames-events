@@ -5,6 +5,7 @@
 import React, { useEffect, useState } from 'react';
 import { API_BASE_URL } from '../config';
 import { withAuthHeaders } from '../utils/authFetch';
+import { readJsonResponse } from '../utils/http';
 import './AlertsPage.css';
 
 const initialForm = {
@@ -18,11 +19,7 @@ const initialForm = {
 };
 
 async function readJsonOrThrow(response, fallbackMessage) {
-  const data = await response.json();
-  if (!response.ok) {
-    throw new Error(data?.error || fallbackMessage);
-  }
-  return data;
+  return readJsonResponse(response, fallbackMessage);
 }
 
 function validateAlertForm(form) {

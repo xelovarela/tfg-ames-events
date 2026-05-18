@@ -1,18 +1,19 @@
 import { API_BASE_URL } from '../config';
 import { withAuthHeaders } from './authFetch';
 import { clearAuthSession } from './authStorage';
+import { readJsonResponse } from './http';
 
 async function readJsonOrThrow(response, fallbackMessage) {
-  const data = await response.json();
-  if (!response.ok) {
-    if (response.status === 401) {
+  try {
+    return await readJsonResponse(response, fallbackMessage);
+  } catch (error) {
+    if (error.status === 401) {
       clearAuthSession();
       throw new Error('Tu sesión ha expirado. Vuelve a iniciar sesión.');
     }
 
-    throw new Error(data?.error || fallbackMessage);
+    throw error;
   }
-  return data;
 }
 
 async function listFavorites() {

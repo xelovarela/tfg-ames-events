@@ -9,6 +9,7 @@ import { Link, useLocation, useParams } from 'react-router-dom';
 import { API_BASE_URL } from '../config';
 import { addFavorite, listFavoriteIds, removeFavorite } from '../utils/favoritesApi';
 import { getEventImageAlt, getEventImageUrl } from '../utils/eventImages';
+import { readJsonResponse } from '../utils/http';
 
 const DETAIL_TEXT = {
   title: 'Detalle del evento',
@@ -256,11 +257,7 @@ function EventDetailPage({ session }) {
 
       try {
         const response = await fetch(`${API_BASE_URL}/events/${id}`);
-        const data = await response.json();
-
-        if (!response.ok) {
-          throw new Error(data.error || 'No se pudo cargar el evento');
-        }
+        const data = await readJsonResponse(response, 'No se pudo cargar el evento');
 
         if (isMounted) {
           setEvent(data);

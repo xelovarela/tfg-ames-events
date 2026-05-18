@@ -6,6 +6,7 @@
 import React, { useEffect, useState } from 'react';
 import { API_BASE_URL } from './config';
 import { withAuthHeaders } from './utils/authFetch';
+import { readJsonResponse } from './utils/http';
 import './OrganizerManager.css';
 
 // Estado base del formulario de organizadores.
@@ -48,10 +49,7 @@ function OrganizerManager({ onOrganizersChanged }) {
   const loadOrganizers = async () => {
     try {
       const response = await fetch(`${API_BASE_URL}/organizers`);
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data.error || 'No se pudieron cargar los organizadores');
-      }
+      const data = await readJsonResponse(response, 'No se pudieron cargar los organizadores');
       setOrganizers(data);
     } catch (error) {
       console.error(error);
@@ -109,10 +107,7 @@ function OrganizerManager({ onOrganizersChanged }) {
         headers: withAuthHeaders({ 'Content-Type': 'application/json' }),
         body: JSON.stringify(payload)
       });
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data.error || 'Error guardando organizador');
-      }
+      await readJsonResponse(response, 'Error guardando organizador');
 
       setMessage(editingId ? 'Organizador actualizado correctamente.' : 'Organizador creado correctamente.');
       clearForm();
@@ -151,10 +146,7 @@ function OrganizerManager({ onOrganizersChanged }) {
         method: 'DELETE',
         headers: withAuthHeaders()
       });
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data.error || 'Error eliminando organizador');
-      }
+      await readJsonResponse(response, 'Error eliminando organizador');
 
       setMessage('Organizador eliminado correctamente.');
       await loadOrganizers();

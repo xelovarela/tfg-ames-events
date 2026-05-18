@@ -37,6 +37,6 @@ describe('readJsonResponse: lectura segura de respuestas HTTP', () => {
     });
 
     await expect(readJsonResponse(response, 'No se pudo cargar'))
-      .rejects.toThrow(/apunte al backend/i);
+      .rejects.toThrow(/recurso JSON esperado/i);
   });
 });

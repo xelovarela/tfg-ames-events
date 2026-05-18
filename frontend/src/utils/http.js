@@ -1,18 +1,43 @@
 async function readJsonResponse(response, fallbackMessage) {
-  const contentType = response.headers.get('content-type') || '';
-  const bodyText = await response.text();
+  const buildError = (message, data = null) => {
+    const error = new Error(message);
+    error.status = response.status;
+    error.data = data;
+    return error;
+  };
 
-  if (!contentType.includes('application/json')) {
-    const htmlHint = bodyText.trim().startsWith('<')
-      ? ' El servidor devolvio HTML; revisa que la URL de la API apunte al backend y no al frontend.'
-      : '';
+  if (typeof response.text !== 'function') {
+    const data = typeof response.json === 'function' ? await response.json() : null;
+    if (!response.ok) {
+      throw buildError(data?.error || fallbackMessage, data);
+    }
 
-    throw new Error(`${fallbackMessage}${htmlHint}`);
+    return data;
   }
 
-  const data = bodyText ? JSON.parse(bodyText) : null;
+  const contentType = response.headers?.get?.('content-type') || '';
+  const bodyText = await response.text();
+
+  if (!bodyText) {
+    if (response.ok) {
+      return null;
+    }
+
+    throw buildError(fallbackMessage);
+  }
+
+  const isJsonContentType = contentType.includes('application/json') || contentType.includes('+json');
+  if (!isJsonContentType) {
+    const htmlHint = bodyText.trim().startsWith('<')
+      ? ' El servidor devolvio HTML; revisa que la URL solicitada apunte al recurso JSON esperado.'
+      : '';
+
+    throw buildError(`${fallbackMessage}${htmlHint}`);
+  }
+
+  const data = JSON.parse(bodyText);
   if (!response.ok) {
-    throw new Error(data?.error || fallbackMessage);
+    throw buildError(data?.error || fallbackMessage, data);
   }
 
   return data;

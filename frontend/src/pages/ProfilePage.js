@@ -3,6 +3,7 @@ import { API_BASE_URL } from '../config';
 import { setAuthSession } from '../utils/authStorage';
 import { withAuthHeaders } from '../utils/authFetch';
 import { validatePasswordChange, validateProfileUsername } from '../utils/accountValidation';
+import { readJsonResponse } from '../utils/http';
 import './ProfilePage.css';
 
 function getDisplayName(user) {
@@ -15,11 +16,7 @@ function getInitial(user) {
 }
 
 async function readJsonOrThrow(response, fallbackMessage) {
-  const data = await response.json();
-  if (!response.ok) {
-    throw new Error(data?.error || fallbackMessage);
-  }
-  return data;
+  return readJsonResponse(response, fallbackMessage);
 }
 
 function ProfilePage({ session }) {

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { API_BASE_URL } from '../config';
+import { readJsonResponse } from '../utils/http';
 import './PasswordResetPage.css';
 
 function ResetPasswordPage() {
@@ -52,10 +53,7 @@ function ResetPasswordPage() {
         })
       });
 
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data?.error || 'Token invalido o expirado.');
-      }
+      const data = await readJsonResponse(response, 'Token invalido o expirado.');
 
       setMessage(data.message || 'Contrasena actualizada.');
       setIsSuccess(true);

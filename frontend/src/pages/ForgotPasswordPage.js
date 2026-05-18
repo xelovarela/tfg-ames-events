@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { API_BASE_URL } from '../config';
+import { readJsonResponse } from '../utils/http';
 import './PasswordResetPage.css';
 
 function ForgotPasswordPage() {
@@ -26,10 +27,7 @@ function ForgotPasswordPage() {
         body: JSON.stringify({ email: email.trim().toLowerCase() })
       });
 
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data?.error || 'No se pudo solicitar la recuperación.');
-      }
+      const data = await readJsonResponse(response, 'No se pudo solicitar la recuperación.');
 
       setMessage(data.message || 'Si el email existe, recibirás instrucciones para restablecer la contraseña.');
       setEmail('');

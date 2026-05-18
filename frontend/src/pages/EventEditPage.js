@@ -7,6 +7,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import EventForm from '../EventForm';
 import { API_BASE_URL } from '../config';
+import { readJsonResponse } from '../utils/http';
 
 // Este componente resuelve el evento desde la URL y prepara su edición.
 function EventEditPage() {
@@ -26,11 +27,7 @@ function EventEditPage() {
 
       try {
         const response = await fetch(`${API_BASE_URL}/events/${id}`);
-        const data = await response.json();
-
-        if (!response.ok) {
-          throw new Error(data.error || 'No se pudo cargar el evento');
-        }
+        const data = await readJsonResponse(response, 'No se pudo cargar el evento');
 
         if (isMounted) {
           setEventToEdit(data);

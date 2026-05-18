@@ -8,6 +8,7 @@ import { ArrowRight, CalendarDays, Heart, ListFilter, MapPin, Megaphone } from '
 import { Link } from 'react-router-dom';
 import { API_BASE_URL } from '../config';
 import { getEventImageAlt, getEventImageUrl } from '../utils/eventImages';
+import { readJsonResponse } from '../utils/http';
 import './HomePage.css';
 
 function formatEventDateParts(value) {
@@ -78,10 +79,9 @@ function HomePage({ session }) {
 
       try {
         const response = await fetch(`${API_BASE_URL}/events`);
-        const data = await response.json();
-
-        if (!response.ok || !Array.isArray(data)) {
-          throw new Error(data?.error || 'No se pudieron cargar los eventos');
+        const data = await readJsonResponse(response, 'No se pudieron cargar los eventos');
+        if (!Array.isArray(data)) {
+          throw new Error('No se pudieron cargar los eventos');
         }
 
         if (isMounted) {
