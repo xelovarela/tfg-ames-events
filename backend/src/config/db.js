@@ -19,7 +19,8 @@ const pool = mysql.createPool({
   password: process.env.DB_PASSWORD || '',
   database: process.env.DB_NAME || 'ames_events',
   port: process.env.DB_PORT ? Number(process.env.DB_PORT) : 3306,
-  charset: 'utf8mb4_unicode_ci'
+  charset: 'utf8mb4_unicode_ci',
+  dateStrings: ['DATE', 'DATETIME']
 });
 
 // Se exporta una única instancia para compartirla en toda la capa de acceso a datos.
