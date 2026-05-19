@@ -9,7 +9,7 @@ import { API_BASE_URL } from './config';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { withAuthHeaders } from './utils/authFetch';
 import { getEventImageAlt, getEventImageUrl } from './utils/eventImages';
-import { isPastEvent } from './utils/eventTime';
+import { isPastEvent, parseEventDate } from './utils/eventTime';
 import { readJsonResponse } from './utils/http';
 
 // Convierte la fecha tecnica del backend a un formato legible.
@@ -17,8 +17,8 @@ function formatDate(value) {
   if (!value) {
     return 'Sin fecha';
   }
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) {
+  const date = parseEventDate(value);
+  if (!date) {
     return 'Sin fecha';
   }
   return date.toLocaleString('es-ES', {
@@ -50,8 +50,8 @@ function formatShortDate(value) {
     };
   }
 
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) {
+  const date = parseEventDate(value);
+  if (!date) {
     return {
       day: '--',
       month: 'Sin fecha',

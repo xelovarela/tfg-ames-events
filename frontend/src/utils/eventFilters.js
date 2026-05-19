@@ -3,6 +3,8 @@
  * Aqui se define el estado inicial de los filtros, las funciones que interpretan
  * parametros de URL y el algoritmo que decide que eventos se muestran.
  */
+import { parseEventDate } from './eventTime';
+
 // Estado base usado al inicializar o limpiar el formulario de filtros.
 const initialEventFilters = {
   search: '',
@@ -22,8 +24,8 @@ function isDatePresetMatch(eventDateValue, datePreset) {
     return true;
   }
 
-  const eventDate = new Date(eventDateValue);
-  if (Number.isNaN(eventDate.getTime())) {
+  const eventDate = parseEventDate(eventDateValue);
+  if (!eventDate) {
     return false;
   }
 

@@ -1,11 +1,4 @@
-function parseEventDate(value) {
-  if (!value) {
-    return null;
-  }
-
-  const parsed = new Date(value);
-  return Number.isNaN(parsed.getTime()) ? null : parsed;
-}
+import { parseEventDate } from './eventTime';
 
 function validateEventForm(formData, { isDuplicating = false, rejectPastDate = true, now = new Date() } = {}) {
   const trimmedTitle = formData.title.trim();

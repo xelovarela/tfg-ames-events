@@ -12,6 +12,7 @@ import L from 'leaflet';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { API_BASE_URL } from './config';
 import MapContextLayers from './MapContextLayers';
+import { parseEventDate } from './utils/eventTime';
 import { readJsonResponse } from './utils/http';
 
 const categoryMarkerClass = (category = '') => {
@@ -65,8 +66,8 @@ const AmesMap = ({ refreshTrigger, events: externalEvents, showContextLayers = t
   // Formatea fechas de evento para mostrarlas dentro del popup del mapa.
   const formatDate = (value) => {
     if (!value) return 'Sin fecha';
-    const date = new Date(value);
-    if (Number.isNaN(date.getTime())) return 'Sin fecha';
+    const date = parseEventDate(value);
+    if (!date) return 'Sin fecha';
     return date.toLocaleString('es-ES', {
       day: '2-digit',
       month: '2-digit',

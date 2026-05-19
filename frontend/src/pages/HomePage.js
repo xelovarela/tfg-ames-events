@@ -8,6 +8,7 @@ import { ArrowRight, CalendarDays, Heart, ListFilter, MapPin, Megaphone } from '
 import { Link } from 'react-router-dom';
 import { API_BASE_URL } from '../config';
 import { getEventImageAlt, getEventImageUrl } from '../utils/eventImages';
+import { parseEventDate } from '../utils/eventTime';
 import { readJsonResponse } from '../utils/http';
 import './HomePage.css';
 
@@ -20,8 +21,8 @@ function formatEventDateParts(value) {
     };
   }
 
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) {
+  const date = parseEventDate(value);
+  if (!date) {
     return {
       day: '--',
       month: 'SIN FECHA',
@@ -111,10 +112,10 @@ function HomePage({ session }) {
 
     return [...events]
       .filter((event) => {
-        const date = new Date(event.event_date);
-        return !Number.isNaN(date.getTime()) && date >= now;
+        const date = parseEventDate(event.event_date);
+        return date && date >= now;
       })
-      .sort((left, right) => new Date(left.event_date).getTime() - new Date(right.event_date).getTime())
+      .sort((left, right) => parseEventDate(left.event_date).getTime() - parseEventDate(right.event_date).getTime())
       .slice(0, 6);
   }, [events]);
 
@@ -129,7 +130,7 @@ function HomePage({ session }) {
       <article key={event.id} className={`home-event-card${featured ? ' home-event-card-featured' : ''}`}>
         <Link to={`/events/${event.id}`} className="home-event-image-link" aria-label={`Ver ${event.title}`}>
           <img src={getEventImageUrl(event)} alt={getEventImageAlt(event)} className="home-event-image" loading="lazy" />
-          <div className="home-event-date-overlay" aria-label={`Fecha: ${new Date(event.event_date).toLocaleString('es-ES')}`}>
+          <div className="home-event-date-overlay" aria-label={`Fecha: ${parseEventDate(event.event_date)?.toLocaleString('es-ES') || 'Sin fecha'}`}>
             <strong>{eventDateParts.day}</strong>
             <span>{eventDateParts.month}</span>
             {eventDateParts.time && <small>{eventDateParts.time}</small>}

@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
-import { isPastEvent } from './utils/eventTime';
+import { isPastEvent, parseEventDate } from './utils/eventTime';
 import './EventCalendar.css';
 
 const WEEK_DAYS = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
@@ -20,8 +20,8 @@ function toDateKey(value) {
     return '';
   }
 
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) {
+  const date = parseEventDate(value);
+  if (!date) {
     return '';
   }
 
@@ -36,8 +36,8 @@ function formatEventTime(value) {
     return '';
   }
 
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) {
+  const date = parseEventDate(value);
+  if (!date) {
     return '';
   }
 
@@ -100,7 +100,7 @@ function EventCalendar({ events = [], emptyMessage = 'No hay eventos para mostra
     });
 
     groupedEvents.forEach((dayEvents) => {
-      dayEvents.sort((first, second) => new Date(first.event_date) - new Date(second.event_date));
+      dayEvents.sort((first, second) => parseEventDate(first.event_date) - parseEventDate(second.event_date));
     });
 
     return groupedEvents;

@@ -9,6 +9,7 @@ import { Link, useLocation, useParams } from 'react-router-dom';
 import { API_BASE_URL } from '../config';
 import { addFavorite, listFavoriteIds, removeFavorite } from '../utils/favoritesApi';
 import { getEventImageAlt, getEventImageUrl } from '../utils/eventImages';
+import { parseEventDate } from '../utils/eventTime';
 import { readJsonResponse } from '../utils/http';
 
 const DETAIL_TEXT = {
@@ -47,8 +48,8 @@ function formatDateParts(value) {
     };
   }
 
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) {
+  const date = parseEventDate(value);
+  if (!date) {
     return {
       day: 'Sin fecha',
       time: 'Hora no indicada'
@@ -78,8 +79,8 @@ function formatDateBadgeParts(value) {
     };
   }
 
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) {
+  const date = parseEventDate(value);
+  if (!date) {
     return {
       day: '--',
       month: 'SIN FECHA',
@@ -145,8 +146,8 @@ function IconShare() {
 }
 
 function formatCalendarDateLocal(value) {
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) {
+  const date = parseEventDate(value);
+  if (!date) {
     return '';
   }
 
@@ -164,8 +165,8 @@ function buildGoogleCalendarUrl(event) {
     return '';
   }
 
-  const startDate = new Date(event.event_date);
-  if (Number.isNaN(startDate.getTime())) {
+  const startDate = parseEventDate(event.event_date);
+  if (!startDate) {
     return '';
   }
 

@@ -8,6 +8,7 @@ import { API_BASE_URL } from './config';
 import { withAuthHeaders } from './utils/authFetch';
 import { getEventImageUrl } from './utils/eventImages';
 import { validateEventForm } from './utils/eventFormValidation';
+import { parseEventDate } from './utils/eventTime';
 import { readJsonResponse } from './utils/http';
 import './EventForm.css';
 
@@ -30,8 +31,8 @@ function toDateTimeLocalInput(value) {
     return '';
   }
 
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) {
+  const date = parseEventDate(value);
+  if (!date) {
     return '';
   }
 
