@@ -251,7 +251,7 @@ async function sendFavoriteReminderEmail({ to, name, event }) {
 
   if (!transporter) {
     console.warn(`[emailService] SMTP no configurado. Recordatorio de favorito para ${to}: ${eventUrl}`);
-    return { delivered: false, eventUrl };
+    return { delivered: false, eventUrl, reason: 'smtp_not_configured' };
   }
 
   await transporter.sendMail({

@@ -63,6 +63,7 @@ async function markReminderSent(userId, eventId, reminderFor) {
 async function sendFavoriteRemindersForDate(targetDate = getTomorrowDateOnly()) {
   const reminders = await listPendingFavoriteReminders(targetDate);
   let sent = 0;
+  let skipped = 0;
   let failed = 0;
 
   for (const reminder of reminders) {
@@ -76,6 +77,11 @@ async function sendFavoriteRemindersForDate(targetDate = getTomorrowDateOnly()) 
       if (result.delivered) {
         await markReminderSent(reminder.user_id, reminder.id, targetDate);
         sent += 1;
+      } else {
+        skipped += 1;
+        console.warn(
+          `[favoriteRemindersService] Reminder not delivered for user ${reminder.user_id} and event ${reminder.id}. Reason: ${result.reason || 'unknown'}.`
+        );
       }
     } catch (error) {
       failed += 1;
@@ -83,7 +89,7 @@ async function sendFavoriteRemindersForDate(targetDate = getTomorrowDateOnly()) 
     }
   }
 
-  return { checked: reminders.length, sent, failed, targetDate };
+  return { checked: reminders.length, sent, skipped, failed, targetDate };
 }
 
 module.exports = {

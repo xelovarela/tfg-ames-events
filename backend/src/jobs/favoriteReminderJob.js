@@ -35,7 +35,7 @@ function getDelayUntilNextRun(runTime) {
 async function runFavoriteReminderJob() {
   const result = await favoriteRemindersService.sendFavoriteRemindersForDate();
   console.log(
-    `[favoriteReminderJob] Fecha objetivo ${result.targetDate}. Revisados: ${result.checked}. Enviados: ${result.sent}. Fallidos: ${result.failed}.`
+    `[favoriteReminderJob] Fecha objetivo ${result.targetDate}. Revisados: ${result.checked}. Enviados: ${result.sent}. Omitidos: ${result.skipped}. Fallidos: ${result.failed}.`
   );
 }
 

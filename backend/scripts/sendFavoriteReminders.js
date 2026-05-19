@@ -1,4 +1,6 @@
-require('dotenv').config();
+const path = require('path');
+
+require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 
 const favoriteRemindersService = require('../src/services/favoriteRemindersService');
 
@@ -7,10 +9,10 @@ async function main() {
   const result = await favoriteRemindersService.sendFavoriteRemindersForDate(targetDate);
 
   console.log(
-    `[favorite-reminders] Fecha objetivo ${result.targetDate}. Revisados: ${result.checked}. Enviados: ${result.sent}. Fallidos: ${result.failed}.`
+    `[favorite-reminders] Fecha objetivo ${result.targetDate}. Revisados: ${result.checked}. Enviados: ${result.sent}. Omitidos: ${result.skipped}. Fallidos: ${result.failed}.`
   );
 
-  if (result.failed > 0) {
+  if (result.failed > 0 || result.skipped > 0) {
     process.exitCode = 1;
   }
 }
