@@ -1,3 +1,5 @@
+AddType application/geo+json .geojson
+
 RewriteEngine On
 RewriteBase /
 RewriteRule ^index\.html$ - [L]
