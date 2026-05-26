@@ -509,6 +509,7 @@ h1, h2, h3, h4, h5, h6 {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(290px, 360px));
   gap: 0.9rem;
+  align-items: start;
   justify-content: start;
 }
 
@@ -684,10 +685,9 @@ h1, h2, h3, h4, h5, h6 {
 .event-list-card-body {
   min-width: 0;
   display: grid;
-  gap: 0.55rem;
+  gap: 0.45rem;
   position: relative;
-  padding: 0.85rem;
-  padding-bottom: 2.3rem;
+  padding: 0.75rem;
 }
 
 .event-list-card-top {
@@ -733,8 +733,8 @@ h1, h2, h3, h4, h5, h6 {
 .event-list-card h4 {
   margin: 0;
   color: #4c1f12;
-  font-size: 1.12rem;
-  line-height: 1.2;
+  font-size: 1.04rem;
+  line-height: 1.18;
 }
 
 .event-list-card h4 a {
@@ -749,26 +749,33 @@ h1, h2, h3, h4, h5, h6 {
 .event-list-description {
   margin: 0;
   color: #59463b;
-  font-size: 0.92rem;
-  line-height: 1.45;
+  font-size: 0.88rem;
+  line-height: 1.35;
 }
 
 .event-list-meta {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.45rem;
+  grid-template-columns: 1fr;
+  gap: 0.38rem;
   margin: 0;
 }
 
 .event-list-meta div {
   min-width: 0;
-  padding: 0.45rem;
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr);
+  align-items: center;
+  column-gap: 0.35rem;
+  padding: 0.38rem 0.42rem;
   border: 1px solid #f0dfd4;
   border-radius: 10px;
   background: #fffaf6;
 }
 
 .event-list-meta dt {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   color: #8a5139;
   font-size: 0.72rem;
   font-weight: 900;
@@ -777,9 +784,9 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .event-list-meta dd {
-  margin: 0.12rem 0 0;
+  margin: 0;
   color: #2f2520;
-  font-size: 0.84rem;
+  font-size: 0.8rem;
   overflow-wrap: anywhere;
 }
 
@@ -805,11 +812,9 @@ h1, h2, h3, h4, h5, h6 {
 .event-list-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.45rem;
+  gap: 0.38rem;
   align-items: center;
-  margin-top: 0.15rem;
-  padding-right: 3rem;
-  min-height: 40px;
+  margin-top: 0.05rem;
 }
 
 .event-list-action-btn {
@@ -856,8 +861,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .event-list-favorite-btn {
-  width: 40px;
-  height: 40px;
+  width: 34px;
+  height: 34px;
   border: 1px solid #d9c4b4;
   border-radius: 999px;
   background: #fff;
@@ -866,9 +871,7 @@ h1, h2, h3, h4, h5, h6 {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  position: absolute;
-  right: 0;
-  bottom: 0;
+  margin-left: auto;
 }
 
 .event-list-favorite-btn:hover {
@@ -877,8 +880,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .event-list-favorite-icon {
-  width: 21px;
-  height: 21px;
+  width: 19px;
+  height: 19px;
   display: inline-flex;
 }
 

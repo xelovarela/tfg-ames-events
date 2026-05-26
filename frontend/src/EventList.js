@@ -316,21 +316,6 @@ const EventList = ({
 
                   {(showFavoriteButton || canManageEvents) && (
                     <div className="event-list-actions">
-                      {showFavoriteButton && (
-                        <button
-                          type="button"
-                          className={`event-list-favorite-btn${isFavorite ? ' active' : ''}`}
-                          onClick={(clickEvent) => {
-                            clickEvent.stopPropagation();
-                            handleToggleFavorite(event.id, isFavorite);
-                          }}
-                          aria-label={isFavorite ? 'Quitar de favoritos' : 'Anadir a favoritos'}
-                          title={isFavorite ? 'Quitar de favoritos' : 'Anadir a favoritos'}
-                        >
-                          <span className="event-list-favorite-icon" aria-hidden="true"><IconHeart /></span>
-                        </button>
-                      )}
-
                       {canManageEvents && (
                         <>
                           <Link
@@ -361,6 +346,21 @@ const EventList = ({
                             Borrar
                           </button>
                         </>
+                      )}
+
+                      {showFavoriteButton && (
+                        <button
+                          type="button"
+                          className={`event-list-favorite-btn${isFavorite ? ' active' : ''}`}
+                          onClick={(clickEvent) => {
+                            clickEvent.stopPropagation();
+                            handleToggleFavorite(event.id, isFavorite);
+                          }}
+                          aria-label={isFavorite ? 'Quitar de favoritos' : 'Anadir a favoritos'}
+                          title={isFavorite ? 'Quitar de favoritos' : 'Anadir a favoritos'}
+                        >
+                          <span className="event-list-favorite-icon" aria-hidden="true"><IconHeart /></span>
+                        </button>
                       )}
                     </div>
                   )}
