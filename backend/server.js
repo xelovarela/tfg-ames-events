@@ -19,7 +19,6 @@ const rolesRoutes = require('./src/routes/roles');
 const favoritesRoutes = require('./src/routes/favorites');
 const alertsRoutes = require('./src/routes/alerts');
 const contentManagerRequestsRoutes = require('./src/routes/contentManagerRequests');
-const { startFavoriteReminderJob } = require('./src/jobs/favoriteReminderJob');
 
 // Validar variables críticas antes de arrancar
 if (process.env.NODE_ENV === 'production') {
@@ -28,10 +27,6 @@ if (process.env.NODE_ENV === 'production') {
     process.exit(1);
   }
   console.log('✓ JWT_SECRET configurado en producción');
-}
-
-if (process.env.FAVORITE_REMINDERS_ENABLED === 'true' && !process.env.SMTP_HOST) {
-  console.warn('ADVERTENCIA: Recordatorios de favoritos habilitados pero SMTP no configurado. Los emails no se enviarán.');
 }
 
 const app = express();
@@ -103,5 +98,4 @@ const PORT = process.env.PORT || 3001;
 
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en puerto ${PORT}`);
-  startFavoriteReminderJob();
 });

@@ -35,10 +35,6 @@ SMTP_USER=tu-email@example.com
 SMTP_PASS=tu-contrasena
 MAIL_FROM="Ames Events <no-reply@ames-events.local>"
 
-FAVORITE_REMINDERS_ENABLED=false
-FAVORITE_REMINDERS_RUN_TIME=09:00
-FAVORITE_REMINDERS_RUN_ON_START=true
-
 EVENT_IMAGES_DIR=/home/your-user/api/uploads/events
 EVENT_IMAGES_PUBLIC_BASE_URL=https://api.anxovarela.es
 CATEGORY_IMAGES_DIR=/home/your-user/api/uploads/categories
@@ -55,6 +51,8 @@ npm run send:favorite-reminders   # Ejecutar recordatorios manualmente
 npm test                          # Ejecutar tests unitarios
 ```
 
+Los recordatorios de favoritos no se ejecutan al arrancar el backend. Para enviarlos, ejecuta el script manualmente o prográmalo con cron.
+
 ## Estructura
 
 - `server.js` - Punto de entrada y configuracion global de Express.
@@ -64,7 +62,6 @@ npm test                          # Ejecutar tests unitarios
 - `src/middleware/` - Autenticacion, permisos y subida de imagenes.
 - `src/config/` - Configuracion de base de datos y JWT.
 - `src/utils/` - Utilidades puras de validacion y normalizacion.
-- `src/jobs/` - Tareas automaticas, como recordatorios de favoritos.
 
 ## Endpoints principales
 

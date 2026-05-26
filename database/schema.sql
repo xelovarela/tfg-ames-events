@@ -15,7 +15,6 @@
 -- - roles: Roles de usuario (admin, content_manager, user)
 -- - alerts: Alertas personalizadas de usuarios para filtrar eventos
 -- - favorites: Eventos marcados como favoritos por usuarios
--- - favorite_event_reminders: Recordatorios de eventos favoritos
 -- - content_manager_requests: Solicitudes para ser gestor de contenidos
 -- 
 -- Codificación: UTF-8 (utf8mb4)
@@ -133,27 +132,6 @@ CREATE TABLE `events` (
   CONSTRAINT `fk_location` FOREIGN KEY (`location_id`) REFERENCES `locations` (`id`),
   CONSTRAINT `fk_organizer` FOREIGN KEY (`organizer_id`) REFERENCES `organizers` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=26 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
--- ============================================================
--- TABLA: favorite_event_reminders
--- ============================================================
--- Controla el envío de recordatorios de eventos favoritos.
--- Evita enviar múltiples recordatorios del mismo evento a un usuario
--- en la misma fecha de evento.
-DROP TABLE IF EXISTS `favorite_event_reminders`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `favorite_event_reminders` (
-  `user_id` int unsigned NOT NULL,
-  `event_id` int NOT NULL,
-  `reminder_for` date NOT NULL,
-  `sent_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`user_id`,`event_id`,`reminder_for`),
-  KEY `fk_favorite_reminders_event` (`event_id`),
-  CONSTRAINT `fk_favorite_reminders_event` FOREIGN KEY (`event_id`) REFERENCES `events` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `fk_favorite_reminders_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 -- ============================================================

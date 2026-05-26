@@ -158,7 +158,7 @@ El mapa consume eventos ya filtrados y los agrupa por coordenadas para evitar ma
 2. El frontend consulta `GET /favorites/ids` para saber qué eventos están marcados.
 3. Al pulsar favorito, llama a `POST /favorites/:eventId` o `DELETE /favorites/:eventId`.
 4. El backend comprueba JWT, permisos y existencia del evento antes de modificar `favorites`.
-5. Los favoritos se muestran en `/favorites` y sirven para enviar recordatorios cuando el proceso está activo.
+5. Los favoritos se muestran en `/favorites` y sirven para enviar recordatorios cuando se ejecuta el script correspondiente.
 
 ### Flujo de alertas
 
@@ -218,9 +218,6 @@ SMTP_USER=your_smtp_user
 SMTP_PASS=your_smtp_password
 MAIL_FROM="Ames Events <no-reply@ames-events.local>"
 PORT=3001
-FAVORITE_REMINDERS_ENABLED=false
-FAVORITE_REMINDERS_RUN_TIME=09:00
-FAVORITE_REMINDERS_RUN_ON_START=true
 CORS_ORIGINS=http://localhost:3000,https://ames-events.anxovarela.es
 ```
 
