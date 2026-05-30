@@ -1,3 +1,8 @@
+/**
+ * Centraliza la clave JWT usada por la API.
+ * En desarrollo permite arrancar sin variable de entorno, pero en produccion
+ * obliga a configurar JWT_SECRET para no firmar tokens con una clave insegura.
+ */
 const DEVELOPMENT_JWT_SECRET = 'cambiar-esto-en-producción';
 
 function getJwtSecret() {

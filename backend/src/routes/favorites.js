@@ -1,3 +1,7 @@
+/**
+ * Rutas de favoritos.
+ * Permiten a usuarios autenticados consultar y modificar sus eventos guardados.
+ */
 const express = require('express');
 const favoritesController = require('../controllers/favoritesController');
 const { requireAuth, requireAnyRole } = require('../middleware/authMiddleware');

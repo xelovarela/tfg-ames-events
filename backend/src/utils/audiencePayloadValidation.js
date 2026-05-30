@@ -1,6 +1,11 @@
+/**
+ * Utilidades de validacion para audiencias en el backend.
+ * Limpian el nombre y normalizan los limites de edad antes de guardar.
+ */
 const MAX_AUDIENCE_NAME_LENGTH = 100;
 
 function toNullableNonNegativeInt(value) {
+  // Los campos vacios se tratan como ausencia de limite de edad.
   if (value === null || value === undefined || value === '') {
     return null;
   }

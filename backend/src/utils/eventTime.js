@@ -1,3 +1,8 @@
+/**
+ * Utilidades de tiempo para consultas de eventos.
+ * Construyen filtros SQL reutilizables para distinguir eventos proximos,
+ * pasados o todos sin duplicar condiciones en los servicios.
+ */
 const TIME_SCOPES = {
   UPCOMING: 'upcoming',
   PAST: 'past',

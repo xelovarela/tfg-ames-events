@@ -64,3 +64,6 @@ yarn-error.log*
 
 # Local agent instructions
 /WORKING_INSTRUCTIONS.md
+
+# Local CodeGraph index
+.codegraph/

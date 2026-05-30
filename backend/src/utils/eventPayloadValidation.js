@@ -1,3 +1,8 @@
+/**
+ * Validacion del cuerpo recibido al crear o editar eventos.
+ * Convierte tipos simples desde formularios HTTP y concentra las reglas de
+ * obligatoriedad antes de que los controladores llamen a la capa de datos.
+ */
 const {
   toPositiveInt,
   toNullablePositiveInt,
@@ -24,6 +29,7 @@ function isMysqlDateTimeBefore(value, now) {
 }
 
 function parseEventPayload(body = {}, { rejectPastDate = false, now = new Date() } = {}) {
+  // Se normalizan todos los campos aqui para que el servicio reciba tipos previsibles.
   const title = typeof body.title === 'string' ? body.title.trim() : '';
   const description = typeof body.description === 'string' ? body.description.trim() : '';
   const categoryId = toPositiveInt(body.category_id);

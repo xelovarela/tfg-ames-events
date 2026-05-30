@@ -1,3 +1,8 @@
+/**
+ * Controlador de autenticacion y cuenta de usuario.
+ * Recibe las peticiones HTTP de registro, inicio de sesion, verificacion,
+ * recuperacion de contrasena y cambios de perfil antes de llamar al servicio.
+ */
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
@@ -38,6 +43,7 @@ function generatePasswordResetToken() {
 }
 
 async function register(req, res) {
+  // Normaliza la entrada del formulario antes de comprobar duplicados.
   const username = typeof req.body.username === 'string' ? req.body.username.trim() : '';
   const email = typeof req.body.email === 'string' ? req.body.email.trim().toLowerCase() : '';
   const password = typeof req.body.password === 'string' ? req.body.password : '';
@@ -160,6 +166,7 @@ async function resendVerification(req, res) {
 }
 
 async function forgotPassword(req, res) {
+  // La respuesta no revela si el correo existe para evitar enumeracion de usuarios.
   const email = typeof req.body.email === 'string' ? req.body.email.trim().toLowerCase() : '';
   const genericResponse = { message: PASSWORD_RESET_GENERIC_MESSAGE };
 
@@ -210,6 +217,7 @@ async function resetPassword(req, res) {
 }
 
 async function login(req, res) {
+  // El login combina validacion de credenciales, estado de la cuenta y emision del token.
   const loginValue = typeof req.body.login === 'string' ? req.body.login.trim() : '';
   const password = typeof req.body.password === 'string' ? req.body.password : '';
 

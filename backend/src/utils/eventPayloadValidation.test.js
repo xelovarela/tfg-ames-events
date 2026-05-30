@@ -1,3 +1,7 @@
+/**
+ * Pruebas de parseEventPayload.
+ * Verifican conversiones de tipos, campos obligatorios y validaciones de fecha.
+ */
 const assert = require('node:assert/strict');
 const test = require('node:test');
 const { parseEventPayload } = require('./eventPayloadValidation');

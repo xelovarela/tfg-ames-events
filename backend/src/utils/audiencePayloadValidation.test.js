@@ -1,3 +1,7 @@
+/**
+ * Pruebas de parseAudiencePayload.
+ * Cubren rangos de edad validos, limites opcionales y mensajes de error.
+ */
 const assert = require('node:assert/strict');
 const test = require('node:test');
 const { parseAudiencePayload } = require('./audiencePayloadValidation');

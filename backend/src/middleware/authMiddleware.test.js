@@ -1,3 +1,7 @@
+/**
+ * Pruebas unitarias de los middlewares de autenticacion y roles.
+ * Comprueban tokens validos, errores de autorizacion y permisos por perfil.
+ */
 const assert = require('node:assert/strict');
 const test = require('node:test');
 const jwt = require('jsonwebtoken');

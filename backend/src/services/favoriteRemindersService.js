@@ -1,7 +1,13 @@
+/**
+ * Servicio de recordatorios de favoritos.
+ * Busca eventos favoritos proximos y envia correos evitando duplicar avisos
+ * para el mismo usuario, evento y dia.
+ */
 const db = require('../config/db');
 const emailService = require('./emailService');
 
 function toDateOnly(value) {
+  // Convierte fechas de base de datos a una clave YYYY-MM-DD estable.
   const date = value instanceof Date ? value : new Date(value);
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, '0');

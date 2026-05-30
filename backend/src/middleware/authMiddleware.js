@@ -1,7 +1,13 @@
+/**
+ * Middlewares de autorizacion basados en JWT y roles.
+ * Validan la cabecera Authorization y dejan en req.user los datos minimos
+ * que necesitan los controladores protegidos.
+ */
 const jwt = require('jsonwebtoken');
 const { JWT_SECRET } = require('../config/auth');
 
 function requireAuth(req, res, next) {
+  // Se espera el formato "Bearer <token>" en la cabecera Authorization.
   const authHeader = req.headers.authorization || '';
 
   if (!authHeader.startsWith('Bearer ')) {

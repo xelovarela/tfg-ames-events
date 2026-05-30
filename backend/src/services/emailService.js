@@ -1,3 +1,8 @@
+/**
+ * Servicio de correo del backend.
+ * Construye enlaces publicos y envia emails de verificacion, recuperacion
+ * de contrasena y recordatorios de eventos favoritos.
+ */
 const nodemailer = require('nodemailer');
 
 const DEFAULT_APP_BASE_URL = 'http://localhost:3000';

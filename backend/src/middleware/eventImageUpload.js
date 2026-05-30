@@ -1,3 +1,8 @@
+/**
+ * Configura la subida de imagenes de eventos.
+ * Valida extensiones, tamano y destino fisico antes de que los controladores
+ * guarden la ruta publica asociada al evento.
+ */
 const fs = require('fs');
 const path = require('path');
 const multer = require('multer');

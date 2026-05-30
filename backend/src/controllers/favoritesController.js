@@ -1,3 +1,7 @@
+/**
+ * Controlador de favoritos del usuario autenticado.
+ * Expone operaciones para listar, anadir y retirar eventos guardados.
+ */
 const favoritesService = require('../services/favoritesService');
 const { toPositiveIntParam } = require('../utils/validation');
 

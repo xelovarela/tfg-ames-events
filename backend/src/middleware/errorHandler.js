@@ -1,3 +1,8 @@
+/**
+ * Middleware final de errores de Express.
+ * Traduce excepciones a una respuesta JSON coherente y evita exponer detalles
+ * internos cuando el error no trae un estado HTTP explicito.
+ */
 const errorHandler = (err, req, res, next) => {
   // Por defecto, asumimos un error interno del servidor
   const statusCode = err.statusCode || 500;

@@ -1,3 +1,7 @@
+/**
+ * Script programado para enviar recordatorios de eventos marcados como favoritos.
+ * Carga las variables de entorno del backend y delega el envio en el servicio.
+ */
 const path = require('path');
 
 require('dotenv').config({ path: path.resolve(__dirname, '../.env') });

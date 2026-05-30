@@ -1,3 +1,8 @@
+/**
+ * Servicio de favoritos.
+ * Contiene las operaciones de persistencia para marcar eventos, desmarcarlos
+ * y recuperar listados enriquecidos para la interfaz.
+ */
 const db = require('../config/db');
 const { buildIsPastSelect } = require('../utils/eventTime');
 

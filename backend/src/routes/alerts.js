@@ -1,3 +1,7 @@
+/**
+ * Rutas de alertas y recordatorios del sistema.
+ * Todas requieren usuario autenticado porque operan sobre preferencias propias.
+ */
 const express = require('express');
 const alertsController = require('../controllers/alertsController');
 const { requireAuth } = require('../middleware/authMiddleware');
