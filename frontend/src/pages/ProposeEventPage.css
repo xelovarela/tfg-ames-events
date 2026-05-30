@@ -1,3 +1,7 @@
+/*
+ * Estilos de la pagina de propuesta de gestion.
+ * Ordena el formulario, el estado de solicitud y el historial del usuario.
+ */
 .proposal-card {
   max-width: 860px;
   border: 1px solid #eadfd5;

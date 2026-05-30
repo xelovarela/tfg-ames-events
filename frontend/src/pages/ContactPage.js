@@ -1,3 +1,7 @@
+/**
+ * Pagina de contacto.
+ * Muestra vias de comunicacion para consultas, incidencias y propuestas.
+ */
 import React from 'react';
 import { Mail, MessageSquare, Phone } from 'lucide-react';
 import StaticPageLayout, { StaticPageSection } from './StaticPageLayout';

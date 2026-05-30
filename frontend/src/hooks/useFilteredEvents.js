@@ -1,3 +1,8 @@
+/**
+ * Hook de carga y filtrado de eventos.
+ * Sincroniza filtros con la URL, consulta el backend y expone estados listos
+ * para que las paginas de listado, mapa y calendario compartan comportamiento.
+ */
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { API_BASE_URL } from '../config';
@@ -28,6 +33,7 @@ function normalizeOptions(optionsOrMessage) {
 }
 
 function useFilteredEvents(optionsOrMessage = {}) {
+  // searchParams permite que los filtros sean compartibles mediante la URL.
   const { eventLoadErrorMessage, timeScope, includeAuth } = normalizeOptions(optionsOrMessage);
   const [events, setEvents] = useState([]);
   const [categories, setCategories] = useState([]);

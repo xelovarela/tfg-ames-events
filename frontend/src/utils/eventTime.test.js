@@ -1,3 +1,7 @@
+/**
+ * Pruebas de parseo local de fechas de evento.
+ * Protegen contra regresiones por conversion automatica a UTC.
+ */
 import { parseEventDate } from './eventTime';
 
 describe('eventTime: parseo local de fechas de evento', () => {

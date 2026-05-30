@@ -1,3 +1,7 @@
+/**
+ * Validaciones de audiencias en el frontend.
+ * Preparan el payload que consumen las pantallas de administracion.
+ */
 function parseOptionalAge(value) {
   if (value === null || value === undefined || value === '') {
     return null;

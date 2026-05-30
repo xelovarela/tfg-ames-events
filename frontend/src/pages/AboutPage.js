@@ -1,3 +1,7 @@
+/**
+ * Pagina informativa sobre la plataforma.
+ * Presenta el objetivo del proyecto, el contexto academico y el enfoque local.
+ */
 import React from 'react';
 import { GraduationCap, Info, ShieldCheck, Users } from 'lucide-react';
 import StaticPageLayout, { StaticPageSection } from './StaticPageLayout';

@@ -1,3 +1,7 @@
+/**
+ * Pruebas de filtros de eventos.
+ * Aseguran que la URL, el filtrado local y los mensajes de resultado sean coherentes.
+ */
 import {
   buildSearchParamsFromFilters,
   filterEvents,

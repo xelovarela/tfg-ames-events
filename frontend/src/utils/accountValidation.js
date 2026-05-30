@@ -1,7 +1,12 @@
+/**
+ * Validaciones de cuenta compartidas por registro, perfil y cambio de contrasena.
+ * Devuelven mensajes listos para mostrar sin mezclar reglas de formulario en las paginas.
+ */
 const MIN_PASSWORD_LENGTH = 8;
 const MAX_USERNAME_LENGTH = 100;
 
 function isValidEmail(email) {
+  // Expresion sencilla suficiente para descartar formatos claramente invalidos.
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 

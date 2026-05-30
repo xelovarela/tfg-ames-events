@@ -1,3 +1,7 @@
+/**
+ * Componente de estructura para paginas estaticas.
+ * Unifica cabecera, secciones, notas y contenido lateral en las paginas informativas.
+ */
 import React from 'react';
 import './StaticPageLayout.css';
 

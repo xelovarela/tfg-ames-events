@@ -1,3 +1,7 @@
+/**
+ * Pruebas del cliente de favoritos.
+ * Simulan respuestas HTTP para comprobar sesiones expiradas y operaciones correctas.
+ */
 import { addFavorite, listFavoriteIds, listFavorites, removeFavorite } from './favoritesApi';
 import { clearAuthSession, getAuthSession, setAuthSession } from './authStorage';
 

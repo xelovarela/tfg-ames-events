@@ -1,3 +1,8 @@
+/**
+ * Calendario mensual de eventos.
+ * Agrupa eventos por dia, permite cambiar de mes y enlaza cada entrada con
+ * su ficha de detalle conservando la ruta de retorno.
+ */
 import React, { useMemo, useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
@@ -80,6 +85,7 @@ function getCategoryColor(categoryName) {
 }
 
 function EventCalendar({ events = [], emptyMessage = 'No hay eventos para mostrar en este mes.' }) {
+  // El mes visible se mantiene separado de los eventos para navegar sin recargar.
   const [visibleMonth, setVisibleMonth] = useState(() => startOfMonth(new Date()));
   const location = useLocation();
   const todayKey = toDateKey(new Date());

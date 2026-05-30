@@ -1,3 +1,7 @@
+/**
+ * Pruebas de validacion de audiencias.
+ * Comprueban nombres, edades opcionales y coherencia entre edad minima y maxima.
+ */
 import { buildAudiencePayload, validateAudience } from './audienceValidation';
 
 describe('audienceValidation: reglas para rangos de edad', () => {

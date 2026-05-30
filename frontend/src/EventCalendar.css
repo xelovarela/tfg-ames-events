@@ -1,3 +1,7 @@
+/*
+ * Estilos del calendario de eventos.
+ * Define la cuadricula mensual, los estados de navegacion y las tarjetas de dia.
+ */
 .event-calendar-panel {
   margin-top: 1rem;
   padding: 1rem;

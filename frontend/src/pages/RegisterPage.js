@@ -1,3 +1,7 @@
+/**
+ * Pagina de registro.
+ * Valida el formulario en cliente y crea una cuenta pendiente de verificacion por correo.
+ */
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { API_BASE_URL } from '../config';

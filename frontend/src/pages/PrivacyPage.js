@@ -1,3 +1,7 @@
+/**
+ * Pagina de privacidad.
+ * Explica que datos se tratan y como se protegen dentro de la aplicacion.
+ */
 import React from 'react';
 import { Database, Lock, ShieldCheck, UserRound } from 'lucide-react';
 import StaticPageLayout, { StaticPageSection } from './StaticPageLayout';

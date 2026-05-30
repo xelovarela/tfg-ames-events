@@ -1,3 +1,7 @@
+/**
+ * Pie de pagina comun de la aplicacion.
+ * Reune enlaces legales, informacion de contacto y accesos secundarios.
+ */
 import React from 'react';
 import { Link } from 'react-router-dom';
 

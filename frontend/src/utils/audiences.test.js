@@ -1,3 +1,7 @@
+/**
+ * Pruebas de ordenacion de audiencias.
+ * Verifican que el publico general y los rangos de edad aparezcan en orden esperado.
+ */
 import { sortAudiencesByAge } from './audiences';
 
 describe('audiences: ordenacion del catalogo de publicos', () => {

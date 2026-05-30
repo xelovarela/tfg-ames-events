@@ -1,8 +1,13 @@
+/**
+ * Pagina de favoritos del usuario.
+ * Carga eventos guardados y permite anadir o retirar favoritos desde el listado.
+ */
 import React, { useCallback, useEffect, useState } from 'react';
 import EventList from '../EventList';
 import { addFavorite, listFavorites, removeFavorite } from '../utils/favoritesApi';
 
 function FavoritesPage({ session }) {
+  // La lista local se actualiza tras cada accion para reflejar el estado real del usuario.
   const [favorites, setFavorites] = useState([]);
   const [loadError, setLoadError] = useState('');
   const isAuthenticated = Boolean(session?.token);

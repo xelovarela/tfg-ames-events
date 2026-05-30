@@ -1,3 +1,7 @@
+/*
+ * Estilos de la pagina de inicio.
+ * Define la composicion de bienvenida, busqueda rapida y secciones destacadas.
+ */
 .home-page {
   display: grid;
   gap: 1rem;

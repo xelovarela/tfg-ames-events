@@ -1,3 +1,7 @@
+/**
+ * Mapa del sitio.
+ * Agrupa enlaces principales, paginas legales y accesos de administracion.
+ */
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { CalendarDays, Link2, LockKeyhole, ShieldCheck, Sparkles } from 'lucide-react';

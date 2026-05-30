@@ -1,3 +1,7 @@
+/**
+ * Pagina de calendario de eventos.
+ * Combina filtros reutilizables con la vista mensual para explorar la agenda.
+ */
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import EventCalendar from '../EventCalendar';

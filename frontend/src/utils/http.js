@@ -1,3 +1,7 @@
+/**
+ * Utilidad comun para leer respuestas JSON.
+ * Crea errores enriquecidos con status y cuerpo para que las paginas muestren mensajes claros.
+ */
 async function readJsonResponse(response, fallbackMessage) {
   const buildError = (message, data = null) => {
     const error = new Error(message);

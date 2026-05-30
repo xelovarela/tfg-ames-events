@@ -1,3 +1,7 @@
+/**
+ * Pagina de solicitud de recuperacion de contrasena.
+ * Envia el correo al backend y muestra una respuesta generica por seguridad.
+ */
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { API_BASE_URL } from '../config';

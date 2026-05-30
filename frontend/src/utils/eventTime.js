@@ -1,6 +1,11 @@
+/**
+ * Utilidades de fechas de evento en el cliente.
+ * Interpretan los DATETIME de MySQL como hora local para evitar desplazamientos UTC.
+ */
 const LOCAL_DATE_TIME_PATTERN = /^(\d{4})-(\d{2})-(\d{2})(?:[ T](\d{2}):(\d{2})(?::(\d{2}))?)$/;
 
 function parseEventDate(value) {
+  // El parser manual mantiene la fecha en zona local del navegador.
   if (!value) {
     return null;
   }

@@ -1,8 +1,12 @@
+/*
+ * Variables globales de diseno.
+ * Centralizan tipografias, colores semanticos y tokens reutilizables del frontend.
+ */
 :root {
   --font-family-base: 'Trebuchet MS', 'Segoe UI', sans-serif;
   --font-family-display: 'DM Serif Display', 'Iowan Old Style', Georgia, serif;
 
-  /* Semantic palette (phase 1) */
+  /* Paleta semantica principal. */
   --background: #f3eee6;
   --surface: #fffdf9;
   --surface-soft: #fff8f0;

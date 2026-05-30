@@ -1,3 +1,7 @@
+/**
+ * Declaracion central de rutas del frontend.
+ * Conecta cada URL con su pagina y aplica proteccion segun rol cuando procede.
+ */
 import React from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import MapPage from './pages/MapPage';

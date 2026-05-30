@@ -1,3 +1,7 @@
+/**
+ * Pruebas de seleccion de imagenes de evento.
+ * Verifican fallback por categoria, URL absoluta y textos alternativos.
+ */
 import { getCategoryFallbackImage, getEventImageAlt, getEventImageUrl, DEFAULT_EVENT_IMAGE } from './eventImages';
 
 describe('eventImages: seleccion de imagenes para tarjetas de eventos', () => {

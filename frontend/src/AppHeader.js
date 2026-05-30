@@ -1,3 +1,7 @@
+/**
+ * Cabecera principal de navegacion.
+ * Gestiona enlaces visibles, menu desplegable en movil y acciones de sesion.
+ */
 import React, { useEffect, useRef, useState } from 'react';
 import { CalendarDays, ChevronDown, ListFilter, LogOut, MapPin, UserRound } from 'lucide-react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
@@ -28,6 +32,7 @@ function getUserInitial(user) {
 }
 
 function AppHeader({ session, onLogout }) {
+  // El estado local controla el desplegable sin afectar a las rutas.
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const userMenuRef = useRef(null);

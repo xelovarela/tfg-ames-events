@@ -1,3 +1,7 @@
+/**
+ * Pagina de accesibilidad.
+ * Resume criterios de uso inclusivo, navegacion con teclado y canales de ayuda.
+ */
 import React from 'react';
 import { Accessibility, Keyboard, MessageSquareText, Type } from 'lucide-react';
 import StaticPageLayout, { StaticPageSection } from './StaticPageLayout';

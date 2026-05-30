@@ -1,6 +1,11 @@
+/**
+ * Validacion del formulario de eventos.
+ * Reune reglas de campos obligatorios, precios y fechas antes de enviar al backend.
+ */
 import { parseEventDate } from './eventTime';
 
 function validateEventForm(formData, { isDuplicating = false, rejectPastDate = true, now = new Date() } = {}) {
+  // La duplicacion puede relajar algunas reglas para permitir reutilizar eventos existentes.
   const trimmedTitle = formData.title.trim();
   if (!trimmedTitle || !formData.category_id || !formData.location_id) {
     return 'Completa todos los campos obligatorios.';

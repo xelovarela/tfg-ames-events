@@ -1,3 +1,7 @@
+/**
+ * Pagina de restablecimiento de contrasena.
+ * Lee el token de la URL y envia la nueva contrasena al backend.
+ */
 import React, { useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { API_BASE_URL } from '../config';

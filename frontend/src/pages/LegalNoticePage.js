@@ -1,3 +1,7 @@
+/**
+ * Pagina de aviso legal.
+ * Expone informacion responsable del sitio y condiciones generales de uso.
+ */
 import React from 'react';
 import { FileText, Scale, ShieldCheck } from 'lucide-react';
 import StaticPageLayout, { StaticPageSection } from './StaticPageLayout';

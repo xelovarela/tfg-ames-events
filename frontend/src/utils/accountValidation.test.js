@@ -1,3 +1,7 @@
+/**
+ * Pruebas de las reglas de cuenta.
+ * Cubren email, registro, nombre de usuario y cambio de contrasena.
+ */
 import {
   buildRegisterPayload,
   isValidEmail,

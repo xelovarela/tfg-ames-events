@@ -1,3 +1,7 @@
+/**
+ * Pagina de perfil.
+ * Permite consultar la cuenta, cambiar el nombre visible y actualizar la contrasena.
+ */
 import React, { useEffect, useMemo, useState } from 'react';
 import { API_BASE_URL } from '../config';
 import { setAuthSession } from '../utils/authStorage';
@@ -20,6 +24,7 @@ async function readJsonOrThrow(response, fallbackMessage) {
 }
 
 function ProfilePage({ session }) {
+  // Separamos datos de perfil y contrasena para validar cada formulario por su cuenta.
   const [profile, setProfile] = useState(() => session?.user || null);
   const [username, setUsername] = useState(() => getDisplayName(session?.user));
   const [profileMessage, setProfileMessage] = useState('');

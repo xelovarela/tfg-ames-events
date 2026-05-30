@@ -1,3 +1,7 @@
+/*
+ * Estilos base para paginas estaticas.
+ * Reutiliza una estructura comun para textos legales, ayuda y paginas informativas.
+ */
 .static-page {
   width: min(1120px, 100%);
   margin: 0 auto;

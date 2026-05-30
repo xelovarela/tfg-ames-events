@@ -1,3 +1,7 @@
+/**
+ * Pagina de verificacion de correo.
+ * Consume el token recibido por URL y comunica el resultado de activacion.
+ */
 import React, { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { API_BASE_URL } from '../config';

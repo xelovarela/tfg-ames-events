@@ -1,3 +1,7 @@
+/*
+ * Estilos de la pagina de perfil.
+ * Presenta resumen de cuenta, formularios y mensajes de guardado.
+ */
 .profile-summary {
   max-width: 720px;
   display: flex;

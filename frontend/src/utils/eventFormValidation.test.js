@@ -1,3 +1,7 @@
+/**
+ * Pruebas de validacion del formulario de eventos.
+ * Cubren campos obligatorios, eventos pasados, duplicados y precios.
+ */
 import { validateEventForm } from './eventFormValidation';
 
 const VALID_EVENT_FORM = {

@@ -1,3 +1,7 @@
+/**
+ * Pagina para solicitar permisos de gestion de contenido.
+ * Permite enviar una propuesta y revisar el historial de solicitudes propias.
+ */
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
@@ -32,6 +36,7 @@ function statusText(status) {
 }
 
 function ProposeEventPage({ session }) {
+  // Las solicitudes se mantienen en memoria para mostrar estado e historial tras enviar.
   const [requests, setRequests] = useState([]);
   const [loadError, setLoadError] = useState('');
   const [message, setMessage] = useState('');

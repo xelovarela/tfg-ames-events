@@ -1,3 +1,7 @@
+/**
+ * Cliente HTTP de solicitudes para gestores de contenido.
+ * Encapsula endpoints autenticados para crear, listar y revisar peticiones.
+ */
 import { API_BASE_URL } from '../config';
 import { withAuthHeaders } from './authFetch';
 import { readJsonResponse } from './http';

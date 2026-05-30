@@ -1,3 +1,7 @@
+/**
+ * Cliente HTTP de favoritos.
+ * Centraliza listado, alta y baja de favoritos con cabeceras de autenticacion.
+ */
 import { API_BASE_URL } from '../config';
 import { withAuthHeaders } from './authFetch';
 import { clearAuthSession } from './authStorage';

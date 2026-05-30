@@ -1,3 +1,7 @@
+/**
+ * Pruebas de lectura de respuestas HTTP.
+ * Verifican JSON valido, cuerpos vacios y mensajes de error alternativos.
+ */
 import { readJsonResponse } from './http';
 
 function createResponse({ ok = true, contentType = 'application/json', body = '' } = {}) {

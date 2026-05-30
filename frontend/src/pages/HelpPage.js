@@ -1,3 +1,7 @@
+/**
+ * Pagina de ayuda.
+ * Reune preguntas frecuentes y consejos de uso para busqueda, favoritos y alertas.
+ */
 import React from 'react';
 import { BellRing, CalendarDays, CircleHelp, Copy, Filter, Heart, MapPinned, Search, TriangleAlert } from 'lucide-react';
 import StaticPageLayout, { StaticPageSection } from './StaticPageLayout';

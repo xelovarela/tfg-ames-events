@@ -1,3 +1,7 @@
+/*
+ * Estilos de verificacion de correo.
+ * Centra la tarjeta de estado y diferencia mensajes de exito o error.
+ */
 .verify-card {
   max-width: 520px;
   background: #fff;
