@@ -151,9 +151,6 @@ function LoginPage({ onLogin }) {
             <Link to="/forgot-password" className="login-link">
               Olvidaste tu contraseña?
             </Link>
-            <Link to="/map" className="login-link">
-              Volver al mapa
-            </Link>
           </div>
         </form>
 
