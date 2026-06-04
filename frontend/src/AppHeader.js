@@ -41,6 +41,7 @@ function AppHeader({ session, onLogout }) {
   const isAdmin = session?.user?.role === 'admin';
   const userRole = session?.user?.role;
   const canAccessFavorites = userRole === 'user' || isAdmin;
+  const loginRedirectState = location.pathname === '/login' ? undefined : { from: location };
   const visibleNavItems = NAV_ITEMS.filter((item) => {
     if (item.adminOnly) {
       return isAdmin;
@@ -158,7 +159,7 @@ function AppHeader({ session, onLogout }) {
                 )}
               </div>
             ) : (
-              <Link to="/login" className="app-auth-link">
+              <Link to="/login" state={loginRedirectState} className="app-auth-link">
                 <span className="app-auth-link-icon" aria-hidden="true"><UserRound /></span>
                 Iniciar sesión
               </Link>
