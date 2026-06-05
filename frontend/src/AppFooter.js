@@ -19,10 +19,9 @@ function AppFooter() {
           <span className="app-footer-group-title">Explorar</span>
           <div className="app-footer-group-links">
             <Link to="/">Inicio</Link>
-            <Link to="/events">Agenda</Link>
+            <Link to="/events">Listado</Link>
+            <Link to="/events/calendar">Calendario</Link>
             <Link to="/map">Mapa</Link>
-            <Link to="/favorites">Favoritos</Link>
-            <Link to="/alerts">Alertas</Link>
           </div>
         </nav>
 
