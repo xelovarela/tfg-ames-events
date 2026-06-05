@@ -121,6 +121,15 @@
   border-color: rgba(184, 49, 20, 0.22);
 }
 
+.app-topbar-link-create {
+  color: #b83114;
+}
+
+.app-topbar-link-create:hover,
+.app-topbar-link-create.active {
+  color: #8f260f;
+}
+
 .app-topbar-link-icon {
   width: 19px;
   height: 19px;

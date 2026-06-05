@@ -120,7 +120,7 @@ function AppHeader({ session, onLogout }) {
               <span>Mapa</span>
             </NavLink>
             {canCreateEvents && (
-              <NavLink to="/events/new" className={({ isActive }) => `app-topbar-link${isActive ? ' active' : ''}`}>
+              <NavLink to="/events/new" className={({ isActive }) => `app-topbar-link app-topbar-link-create${isActive ? ' active' : ''}`}>
                 <span className="app-topbar-link-icon" aria-hidden="true"><CalendarPlus /></span>
                 <span>Crear evento</span>
               </NavLink>
