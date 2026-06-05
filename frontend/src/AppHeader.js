@@ -3,7 +3,7 @@
  * Gestiona enlaces visibles, menu desplegable en movil y acciones de sesion.
  */
 import React, { useEffect, useRef, useState } from 'react';
-import { CalendarDays, ChevronDown, ListFilter, LogOut, MapPin, UserRound } from 'lucide-react';
+import { CalendarDays, CalendarPlus, ChevronDown, ListFilter, LogOut, MapPin, UserRound } from 'lucide-react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import './styles/topbar.css';
 
@@ -41,6 +41,7 @@ function AppHeader({ session, onLogout }) {
   const isAdmin = session?.user?.role === 'admin';
   const userRole = session?.user?.role;
   const canAccessFavorites = userRole === 'user' || isAdmin;
+  const canCreateEvents = isAdmin || userRole === 'content_manager';
   const loginRedirectState = location.pathname === '/login' ? undefined : { from: location };
   const visibleNavItems = NAV_ITEMS.filter((item) => {
     if (item.adminOnly) {
@@ -118,6 +119,12 @@ function AppHeader({ session, onLogout }) {
               <span className="app-topbar-link-icon" aria-hidden="true"><MapPin /></span>
               <span>Mapa</span>
             </NavLink>
+            {canCreateEvents && (
+              <NavLink to="/events/new" className={({ isActive }) => `app-topbar-link${isActive ? ' active' : ''}`}>
+                <span className="app-topbar-link-icon" aria-hidden="true"><CalendarPlus /></span>
+                <span>Crear evento</span>
+              </NavLink>
+            )}
           </nav>
 
           <div className="app-auth-wrap">
