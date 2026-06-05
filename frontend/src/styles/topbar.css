@@ -464,12 +464,14 @@
   }
 
   .app-topbar-links {
-    grid-column: 2 / 4;
+    grid-column: 1 / -1;
     grid-row: 3;
     justify-content: flex-start;
+    flex-wrap: wrap;
   }
 
   .app-topbar-link {
+    flex: 1 1 calc(50% - 0.25rem);
     background: rgba(255, 255, 255, 0.52);
     border-color: rgba(117, 76, 50, 0.12);
   }
