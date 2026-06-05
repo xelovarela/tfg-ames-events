@@ -26,6 +26,11 @@ function getEventUrl(eventId) {
   return `${baseUrl}/events/${encodeURIComponent(eventId)}`;
 }
 
+function getAdminUsersUrl() {
+  const baseUrl = process.env.APP_BASE_URL || DEFAULT_APP_BASE_URL;
+  return `${baseUrl}/admin/users`;
+}
+
 function formatEventDate(value) {
   if (!value) {
     return 'Sin fecha';
@@ -270,12 +275,76 @@ async function sendFavoriteReminderEmail({ to, name, event }) {
   return { delivered: true, eventUrl };
 }
 
+async function sendContentManagerRequestEmail({ to, name, request }) {
+  const adminUsersUrl = getAdminUsersUrl();
+  const transporter = createTransporterIfConfigured();
+  const from = process.env.MAIL_FROM || process.env.SMTP_USER || 'no-reply@ames-events.local';
+  const subject = 'Nueva solicitud de creador de contenido - Ames Events';
+  const requesterName = request.username || 'Usuario';
+  const requesterEmail = request.email || 'Email no disponible';
+  const organization = request.organization_name || 'Sin organizacion';
+  const phone = request.phone || 'Sin telefono';
+  const safeName = escapeHtml(name || 'administrador');
+  const safeRequesterName = escapeHtml(requesterName);
+  const safeRequesterEmail = escapeHtml(requesterEmail);
+  const safeOrganization = escapeHtml(organization);
+  const safePhone = escapeHtml(phone);
+  const safeProposalTitle = escapeHtml(request.proposal_title);
+  const safeProposalDescription = escapeHtml(request.proposal_description);
+  const safeAdminUsersUrl = escapeHtml(adminUsersUrl);
+  const text = [
+    `Hola ${name || 'administrador'},`,
+    '',
+    'Hay una nueva solicitud para ser creador de contenido en Ames Events.',
+    '',
+    `Usuario: ${requesterName}`,
+    `Email: ${requesterEmail}`,
+    `Organizacion: ${organization}`,
+    `Telefono: ${phone}`,
+    `Propuesta: ${request.proposal_title}`,
+    '',
+    request.proposal_description,
+    '',
+    `Puedes revisarla aqui: ${adminUsersUrl}`
+  ].join('\n');
+  const html = `
+    <p>Hola ${safeName},</p>
+    <p>Hay una nueva solicitud para ser creador de contenido en Ames Events.</p>
+    <ul>
+      <li><strong>Usuario:</strong> ${safeRequesterName}</li>
+      <li><strong>Email:</strong> ${safeRequesterEmail}</li>
+      <li><strong>Organizacion:</strong> ${safeOrganization}</li>
+      <li><strong>Telefono:</strong> ${safePhone}</li>
+      <li><strong>Propuesta:</strong> ${safeProposalTitle}</li>
+    </ul>
+    <p>${safeProposalDescription}</p>
+    <p><a href="${safeAdminUsersUrl}">Revisar solicitudes</a></p>
+  `;
+
+  if (!transporter) {
+    console.warn(`[emailService] SMTP no configurado. Solicitud de creador para ${to}: ${adminUsersUrl}`);
+    return { delivered: false, adminUsersUrl, reason: 'smtp_not_configured' };
+  }
+
+  await transporter.sendMail({
+    from,
+    to,
+    subject,
+    text,
+    html
+  });
+
+  return { delivered: true, adminUsersUrl };
+}
+
 module.exports = {
   sendVerificationEmail,
   sendPasswordResetEmail,
   sendEventAlertEmail,
   sendFavoriteReminderEmail,
+  sendContentManagerRequestEmail,
   getVerificationUrl,
   getPasswordResetUrl,
-  getEventUrl
+  getEventUrl,
+  getAdminUsersUrl
 };

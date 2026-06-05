@@ -5,6 +5,7 @@
 const contentManagerRequestsService = require('../services/contentManagerRequestsService');
 const usersService = require('../services/usersService');
 const rolesService = require('../services/rolesService');
+const emailService = require('../services/emailService');
 const { toPositiveIntParam } = require('../utils/validation');
 
 const ALLOWED_REQUESTER_ROLES = ['user'];
@@ -64,6 +65,27 @@ function parseReviewPayload(body) {
   };
 }
 
+async function notifyAdminsOfNewRequest(request) {
+  if (!request) {
+    return;
+  }
+
+  try {
+    const admins = await usersService.listAdminUsers();
+    await Promise.all(
+      admins
+        .filter((admin) => admin.email)
+        .map((admin) => emailService.sendContentManagerRequestEmail({
+          to: admin.email,
+          name: admin.username,
+          request
+        }))
+    );
+  } catch (error) {
+    console.error('[contentManagerRequests] No se pudo enviar el aviso a administracion:', error);
+  }
+}
+
 async function create(req, res) {
   const userId = Number(req.user?.id);
   const parsedPayload = parseCreatePayload(req.body || {});
@@ -93,6 +115,8 @@ async function create(req, res) {
 
   const requests = await contentManagerRequestsService.listRequestsByUserId(userId);
   const createdRequest = requests.find((requestItem) => Number(requestItem.id) === Number(requestId)) || null;
+
+  notifyAdminsOfNewRequest(createdRequest);
 
   return res.status(201).json({
     message: 'Solicitud enviada. Administracion la revisara lo antes posible.',

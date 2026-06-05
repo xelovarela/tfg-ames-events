@@ -39,6 +39,25 @@ async function listUsers() {
   return rows.map(normalizeUser);
 }
 
+async function listAdminUsers() {
+  const [rows] = await db.query(
+    `SELECT
+      u.id,
+      u.username,
+      u.email,
+      u.is_active,
+      u.email_verified,
+      u.created_at,
+      r.name AS role
+     FROM users u
+     JOIN roles r ON u.role_id = r.id
+     WHERE r.name = 'admin'
+     ORDER BY u.created_at DESC, u.id DESC`
+  );
+
+  return rows.map(normalizeUser);
+}
+
 async function getUserById(id) {
   const [rows] = await db.query(
     `SELECT
@@ -192,6 +211,7 @@ async function updateUserStatus(id, isActive) {
 
 module.exports = {
   listUsers,
+  listAdminUsers,
   getUserById,
   getUserCredentialsById,
   getUserByUsernameOrEmail,
