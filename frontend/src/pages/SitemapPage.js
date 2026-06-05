@@ -34,7 +34,7 @@ const SITEMAP_GROUPS = [
       { to: '/acerca-de', label: 'Acerca de' },
       { to: '/contacto', label: 'Contacto' },
       { to: '/ayuda', label: 'Ayuda' },
-      { to: '/mapa-del-sitio', label: 'Mapa del sitio' }
+      { to: '/accesibilidad', label: 'Accesibilidad' }
     ]
   },
   {
@@ -43,7 +43,7 @@ const SITEMAP_GROUPS = [
     links: [
       { to: '/privacidad', label: 'Privacidad' },
       { to: '/aviso-legal', label: 'Aviso legal' },
-      { to: '/accesibilidad', label: 'Accesibilidad' }
+      { to: '/mapa-del-sitio', label: 'Mapa del sitio' }
     ]
   }
 ];

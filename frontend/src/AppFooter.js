@@ -42,7 +42,6 @@ function AppFooter() {
             <Link to="/privacidad">Privacidad</Link>
             <Link to="/aviso-legal">Aviso legal</Link>
             <Link to="/mapa-del-sitio">Mapa del sitio</Link>
-            <Link to="/aviso-legal#licencia">Licencia</Link>
           </div>
         </nav>
       </div>
