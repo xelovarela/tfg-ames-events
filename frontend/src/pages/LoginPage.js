@@ -6,6 +6,7 @@
 import React, { useState } from 'react';
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { API_BASE_URL } from '../config';
+import PasswordInput from '../PasswordInput';
 import { getAuthSession, setAuthSession } from '../utils/authStorage';
 import { readJsonResponse } from '../utils/http';
 import './LoginPage.css';
@@ -132,9 +133,8 @@ function LoginPage({ onLogin }) {
           />
 
           <label htmlFor="password">Contrasena</label>
-          <input
+          <PasswordInput
             id="password"
-            type="password"
             className="login-input"
             value={password}
             onChange={(event) => setPassword(event.target.value)}

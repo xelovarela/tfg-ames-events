@@ -5,6 +5,7 @@
 import React, { useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { API_BASE_URL } from '../config';
+import PasswordInput from '../PasswordInput';
 import { readJsonResponse } from '../utils/http';
 import './PasswordResetPage.css';
 
@@ -79,9 +80,8 @@ function ResetPasswordPage() {
       <section className="password-reset-card">
         <form className="password-reset-form" onSubmit={handleSubmit}>
           <label htmlFor="new-password">Nueva contraseña</label>
-          <input
+          <PasswordInput
             id="new-password"
-            type="password"
             className="password-reset-input"
             value={newPassword}
             onChange={(event) => setNewPassword(event.target.value)}
@@ -89,9 +89,8 @@ function ResetPasswordPage() {
           />
 
           <label htmlFor="confirm-new-password">Confirmar contraseña</label>
-          <input
+          <PasswordInput
             id="confirm-new-password"
-            type="password"
             className="password-reset-input"
             value={confirmPassword}
             onChange={(event) => setConfirmPassword(event.target.value)}

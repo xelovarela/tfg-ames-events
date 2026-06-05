@@ -5,6 +5,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { API_BASE_URL } from '../config';
+import PasswordInput from '../PasswordInput';
 import { buildRegisterPayload, validateRegisterForm } from '../utils/accountValidation';
 import { readJsonResponse } from '../utils/http';
 import './RegisterPage.css';
@@ -88,9 +89,8 @@ function RegisterPage() {
           />
 
           <label htmlFor="password">Contrasena</label>
-          <input
+          <PasswordInput
             id="password"
-            type="password"
             className="register-input"
             value={password}
             onChange={(event) => setPassword(event.target.value)}
@@ -98,9 +98,8 @@ function RegisterPage() {
           />
 
           <label htmlFor="confirm-password">Confirmar contraseña</label>
-          <input
+          <PasswordInput
             id="confirm-password"
-            type="password"
             className="register-input"
             value={confirmPassword}
             onChange={(event) => setConfirmPassword(event.target.value)}

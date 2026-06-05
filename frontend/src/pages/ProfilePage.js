@@ -4,6 +4,7 @@
  */
 import React, { useEffect, useMemo, useState } from 'react';
 import { API_BASE_URL } from '../config';
+import PasswordInput from '../PasswordInput';
 import { setAuthSession } from '../utils/authStorage';
 import { withAuthHeaders } from '../utils/authFetch';
 import { validatePasswordChange, validateProfileUsername } from '../utils/accountValidation';
@@ -232,30 +233,27 @@ function ProfilePage({ session }) {
           <h3>Cambiar contraseña</h3>
           <form className="profile-form" onSubmit={handlePasswordSubmit}>
             <label htmlFor="current-password">Contrasena actual</label>
-            <input
+            <PasswordInput
               id="current-password"
               className="profile-input"
-              type="password"
               value={currentPassword}
               onChange={(event) => setCurrentPassword(event.target.value)}
               autoComplete="current-password"
             />
 
             <label htmlFor="profile-new-password">Nueva contraseña</label>
-            <input
+            <PasswordInput
               id="profile-new-password"
               className="profile-input"
-              type="password"
               value={newPassword}
               onChange={(event) => setNewPassword(event.target.value)}
               autoComplete="new-password"
             />
 
             <label htmlFor="profile-confirm-password">Confirmar nueva contraseña</label>
-            <input
+            <PasswordInput
               id="profile-confirm-password"
               className="profile-input"
-              type="password"
               value={confirmPassword}
               onChange={(event) => setConfirmPassword(event.target.value)}
               autoComplete="new-password"
