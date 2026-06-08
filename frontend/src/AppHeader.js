@@ -40,7 +40,7 @@ function AppHeader({ session, onLogout }) {
   const isAuthenticated = Boolean(session?.token);
   const isAdmin = session?.user?.role === 'admin';
   const userRole = session?.user?.role;
-  const canAccessFavorites = userRole === 'user' || isAdmin;
+  const canAccessFavorites = ['user', 'content_manager'].includes(userRole) || isAdmin;
   const canCreateEvents = isAdmin || userRole === 'content_manager';
   const loginRedirectState = location.pathname === '/login' ? undefined : { from: location };
   const visibleNavItems = NAV_ITEMS.filter((item) => {

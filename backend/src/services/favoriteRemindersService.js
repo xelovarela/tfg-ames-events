@@ -1,7 +1,6 @@
 /**
  * Servicio de recordatorios de favoritos.
- * Busca eventos favoritos proximos y envia correos evitando duplicar avisos
- * para el mismo usuario, evento y dia.
+ * Busca eventos favoritos proximos y envia correos a sus usuarios.
  */
 const db = require('../config/db');
 const emailService = require('./emailService');

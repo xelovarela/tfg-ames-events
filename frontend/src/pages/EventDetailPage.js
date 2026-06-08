@@ -239,7 +239,7 @@ function EventDetailPage({ session }) {
   const [shareMessage, setShareMessage] = useState('');
   const [isFavoriteLoading, setIsFavoriteLoading] = useState(false);
   const isAuthenticated = Boolean(session?.token);
-  const canUseFavorites = ['user', 'admin'].includes(session?.user?.role);
+  const canUseFavorites = ['user', 'admin', 'content_manager'].includes(session?.user?.role);
   const canManageEvents = ['admin', 'content_manager'].includes(session?.user?.role);
   const dateParts = event ? formatDateParts(event.event_date) : null;
   const dateBadge = event ? formatDateBadgeParts(event.event_date) : null;
