@@ -21,7 +21,7 @@ Dependencias de ejecucion definidas en `backend/package.json`:
 - `jsonwebtoken`: emisión y validación de tokens JWT.
 - `multer`: recepcion de imagenes subidas en formularios `multipart/form-data`.
 - `mysql2`: conexion a MySQL/MariaDB con promesas.
-- `nodemailer`: envio de emails de verificación, alertas y recordatorios.
+- `nodemailer`: envio de emails de verificación, recuperación, alertas, recordatorios y avisos a administración.
 - `sharp`: optimizacion de imagenes subidas a formato WebP 16:9.
 
 Scripts disponibles:
@@ -63,7 +63,7 @@ Dependencias de testing y tooling incluidas por Create React App:
 - Control de acceso por roles: `admin`, `content_manager` y `user`.
 - Gestión de usuarios y revisión de solicitudes de acceso como creador de contenido.
 - Flujo para que usuarios registrados soliciten acceso como creadores de contenido.
-- Bandeja admin de solicitudes con filtros por estado y notas de revisión.
+- Bandeja admin de solicitudes con filtros por estado, notas de revisión y aviso por email cuando llega una solicitud nueva.
 - Favoritos para usuarios registrados, administradores y gestores de contenido.
 - Contadores de `favs` visibles en portada, listado y detalle de evento.
 - Páginas informativas y legales estáticas enlazadas desde el footer: acerca de, contacto, ayuda, accesibilidad, privacidad, aviso legal y mapa del sitio.
@@ -172,9 +172,10 @@ El mapa consume eventos ya filtrados y los agrupa por coordenadas para evitar ma
 
 1. Un usuario con rol `user` accede a `/propose-event` y envía una solicitud explicando por qué quiere publicar eventos.
 2. La solicitud queda en estado `pending` en `content_manager_requests`.
-3. El administrador revisa solicitudes desde el panel de usuarios, puede filtrar por estado y escribir notas.
-4. Si aprueba la solicitud, el backend cambia el estado a `approved` y actualiza el rol del usuario a `content_manager` en una transacción.
-5. Si la rechaza, la solicitud queda como `rejected`, el usuario mantiene su rol y puede consultar las notas.
+3. El backend avisa por email a los administradores con email disponible; si el aviso falla, la solicitud no se cancela.
+4. El administrador revisa solicitudes desde el panel de usuarios, puede filtrar por estado y escribir notas.
+5. Si aprueba la solicitud, el backend cambia el estado a `approved` y actualiza el rol del usuario a `content_manager` en una transacción.
+6. Si la rechaza, la solicitud queda como `rejected`, el usuario mantiene su rol y puede consultar las notas.
 
 ## Mantenimiento de documentacion
 
@@ -511,12 +512,13 @@ Endpoints protegidos con JWT para solicitar y revisar permisos de creación de c
 
 1. Un usuario normal (`user`) crea una solicitud de acceso como creador de contenido.
 2. La solicitud queda en estado `pending`.
-3. Un administrador (`admin`) revisa la solicitud en la sección "Solicitudes de acceso como creador de contenido".
-4. Si la aprueba:
+3. El backend envía un aviso por email a los administradores con enlace a `/admin/users`. El envío es informativo y no bloquea la solicitud si SMTP no está configurado o falla.
+4. Un administrador (`admin`) revisa la solicitud en la sección "Solicitudes de acceso como creador de contenido".
+5. Si la aprueba:
    - La solicitud cambia a estado `approved`.
    - El usuario cambia automáticamente a rol `content_manager`.
    - El usuario ya puede crear y editar eventos desde `/events/new`.
-5. Si la rechaza:
+6. Si la rechaza:
    - La solicitud cambia a estado `rejected`.
    - El usuario mantiene su rol `user`.
    - El usuario puede ver las notas de rechazo.

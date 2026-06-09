@@ -154,6 +154,8 @@ Roles:
 - `GET /content-manager-requests?status=pending` - Listar solicitudes (admin)
 - `PATCH /content-manager-requests/:id/review` - Aprobar o rechazar solicitud (admin)
 
+Al crear una solicitud, el backend envia un aviso por email a los administradores con email disponible. Este aviso es informativo: si SMTP no esta configurado o el envio falla, la solicitud queda creada igualmente.
+
 ## Desarrollo
 
 ```bash

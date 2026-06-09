@@ -223,7 +223,7 @@ Allowed statuses:
 - `approved`
 - `rejected`
 
-When an admin approves a request, the backend updates the request and changes the user role to `content_manager` in a transaction.
+When a request is created, the backend can notify admins by email using the request data; no separate notification table is used for this flow. When an admin approves a request, the backend updates the request and changes the user role to `content_manager` in a transaction.
 
 ## Seed Data
 

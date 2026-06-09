@@ -51,7 +51,7 @@ npm test       # Ejecutar tests con salida detallada
 - `/favorites` - Eventos marcados como favoritos (`user`, `admin` o `content_manager`).
 - `/alerts` - Alertas personalizadas por categoria, localidad, audiencia o palabra clave.
 - `/profile` - Mi perfil.
-- `/propose-event` - Solicitud de acceso como creador de contenido.
+- `/propose-event` - Solicitud de acceso como creador de contenido; al enviarla, el backend avisa por email a los administradores.
 - `/login` - Inicio de sesion.
 - `/register` - Registro de usuario.
 - `/verify-email` - Verificacion de email.
