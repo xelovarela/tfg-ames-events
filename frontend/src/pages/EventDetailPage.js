@@ -413,25 +413,8 @@ function EventDetailPage({ session }) {
                   <span>{favoriteCountLabel}</span>
                 </div>
               )}
-            </div>
 
-            <div className="event-detail-head">
-              <p className="event-detail-kicker">{DETAIL_TEXT.title}</p>
-              <h2>{event.title}</h2>
-
-              <div className="event-detail-head-actions">
-                {canManageEvents && (
-                  <>
-                    <Link to={`/events/new?duplicateFrom=${event.id}`} className="event-detail-calendar-btn">
-                      {DETAIL_TEXT.duplicateEvent}
-                    </Link>
-
-                    <Link to={`/events/${event.id}/edit`} className="event-detail-calendar-btn">
-                      {DETAIL_TEXT.editEvent}
-                    </Link>
-                  </>
-                )}
-
+              <div className="event-detail-media-actions">
                 <button
                   type="button"
                   className="event-detail-calendar-btn"
@@ -467,6 +450,23 @@ function EventDetailPage({ session }) {
                   </button>
                 )}
               </div>
+            </div>
+
+            <div className="event-detail-head">
+              <p className="event-detail-kicker">{DETAIL_TEXT.title}</p>
+              <h2>{event.title}</h2>
+
+              {canManageEvents && (
+                <div className="event-detail-head-actions">
+                  <Link to={`/events/new?duplicateFrom=${event.id}`} className="event-detail-calendar-btn">
+                    {DETAIL_TEXT.duplicateEvent}
+                  </Link>
+
+                  <Link to={`/events/${event.id}/edit`} className="event-detail-calendar-btn">
+                    {DETAIL_TEXT.editEvent}
+                  </Link>
+                </div>
+              )}
             </div>
 
             <div className="event-detail-side">

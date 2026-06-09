@@ -994,7 +994,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .event-detail-popularity {
   position: absolute;
-  right: 0.9rem;
+  left: 0.9rem;
   bottom: 0.9rem;
   z-index: 3;
   display: inline-flex;
@@ -1089,7 +1089,7 @@ h1, h2, h3, h4, h5, h6 {
 .event-detail-head {
   display: grid;
   grid-column: 1 / -1;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr);
   align-items: start;
   gap: 0.65rem;
   background: #fff;
@@ -1233,15 +1233,25 @@ h1, h2, h3, h4, h5, h6 {
   cursor: pointer;
 }
 
-.event-detail-head-actions {
-  grid-column: 2;
-  grid-row: 1 / span 2;
-  justify-self: end;
-  align-self: start;
-  display: inline-flex;
+.event-detail-media-actions {
+  position: absolute;
+  right: 0.9rem;
+  bottom: 0.9rem;
+  z-index: 4;
+  display: flex;
   flex-wrap: wrap;
   gap: 0.45rem;
   justify-content: flex-end;
+  max-width: calc(100% - 8.9rem);
+}
+
+.event-detail-head-actions {
+  grid-column: 1;
+  justify-self: start;
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  justify-content: flex-start;
   align-items: center;
 }
 
@@ -1724,7 +1734,7 @@ h1, h2, h3, h4, h5, h6 {
   }
 
   .event-detail-popularity {
-    right: 0.65rem;
+    left: 0.65rem;
     bottom: 0.65rem;
     max-width: calc(100% - 1.3rem);
     font-size: 0.72rem;
@@ -1753,12 +1763,11 @@ h1, h2, h3, h4, h5, h6 {
     grid-template-columns: 1fr;
   }
 
-  .event-detail-kicker,
-  .event-detail-head h2,
-  .event-detail-head-actions,
-  .event-detail-favorite-btn {
-    grid-column: 1;
-    grid-row: auto;
+  .event-detail-media-actions {
+    right: 0.65rem;
+    bottom: 0.65rem;
+    left: 6rem;
+    max-width: none;
   }
 
   .event-detail-map-cta {
