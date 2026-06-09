@@ -4,11 +4,11 @@
  */
 const express = require('express');
 const favoritesController = require('../controllers/favoritesController');
-const { requireAuth, requireAnyRole } = require('../middleware/authMiddleware');
+const { requireAuth } = require('../middleware/authMiddleware');
 
 const router = express.Router();
 
-router.use(requireAuth, requireAnyRole(['user', 'admin', 'content_manager']));
+router.use(requireAuth);
 
 router.get('/', favoritesController.getMyFavorites);
 router.get('/ids', favoritesController.getMyFavoriteIds);

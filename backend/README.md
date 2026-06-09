@@ -85,6 +85,8 @@ Los recordatorios de favoritos no se ejecutan al arrancar el backend. Para envia
 
 ### Favoritos
 
+Endpoints protegidos con JWT para cualquier usuario autenticado.
+
 - `GET /favorites`
 - `GET /favorites/ids`
 - `POST /favorites/:eventId`

@@ -64,7 +64,7 @@ Dependencias de testing y tooling incluidas por Create React App:
 - Gestión de usuarios y revisión de solicitudes de acceso como creador de contenido.
 - Flujo para que usuarios registrados soliciten acceso como creadores de contenido.
 - Bandeja admin de solicitudes con filtros por estado, notas de revisión y aviso por email cuando llega una solicitud nueva.
-- Favoritos para usuarios registrados, administradores y gestores de contenido.
+- Favoritos para cualquier usuario registrado.
 - Contadores de `favs` visibles en portada, listado y detalle de evento.
 - Páginas informativas y legales estáticas enlazadas desde el footer: acerca de, contacto, ayuda, accesibilidad, privacidad, aviso legal y mapa del sitio.
 - Header principal rediseñado con barra cálida tipo tarjeta, accesos rápidos con iconos y avatar desplegable.
@@ -154,10 +154,10 @@ El mapa consume eventos ya filtrados y los agrupa por coordenadas para evitar ma
 
 ### Flujo de favoritos
 
-1. Un usuario autenticado con rol `user`, `admin` o `content_manager` puede marcar eventos como favoritos.
+1. Cualquier usuario autenticado puede marcar eventos como favoritos desde el listado o desde el detalle.
 2. El frontend consulta `GET /favorites/ids` para saber qué eventos están marcados.
 3. Al pulsar favorito, llama a `POST /favorites/:eventId` o `DELETE /favorites/:eventId`.
-4. El backend comprueba JWT, permisos y existencia del evento antes de modificar `favorites`.
+4. El backend comprueba JWT y existencia del evento antes de modificar `favorites`.
 5. Los favoritos se muestran en `/favorites` y sirven para enviar recordatorios cuando se ejecuta el script correspondiente.
 
 ### Flujo de alertas
@@ -366,7 +366,7 @@ npm test -- --runInBand
 - `/events/new`: crear evento, solo `admin` o `content_manager`.
 - `/events/:id`: detalle de evento.
 - `/events/:id/edit`: editar evento, solo `admin` o `content_manager`.
-- `/favorites`: favoritos, solo `user`, `admin` o `content_manager`.
+- `/favorites`: favoritos, solo usuarios autenticados.
 - `/alerts`: alertas del usuario autenticado.
 - `/profile`: perfil propio.
 - `/propose-event`: solicitud de acceso como creador de contenido.
@@ -540,7 +540,7 @@ En solicitudes pendientes, los administradores pueden:
 
 ### Favorites
 
-Endpoints protegidos con JWT y rol `user`, `admin` o `content_manager`.
+Endpoints protegidos con JWT para cualquier usuario autenticado.
 
 - `GET /favorites`
 - `GET /favorites/ids`

@@ -32,7 +32,7 @@ function EventsPage({ session }) {
   });
   const [favoriteIds, setFavoriteIds] = useState([]);
   const isAuthenticated = Boolean(session?.token);
-  const canUseFavorites = ['user', 'admin', 'content_manager'].includes(session?.user?.role);
+  const canUseFavorites = isAuthenticated;
 
   useEffect(() => {
     if (!canManageEvents && timeScope !== 'upcoming') {

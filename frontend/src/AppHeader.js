@@ -13,7 +13,7 @@ const NAV_ITEMS = [
   { to: '/map', label: 'Mapa' },
   { to: '/events', label: 'Listado' },
   { to: '/events/calendar', label: 'Calendario' },
-  { to: '/favorites', label: 'Mis favoritos', allowedRoles: ['user', 'admin'] },
+  { to: '/favorites', label: 'Mis favoritos', authenticatedOnly: true },
   { to: '/alerts', label: 'Alertas', authenticatedOnly: true },
   { to: '/audiences', label: 'Audiencias', adminOnly: true },
   { to: '/organizers', label: 'Organizadores', allowedRoles: ['admin', 'content_manager'] },
@@ -40,7 +40,7 @@ function AppHeader({ session, onLogout }) {
   const isAuthenticated = Boolean(session?.token);
   const isAdmin = session?.user?.role === 'admin';
   const userRole = session?.user?.role;
-  const canAccessFavorites = ['user', 'content_manager'].includes(userRole) || isAdmin;
+  const canAccessFavorites = isAuthenticated;
   const canCreateEvents = isAdmin || userRole === 'content_manager';
   const loginRedirectState = location.pathname === '/login' ? undefined : { from: location };
   const visibleNavItems = NAV_ITEMS.filter((item) => {
