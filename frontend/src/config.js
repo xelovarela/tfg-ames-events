@@ -14,7 +14,7 @@ function isLocalFrontend() {
   return ['localhost', '127.0.0.1'].includes(window.location.hostname);
 }
 
-// La variable de entorno tiene prioridad. Si falta, elegimos según el host real.
+// Fuente unica de API_BASE_URL. Si falta la variable de entorno, elegimos segun el host real.
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL
   || (isLocalFrontend() ? LOCAL_API_BASE_URL : PRODUCTION_API_BASE_URL);
 

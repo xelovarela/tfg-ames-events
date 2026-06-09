@@ -1,5 +1,6 @@
 /**
  * Utilidad comun para leer respuestas JSON.
+ * La URL base de la API se centraliza en ../config.js; este modulo no la redefine.
  * Crea errores enriquecidos con status y cuerpo para que las paginas muestren mensajes claros.
  */
 async function readJsonResponse(response, fallbackMessage) {
