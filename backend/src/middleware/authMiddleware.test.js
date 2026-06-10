@@ -1,6 +1,6 @@
 /**
- * Pruebas unitarias de los middlewares de autenticacion y roles.
- * Comprueban tokens validos, errores de autorizacion y permisos por perfil.
+ * Pruebas unitarias de los middlewares de autenticación y roles.
+ * Comprueban tokens válidos, errores de autorización y permisos por perfil.
  */
 const assert = require('node:assert/strict');
 const test = require('node:test');
@@ -50,7 +50,7 @@ test('auth: requireAuth rechaza peticiones sin cabecera Bearer', () => {
   assert.deepEqual(res.body, { error: 'No autenticado.' });
 });
 
-test('auth: requireAuth carga id, username y rol desde un JWT valido', () => {
+test('auth: requireAuth carga id, username y rol desde un JWT válido', () => {
   const req = { headers: { authorization: `Bearer ${createToken({ sub: 42, username: 'gestor', role: 'content_manager' })}` } };
   const res = createResponse();
   let nextCalled = false;

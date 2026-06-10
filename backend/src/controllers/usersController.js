@@ -189,7 +189,7 @@ async function updateMyPassword(req, res) {
   const passwordHash = await bcrypt.hash(newPassword, SALT_ROUNDS);
   await usersService.updateOwnPassword(userId, passwordHash);
 
-  return res.json({ message: 'Contrasena actualizada correctamente.' });
+  return res.json({ message: 'Contraseña actualizada correctamente.' });
 }
 
 module.exports = {

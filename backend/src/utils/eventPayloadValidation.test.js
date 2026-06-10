@@ -20,7 +20,7 @@ const VALID_EVENT_BODY = {
 
 const NOW = new Date('2026-05-08T12:00:00');
 
-test('eventos: acepta crear un evento gratuito con fecha futura y relaciones validas', () => {
+test('eventos: acepta crear un evento gratuito con fecha futura y relaciones válidas', () => {
   const payload = parseEventPayload(VALID_EVENT_BODY, { rejectPastDate: true, now: NOW });
 
   assert.equal(payload.error, undefined);
@@ -30,7 +30,7 @@ test('eventos: acepta crear un evento gratuito con fecha futura y relaciones val
   assert.equal(payload.price, null);
 });
 
-test('eventos: rechaza crear un evento con fecha pasada aunque el resto del payload sea valido', () => {
+test('eventos: rechaza crear un evento con fecha pasada aunque el resto del payload sea válido', () => {
   const payload = parseEventPayload(
     { ...VALID_EVENT_BODY, event_date: '2026-05-08T11:59' },
     { rejectPastDate: true, now: NOW }
@@ -67,7 +67,7 @@ test('eventos: elimina el precio cuando el evento es gratuito aunque llegue info
   assert.equal(payload.price, null);
 });
 
-test('eventos: rechaza categoria y ubicacion no positivas', () => {
+test('eventos: rechaza categoría y ubicación no positivas', () => {
   const payload = parseEventPayload(
     { ...VALID_EVENT_BODY, category_id: '0', location_id: '-2' },
     { rejectPastDate: true, now: NOW }
@@ -76,7 +76,7 @@ test('eventos: rechaza categoria y ubicacion no positivas', () => {
   assert.equal(payload.error, 'category_id and location_id must be positive integers.');
 });
 
-test('eventos: rechaza audiencia u organizador invalidos cuando se envian', () => {
+test('eventos: rechaza audiencia u organizador inválidos cuando se envían', () => {
   const invalidAudiencePayload = parseEventPayload(
     { ...VALID_EVENT_BODY, audience_id: 'abc' },
     { rejectPastDate: true, now: NOW }
@@ -90,7 +90,7 @@ test('eventos: rechaza audiencia u organizador invalidos cuando se envian', () =
   assert.equal(invalidOrganizerPayload.error, 'organizer_id must be a positive integer when provided.');
 });
 
-test('eventos: rechaza titulo vacio o demasiado largo', () => {
+test('eventos: rechaza título vacío o demasiado largo', () => {
   const emptyTitlePayload = parseEventPayload(
     { ...VALID_EVENT_BODY, title: '   ' },
     { rejectPastDate: true, now: NOW }

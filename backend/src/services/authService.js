@@ -1,12 +1,12 @@
 /**
- * Servicio de usuarios y autenticacion.
- * Encapsula consultas SQL relacionadas con cuentas, tokens de verificacion,
- * recuperacion de contrasena y actualizacion del perfil.
+ * Servicio de usuarios y autenticación.
+ * Encapsula consultas SQL relacionadas con cuentas, tokens de verificación,
+ * recuperación de contraseña y actualización del perfil.
  */
 const db = require('../config/db');
 
 const VERIFICATION_COLUMNS = [
-  // Migracion defensiva para instalaciones antiguas sin columnas de verificacion.
+  // Migración defensiva para instalaciones antiguas sin columnas de verificación.
   { name: 'is_active', sql: 'ALTER TABLE users ADD COLUMN is_active TINYINT(1) NOT NULL DEFAULT 1' },
   { name: 'email_verified', sql: 'ALTER TABLE users ADD COLUMN email_verified TINYINT(1) NOT NULL DEFAULT 0' },
   { name: 'email_verification_token', sql: 'ALTER TABLE users ADD COLUMN email_verification_token VARCHAR(255) NULL' },

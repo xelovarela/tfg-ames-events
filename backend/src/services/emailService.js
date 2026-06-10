@@ -1,7 +1,7 @@
 /**
  * Servicio de correo del backend.
- * Construye enlaces publicos y envia emails de verificacion, recuperacion
- * de contrasena y recordatorios de eventos favoritos.
+ * Construye enlaces públicos y envía emails de verificación, recuperación
+ * de contraseña y recordatorios de eventos favoritos.
  */
 const nodemailer = require('nodemailer');
 
@@ -176,7 +176,7 @@ async function sendEventAlertEmail({ to, name, alertName, event }) {
   const from = process.env.MAIL_FROM || process.env.SMTP_USER || 'no-reply@ames-events.local';
   const subject = `Nuevo evento para tu alerta: ${event.title}`;
   const eventDate = formatEventDate(event.event_date);
-  const location = event.location || 'Ubicacion no especificada';
+  const location = event.location || 'Ubicación no especificada';
   const safeName = escapeHtml(name || 'usuario');
   const safeAlertName = escapeHtml(alertName);
   const safeEventTitle = escapeHtml(event.title);
@@ -227,7 +227,7 @@ async function sendFavoriteReminderEmail({ to, name, event }) {
   const from = process.env.MAIL_FROM || process.env.SMTP_USER || 'no-reply@ames-events.local';
   const subject = `Recordatorio: ${event.title} es mañana`;
   const eventDate = formatEventDate(event.event_date);
-  const location = event.location || 'Ubicacion no especificada';
+  const location = event.location || 'Ubicación no especificada';
   const organizer = event.organizer || 'Organizador no especificado';
   const safeName = escapeHtml(name || 'usuario');
   const safeEventTitle = escapeHtml(event.title);
@@ -283,7 +283,7 @@ async function sendContentManagerRequestEmail({ to, name, request }) {
   const requesterName = request.username || 'Usuario';
   const requesterEmail = request.email || 'Email no disponible';
   const organization = request.organization_name || 'Sin organizacion';
-  const phone = request.phone || 'Sin telefono';
+  const phone = request.phone || 'Sin teléfono';
   const safeName = escapeHtml(name || 'administrador');
   const safeRequesterName = escapeHtml(requesterName);
   const safeRequesterEmail = escapeHtml(requesterEmail);
@@ -300,7 +300,7 @@ async function sendContentManagerRequestEmail({ to, name, request }) {
     `Usuario: ${requesterName}`,
     `Email: ${requesterEmail}`,
     `Organizacion: ${organization}`,
-    `Telefono: ${phone}`,
+    `Teléfono: ${phone}`,
     `Propuesta: ${request.proposal_title}`,
     '',
     request.proposal_description,
@@ -314,7 +314,7 @@ async function sendContentManagerRequestEmail({ to, name, request }) {
       <li><strong>Usuario:</strong> ${safeRequesterName}</li>
       <li><strong>Email:</strong> ${safeRequesterEmail}</li>
       <li><strong>Organizacion:</strong> ${safeOrganization}</li>
-      <li><strong>Telefono:</strong> ${safePhone}</li>
+      <li><strong>Teléfono:</strong> ${safePhone}</li>
       <li><strong>Propuesta:</strong> ${safeProposalTitle}</li>
     </ul>
     <p>${safeProposalDescription}</p>

@@ -167,7 +167,7 @@ async function update(req, res) {
   }
 }
 
-// Elimina un evento si el identificador es valido y el registro existe.
+// Elimina un evento si el identificador es válido y el registro existe.
 async function remove(req, res) {
   const id = toPositiveInt(req.params.id);
   if (!id) {

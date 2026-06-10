@@ -1,7 +1,7 @@
 /**
- * Controlador de autenticacion y cuenta de usuario.
- * Recibe las peticiones HTTP de registro, inicio de sesion, verificacion,
- * recuperacion de contrasena y cambios de perfil antes de llamar al servicio.
+ * Controlador de autenticación y cuenta de usuario.
+ * Recibe las peticiones HTTP de registro, inicio de sesión, verificación,
+ * recuperación de contraseña y cambios de perfil antes de llamar al servicio.
  */
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
@@ -53,7 +53,7 @@ async function register(req, res) {
   }
 
   if (!email || email.length > MAX_EMAIL_LENGTH || !isValidEmail(email)) {
-    return res.status(400).json({ error: 'Debes indicar un email valido.' });
+    return res.status(400).json({ error: 'Debes indicar un email válido.' });
   }
 
   if (!password || password.length < MIN_PASSWORD_LENGTH) {
@@ -127,7 +127,7 @@ async function verifyEmail(req, res) {
   const user = await authService.getUserByVerificationToken(token);
 
   if (!user) {
-    return res.status(400).json({ error: 'El token de verificación es invalido.' });
+    return res.status(400).json({ error: 'El token de verificación es inválido.' });
   }
 
   if (!user.verification_expires_at || new Date(user.verification_expires_at) < new Date()) {
@@ -192,7 +192,7 @@ async function resetPassword(req, res) {
   const newPassword = typeof req.body.newPassword === 'string' ? req.body.newPassword : '';
 
   if (!token) {
-    return res.status(400).json({ error: 'Token invalido o expirado.' });
+    return res.status(400).json({ error: 'Token inválido o expirado.' });
   }
 
   if (!newPassword || newPassword.length < MIN_PASSWORD_LENGTH) {
@@ -202,18 +202,18 @@ async function resetPassword(req, res) {
   const user = await authService.getUserByPasswordResetToken(token);
 
   if (!user) {
-    return res.status(400).json({ error: 'Token invalido o expirado.' });
+    return res.status(400).json({ error: 'Token inválido o expirado.' });
   }
 
   if (!user.password_reset_expires_at || new Date(user.password_reset_expires_at) < new Date()) {
     await authService.clearPasswordResetToken(user.id);
-    return res.status(400).json({ error: 'Token invalido o expirado.' });
+    return res.status(400).json({ error: 'Token inválido o expirado.' });
   }
 
   const passwordHash = await bcrypt.hash(newPassword, SALT_ROUNDS);
   await authService.updatePasswordAndClearResetToken(user.id, passwordHash);
 
-  return res.json({ message: 'Contrasena actualizada correctamente.' });
+  return res.json({ message: 'Contraseña actualizada correctamente.' });
 }
 
 async function login(req, res) {

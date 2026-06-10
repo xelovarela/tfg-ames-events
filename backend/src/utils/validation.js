@@ -23,7 +23,7 @@ function toPositiveIntParam(value) {
   return toPositiveInt(value);
 }
 
-// Permite campos opcionales: acepta vacios y, si hay dato, exige entero positivo.
+// Permite campos opcionales: acepta vacíos y, si hay dato, exige entero positivo.
 function toNullablePositiveInt(value) {
   if (value === null || value === undefined || value === '') {
     return null;

@@ -1,7 +1,7 @@
 /**
- * Rutas publicas y privadas de autenticacion.
- * Incluyen registro, login, verificacion de correo, recuperacion de contrasena
- * y acciones de perfil que requieren sesion activa.
+ * Rutas públicas y privadas de autenticación.
+ * Incluyen registro, login, verificación de correo, recuperación de contraseña
+ * y acciones de perfil que requieren sesión activa.
  */
 const express = require('express');
 const router = express.Router();

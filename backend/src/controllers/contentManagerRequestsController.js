@@ -82,7 +82,7 @@ async function notifyAdminsOfNewRequest(request) {
         }))
     );
   } catch (error) {
-    console.error('[contentManagerRequests] No se pudo enviar el aviso a administracion:', error);
+    console.error('[contentManagerRequests] No se pudo enviar el aviso a administración:', error);
   }
 }
 
@@ -119,7 +119,7 @@ async function create(req, res) {
   notifyAdminsOfNewRequest(createdRequest);
 
   return res.status(201).json({
-    message: 'Solicitud enviada. Administracion la revisara lo antes posible.',
+    message: 'Solicitud enviada. Administración la revisará lo antes posible.',
     request: createdRequest
   });
 }
@@ -142,7 +142,7 @@ async function listAll(req, res) {
 async function review(req, res) {
   const requestId = toPositiveIntParam(req.params.id);
   if (!requestId) {
-    return res.status(400).json({ error: 'Identificador de solicitud invalido.' });
+    return res.status(400).json({ error: 'Identificador de solicitud inválido.' });
   }
 
   const parsedPayload = parseReviewPayload(req.body || {});

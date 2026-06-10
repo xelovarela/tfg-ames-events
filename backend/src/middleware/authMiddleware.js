@@ -1,5 +1,5 @@
 /**
- * Middlewares de autorizacion basados en JWT y roles.
+ * Middlewares de autorización basados en JWT y roles.
  * Validan la cabecera Authorization y dejan en req.user los datos minimos
  * que necesitan los controladores protegidos.
  */

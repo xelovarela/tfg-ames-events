@@ -6,7 +6,7 @@
 const organizersService = require('../services/organizersService');
 const { toPositiveInt } = require('../utils/validation');
 
-// Limites maximos para los campos editables del organizador.
+// Límites máximos para los campos editables del organizador.
 const MAX_ORGANIZER_NAME_LENGTH = 100;
 const MAX_ORGANIZER_EMAIL_LENGTH = 100;
 const MAX_ORGANIZER_PHONE_LENGTH = 30;

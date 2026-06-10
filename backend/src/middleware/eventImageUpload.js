@@ -1,14 +1,14 @@
 /**
- * Configura la subida de imagenes de eventos.
+ * Configura la subida de imágenes de eventos.
  * Valida extensiones, tamano y destino fisico antes de que los controladores
- * guarden la ruta publica asociada al evento.
+ * guarden la ruta pública asociada al evento.
  */
 const fs = require('fs');
 const path = require('path');
 const multer = require('multer');
 const sharp = require('sharp');
 
-// Las imagenes subidas se optimizan y se guardan en la carpeta que Express sirve como /uploads.
+// Las imágenes subidas se optimizan y se guardan en la carpeta que Express sirve como /uploads.
 const DEFAULT_EVENT_IMAGES_DIR = path.resolve(__dirname, '../../uploads/events');
 const DEFAULT_CATEGORY_IMAGES_DIR = path.resolve(__dirname, '../../uploads/categories');
 const EVENT_IMAGES_DIR = process.env.EVENT_IMAGES_DIR
@@ -40,7 +40,7 @@ const imageUpload = multer({
   },
   fileFilter(req, file, callback) {
     if (!ALLOWED_MIME_TYPES.has(file.mimetype)) {
-      return callback(new Error('Solo se permiten imagenes JPG, PNG, WEBP o GIF.'));
+      return callback(new Error('Solo se permiten imágenes JPG, PNG, WEBP o GIF.'));
     }
 
     return callback(null, true);

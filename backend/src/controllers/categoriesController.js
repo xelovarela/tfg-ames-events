@@ -44,7 +44,7 @@ async function getById(req, res) {
   return res.json(category);
 }
 
-// Inserta una nueva categoría cuándo el nombre es valido.
+// Inserta una nueva categoría cuando el nombre es válido.
 async function create(req, res) {
   const payload = parseCategoryPayload(req.body);
 

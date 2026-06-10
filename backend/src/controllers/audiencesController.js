@@ -9,7 +9,7 @@ const { toPositiveInt } = require('../utils/validation');
 // Límite maximo permitido para el nombre visible de la audiencia.
 const MAX_AUDIENCE_NAME_LENGTH = 100;
 
-// Convierte edades opcionales a enteros no negativos cuándo el dato es valido.
+// Convierte edades opcionales a enteros no negativos cuando el dato es válido.
 function toNullableNonNegativeInt(value) {
   if (value === null || value === undefined || value === '') {
     return null;
