@@ -738,6 +738,12 @@ h1, h2, h3, h4, h5, h6 {
   color: #4c1f12;
   font-size: 1.04rem;
   line-height: 1.18;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-height: calc(1.18em * 2);
 }
 
 .event-list-card h4 a {
@@ -754,6 +760,12 @@ h1, h2, h3, h4, h5, h6 {
   color: #59463b;
   font-size: 0.88rem;
   line-height: 1.35;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-height: calc(1.35em * 3);
 }
 
 .event-list-meta {
