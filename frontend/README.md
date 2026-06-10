@@ -58,7 +58,7 @@ npm test       # Ejecutar tests con salida detallada
 - `/forgot-password` - Solicitar reset de contrasena.
 - `/reset-password` - Restablecer contrasena.
 - `/admin/users` - Gestion de usuarios y solicitudes de acceso (admin).
-- `/categories`, `/locations`, `/organizers` - Gestores de catalogos (admin/content_manager).
+- `/categories`, `/locations`, `/organizers` - Gestores de catalogos (admin).
 - `/audiences` - Gestor de audiencias (admin).
 - `/acerca-de`, `/contacto`, `/aviso-legal`, `/privacidad`, `/accesibilidad`, `/ayuda`, `/mapa-del-sitio` - Paginas informativas y legales.
 

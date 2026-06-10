@@ -56,7 +56,7 @@ Dependencias de testing y tooling incluidas por Create React App:
 - Mapa interactivo con Leaflet y agrupación de eventos por ubicación.
 - **Capas contextuales del mapa**: Límite del Concello de Ames (GeoJSON), zonas de Bertamiráns y O Milladoiro (círculos aprox.), con etiquetas legibles.
 - Calendario mensual de eventos en `/events/calendar`, reutilizando los filtros compartidos.
-- Listado paginado, detalle, alta, edición y borrado de eventos según permisos.
+- Listado paginado, detalle, alta, edición, duplicado y borrado de eventos según permisos.
 - Subida de imagenes para eventos mediante `multipart/form-data`, con conversion a WebP 16:9.
 - Imagenes fallback por categoria para eventos sin imagen propia, mostradas en formato 16:9, con fallback generico final.
 - Registro, verificación de email, login JWT, recuperación de contraseña y perfil propio.
@@ -72,7 +72,7 @@ Dependencias de testing y tooling incluidas por Create React App:
 - Portada ajustada a una paleta cálida coherente con el resto de la web e insignia destacada para el siguiente plan.
 - Alertas por email cuándo se crean eventos que coinciden con criterios guardados por categoría, localidad, audiencia o palabra clave.
 - Recordatorios por email de eventos favoritos.
-- CRUD de categorías, ubicaciones, audiencias y organizadores.
+- CRUD administrativo de categorías, ubicaciones, audiencias y organizadores.
 - Validaciones backend y frontend para los campos principales.
 
 ### Notas actualizadas de interfaz y datos
@@ -129,7 +129,7 @@ Entidades principales:
 ### Roles
 
 - `user`: consulta eventos, gestiona favoritos y alertas, edita su perfil y solicita acceso como creador.
-- `content_manager`: crea y edita eventos y gestiona catálogos necesarios para mantener la agenda.
+- `content_manager`: crea, edita y duplica eventos, pero no elimina eventos ni administra catálogos.
 - `admin`: acceso completo, incluida eliminación de eventos, gestión de usuarios, revisión de solicitudes y administración de catálogos.
 
 Los permisos se aplican en frontend para mostrar u ocultar accesos, y en backend para bloquear peticiones no autorizadas aunque se llamen directamente a la API.
@@ -140,7 +140,7 @@ Los permisos se aplican en frontend para mostrar u ocultar accesos, y en backend
 2. `useFilteredEvents` carga eventos y catálogos auxiliares desde la API.
 3. Los filtros de búsqueda, fecha, categoría, gratuito, ubicación y audiencia se sincronizan con la query string.
 4. `EventList` muestra eventos filtrados en paginas de 9 elementos, `AmesMap` representa los mismos datos agrupados por ubicación y `EventCalendar` los organiza por día.
-5. `admin` y `content_manager` pueden crear, editar, borrar y duplicar eventos con `EventForm`.
+5. `admin` y `content_manager` pueden crear, editar y duplicar eventos con `EventForm`; solo `admin` puede borrarlos.
 6. El backend valida datos, relaciones, imágenes y permisos antes de insertar o actualizar en MySQL.
 7. Al crear eventos, el backend evalúa alertas activas y puede enviar emails si hay coincidencias.
 
@@ -148,7 +148,7 @@ Nota: la busqueda de eventos, los filtros de fecha, gratuito, categoria, ubicaci
 
 ### Flujo de ubicaciones y mapa
 
-Las ubicaciones se gestionan desde su CRUD y se almacenan con nombre, localidad y coordenadas. El formulario permite seleccionar coordenadas sobre el mapa y valida que la ubicación tenga datos consistentes antes de enviarla.
+Las ubicaciones se gestionan desde su CRUD administrativo y se almacenan con nombre, localidad y coordenadas. El formulario permite seleccionar coordenadas sobre el mapa y valida que la ubicación tenga datos consistentes antes de enviarla.
 
 El mapa consume eventos ya filtrados y los agrupa por coordenadas para evitar marcadores duplicados. Además, incluye capas contextuales para identificar el límite del Concello de Ames y zonas de referencia como Bertamiráns y O Milladoiro.
 
@@ -372,7 +372,7 @@ npm test -- --runInBand
 - `/propose-event`: solicitud de acceso como creador de contenido.
 - `/acerca-de`, `/contacto`, `/aviso-legal`, `/privacidad`, `/accesibilidad`, `/ayuda`, `/mapa-del-sitio`: páginas informativas y legales enlazadas desde el footer.
 - `/admin/users`: gestión de usuarios y solicitudes de acceso como creador de contenido, solo `admin`.
-- `/categories`, `/locations`, `/organizers`: catálogos para `admin` o `content_manager`.
+- `/categories`, `/locations`, `/organizers`: catálogos, solo `admin`.
 - `/audiences`: audiencias, solo `admin`.
 - `/login`, `/register`, `/verify-email`, `/forgot-password`, `/reset-password`: autenticación.
 
@@ -424,16 +424,16 @@ Categorías:
 
 - `GET /categories`
 - `GET /categories/:id`
-- `POST /categories` - `admin` o `content_manager`
-- `PUT /categories/:id` - `admin` o `content_manager`
+- `POST /categories` - `admin`
+- `PUT /categories/:id` - `admin`
 - `DELETE /categories/:id` - `admin`
 
 Ubicaciones:
 
 - `GET /locations`
 - `GET /locations/:id`
-- `POST /locations` - `admin` o `content_manager`
-- `PUT /locations/:id` - `admin` o `content_manager`
+- `POST /locations` - `admin`
+- `PUT /locations/:id` - `admin`
 - `DELETE /locations/:id` - `admin`
 
 Audiencias:
@@ -448,8 +448,8 @@ Organizadores:
 
 - `GET /organizers`
 - `GET /organizers/:id`
-- `POST /organizers` - `admin` o `content_manager`
-- `PUT /organizers/:id` - `admin` o `content_manager`
+- `POST /organizers` - `admin`
+- `PUT /organizers/:id` - `admin`
 - `DELETE /organizers/:id` - `admin`
 
 Roles:
@@ -517,7 +517,7 @@ Endpoints protegidos con JWT para solicitar y revisar permisos de creación de c
 5. Si la aprueba:
    - La solicitud cambia a estado `approved`.
    - El usuario cambia automáticamente a rol `content_manager`.
-   - El usuario ya puede crear y editar eventos desde `/events/new`.
+   - El usuario ya puede crear, editar y duplicar eventos, pero no eliminar eventos ni administrar catálogos.
 6. Si la rechaza:
    - La solicitud cambia a estado `rejected`.
    - El usuario mantiene su rol `user`.

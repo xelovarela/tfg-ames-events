@@ -7,7 +7,7 @@ This manual describes the administration and content management workflows in Ame
 The application uses three main roles:
 
 - `user`: browses events, manages favorites and alerts, edits their profile and can request content manager access.
-- `content_manager`: creates and edits events and manages the catalogs needed to publish event information.
+- `content_manager`: creates, edits and duplicates events, but cannot delete events or manage catalogs.
 - `admin`: full access, including user management, request review, catalog administration and event deletion.
 
 ## Admin Access
@@ -100,8 +100,7 @@ Route:
 Permissions:
 
 - view: public through API;
-- create/edit: `admin`, `content_manager`;
-- delete: `admin`.
+- create/edit/delete: `admin`.
 
 Categories are used to classify events and provide fallback images.
 
@@ -121,8 +120,7 @@ Route:
 Permissions:
 
 - view: public through API;
-- create/edit: `admin`, `content_manager`;
-- delete: `admin`.
+- create/edit/delete: `admin`.
 
 Locations include:
 
@@ -144,8 +142,7 @@ Route:
 Permissions:
 
 - view: public through API;
-- create/edit: `admin`, `content_manager`;
-- delete: `admin`.
+- create/edit/delete: `admin`.
 
 Organizers can be attached to events to identify the entity responsible for the activity.
 
@@ -219,7 +216,7 @@ When a request is approved:
 
 - the request changes to `approved`;
 - the user role changes to `content_manager`;
-- the user gains access to event creation and catalog management routes.
+- the user gains access to event creation, editing and duplication, while catalog management remains admin-only.
 
 When a request is rejected:
 

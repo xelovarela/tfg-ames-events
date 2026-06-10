@@ -108,16 +108,16 @@ Categorias:
 
 - `GET /categories`
 - `GET /categories/:id`
-- `POST /categories` - `admin` o `content_manager`
-- `PUT /categories/:id` - `admin` o `content_manager`
+- `POST /categories` - `admin`
+- `PUT /categories/:id` - `admin`
 - `DELETE /categories/:id` - `admin`
 
 Ubicaciones:
 
 - `GET /locations`
 - `GET /locations/:id`
-- `POST /locations` - `admin` o `content_manager`
-- `PUT /locations/:id` - `admin` o `content_manager`
+- `POST /locations` - `admin`
+- `PUT /locations/:id` - `admin`
 - `DELETE /locations/:id` - `admin`
 
 Audiencias:
@@ -132,8 +132,8 @@ Organizadores:
 
 - `GET /organizers`
 - `GET /organizers/:id`
-- `POST /organizers` - `admin` o `content_manager`
-- `PUT /organizers/:id` - `admin` o `content_manager`
+- `POST /organizers` - `admin`
+- `PUT /organizers/:id` - `admin`
 - `DELETE /organizers/:id` - `admin`
 
 Roles:

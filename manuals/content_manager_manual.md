@@ -9,9 +9,7 @@ Content managers can:
 - create events;
 - edit events;
 - duplicate events;
-- manage categories;
-- manage locations;
-- manage organizers;
+- select existing categories, locations, audiences and organizers when editing event data;
 - view public catalogs and event information.
 
 Content managers cannot:
@@ -20,6 +18,9 @@ Content managers cannot:
 - manage users;
 - change user roles;
 - review content manager requests;
+- manage categories;
+- manage locations;
+- manage organizers;
 - manage audiences;
 - access admin-only user administration.
 
@@ -38,9 +39,6 @@ Main routes:
 - `/events`
 - `/events/new`
 - `/events/:id/edit`
-- `/categories`
-- `/locations`
-- `/organizers`
 - `/profile`
 
 ## Event Management
@@ -134,46 +132,18 @@ Content managers cannot delete events. Event deletion is restricted to `admin`.
 
 If an event must be removed, contact an administrator.
 
-## Category Management
+## Catalog Usage
 
-Route:
+Content managers cannot manage category, location or organizer records. These catalogs are maintained by administrators because changes can affect many events and the public map.
 
-```text
-/categories
-```
+Content managers can select existing catalog values when creating, editing or duplicating events:
 
-Content managers can:
+- categories classify events and provide fallback images;
+- locations define place, locality and coordinates;
+- organizers identify the entity responsible for the activity;
+- audiences describe the target public for events.
 
-- create categories;
-- edit categories;
-- upload category images.
-
-Only admins can delete categories.
-
-Categories are used to classify events and provide fallback images.
-
-Recommended category data:
-
-- clear name;
-- representative image when possible;
-- avoid duplicate or overly similar category names.
-
-## Location Management
-
-Route:
-
-```text
-/locations
-```
-
-Content managers can:
-
-- create locations;
-- edit locations;
-- set locality;
-- define latitude and longitude.
-
-Only admins can delete locations.
+If a required category, location or organizer does not exist, contact an administrator.
 
 Locations are used by:
 
@@ -181,35 +151,6 @@ Locations are used by:
 - map markers;
 - locality filters;
 - event detail pages.
-
-Recommended location data:
-
-- use a clear place name;
-- choose the correct locality;
-- verify coordinates before saving.
-
-## Organizer Management
-
-Route:
-
-```text
-/organizers
-```
-
-Content managers can:
-
-- create organizers;
-- edit organizer information.
-
-Only admins can delete organizers.
-
-Organizer data may include:
-
-- name;
-- email;
-- phone.
-
-Use organizer records to avoid repeating text manually in event descriptions.
 
 ## Audience Catalog
 
@@ -297,10 +238,9 @@ The application treats event dates as local datetimes. If an old event was saved
 
 ## Good Practices
 
-- Reuse existing categories, locations and organizers before creating new ones.
-- Avoid duplicate locations for the same physical place.
+- Reuse existing categories, locations and organizers.
 - Use concise event titles.
 - Keep descriptions useful and readable.
 - Upload images with clear subject matter.
 - Review event details after saving.
-- Ask an admin before making structural catalog changes that may affect many events.
+- Ask an admin when a structural catalog change is needed.
