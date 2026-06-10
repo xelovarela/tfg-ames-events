@@ -1,9 +1,11 @@
-/* Cabecera fija con acciones rapidas de navegacion. */
+/* Cabecera fija con acciones rápidas de navegación. */
 .app-topbar {
   position: sticky;
   top: 0;
   z-index: 30;
   padding: 0.75rem 1rem;
+  max-width: 100%;
+  overflow: hidden;
   background: rgba(246, 234, 220, 0.78);
   border-bottom: 1px solid rgba(91, 62, 42, 0.12);
   backdrop-filter: blur(var(--topbar-blur)) saturate(var(--topbar-saturate));
@@ -39,6 +41,7 @@
   color: var(--color-brown);
   text-decoration: none;
   border-radius: 14px;
+  overflow: hidden;
 }
 
 .app-brand:focus-visible,
@@ -75,6 +78,8 @@
   font-weight: 900;
   line-height: 1.05;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .app-brand-copy span {
@@ -384,7 +389,7 @@
   }
 }
 
-@media (max-width: 720px) {
+@media (max-width: 768px) {
   .app-topbar {
     padding: 0.55rem 0.65rem;
   }
@@ -393,10 +398,16 @@
     grid-template-columns: 42px minmax(0, 1fr) auto auto;
     gap: 0.5rem;
     border-radius: 18px;
+    max-width: 100%;
+    overflow: hidden;
   }
 
   .app-brand-copy span {
     display: none;
+  }
+
+  .app-brand-copy strong {
+    max-width: 170px;
   }
 
   .app-brand-mark {
@@ -457,6 +468,8 @@
 @media (max-width: 560px) {
   .app-topbar-inner {
     grid-template-columns: 40px minmax(0, 1fr) auto;
+    padding: 0.5rem;
+    gap: 0.42rem;
   }
 
   .app-auth-wrap {
@@ -474,5 +487,62 @@
     flex: 1 1 calc(50% - 0.25rem);
     background: rgba(255, 255, 255, 0.52);
     border-color: rgba(117, 76, 50, 0.12);
+  }
+}
+
+@media (max-width: 480px) {
+  .app-topbar {
+    padding-inline: 0.45rem;
+  }
+
+  .app-topbar-inner {
+    min-height: 58px;
+    grid-template-columns: 36px minmax(0, 1fr) auto;
+    gap: 0.32rem;
+    border-radius: 16px;
+  }
+
+  .app-brand {
+    gap: 0.42rem;
+  }
+
+  .app-brand-mark {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+  }
+
+  .app-brand-copy strong {
+    max-width: 96px;
+    font-size: 0.9rem;
+  }
+
+  .app-icon-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 11px;
+  }
+
+  .app-auth-link,
+  .app-auth-btn {
+    min-height: 36px;
+    max-width: 108px;
+    padding: 0.32rem 0.42rem;
+    font-size: 0.74rem;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  .app-auth-link-icon {
+    flex: 0 0 auto;
+  }
+
+  .app-user-avatar-btn {
+    min-width: 44px;
+    height: 36px;
+  }
+
+  .app-topbar-links {
+    display: none;
   }
 }

@@ -8,6 +8,7 @@ html, body, #root {
   margin: 0;
   padding: 0;
   min-height: 100%;
+  overflow-x: hidden;
 }
 
 * {
@@ -39,6 +40,8 @@ h1, h2, h3, h4, h5, h6 {
   display: flex;
   flex-direction: column;
   position: relative;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 /* Menu lateral deslizante para la navegación entre secciones. */
@@ -967,6 +970,7 @@ h1, h2, h3, h4, h5, h6 {
   border-radius: 22px;
   box-shadow: var(--shadow-soft);
   padding: 1.2rem;
+  min-width: 0;
 }
 
 .event-detail-layout {
@@ -1096,6 +1100,7 @@ h1, h2, h3, h4, h5, h6 {
   border: 1px solid #eadfd5;
   border-radius: 16px;
   padding: 1rem;
+  min-width: 0;
 }
 
 .event-detail-date-inline {
@@ -1164,6 +1169,8 @@ h1, h2, h3, h4, h5, h6 {
   color: #4c1f12;
   font-size: clamp(1.55rem, 3.4vw, 2.35rem);
   line-height: 1.1;
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .event-detail-tags {
@@ -1351,6 +1358,7 @@ h1, h2, h3, h4, h5, h6 {
   border-radius: 16px;
   padding: 1rem;
   min-height: 0;
+  min-width: 0;
 }
 
 .event-detail-description h3,
@@ -1377,6 +1385,7 @@ h1, h2, h3, h4, h5, h6 {
   border: 1px solid #f0dfd4;
   border-radius: 12px;
   padding: 0.75rem;
+  min-width: 0;
 }
 
 .event-detail-block h4 {
@@ -1481,12 +1490,14 @@ h1, h2, h3, h4, h5, h6 {
 
 .app-footer p {
   margin: 0;
+  overflow-wrap: anywhere;
 }
 
 .app-footer-brand {
   display: grid;
   gap: 0.45rem;
   max-width: 300px;
+  min-width: 0;
 }
 
 .app-footer-brand strong {
@@ -1573,6 +1584,7 @@ h1, h2, h3, h4, h5, h6 {
   justify-content: space-between;
   gap: 0.55rem 1rem;
   font-size: 0.8rem;
+  min-width: 0;
 }
 
 .app-footer-bottom a {
@@ -1582,13 +1594,16 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* Ajustes para pantallas pequenas y uso movil. */
-@media (max-width: 720px) {
+@media (max-width: 768px) {
   .app-auth-user {
     display: none;
   }
 
   .app-main {
+    width: 100%;
+    max-width: 100%;
     padding: 0.75rem;
+    overflow-x: hidden;
   }
 
   .map-shell-header {
@@ -1601,11 +1616,14 @@ h1, h2, h3, h4, h5, h6 {
 
   .app-footer-inner {
     grid-template-columns: 1fr;
-    gap: 1rem;
+    gap: 1.35rem;
   }
 
   .app-footer-bottom {
+    display: grid;
     justify-content: flex-start;
+    gap: 0.62rem;
+    text-align: left;
   }
 
   .map-frame {
@@ -1726,19 +1744,51 @@ h1, h2, h3, h4, h5, h6 {
 
   .event-detail-layout {
     grid-template-columns: 1fr;
+    gap: 0.85rem;
     min-height: auto;
   }
 
+  .event-detail-page,
+  .event-detail-card,
+  .event-detail-nav,
+  .event-detail-description,
+  .event-detail-summary,
+  .event-detail-map-cta {
+    width: 100%;
+    max-width: 100%;
+  }
+
   .event-detail-card {
-    padding: 1rem;
+    border-radius: 18px;
+    padding: 0.85rem;
+  }
+
+  .event-detail-media {
+    display: grid;
+    gap: 0.6rem;
+    overflow: visible;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    aspect-ratio: auto;
+  }
+
+  .event-detail-image {
+    height: auto;
+    min-height: 0;
+    aspect-ratio: 16 / 9;
+    border: 1px solid #ead8ca;
+    border-radius: 16px;
   }
 
   .event-detail-popularity {
-    left: 0.65rem;
-    bottom: 0.65rem;
-    max-width: calc(100% - 1.3rem);
-    font-size: 0.72rem;
-  }
+    position: static;
+  justify-self: start;
+  max-width: 100%;
+  width: fit-content;
+  margin-top: -0.05rem;
+  font-size: 0.72rem;
+}
 
   .event-detail-date-overlay {
     top: 0.65rem;
@@ -1757,38 +1807,208 @@ h1, h2, h3, h4, h5, h6 {
 
   .event-detail-panels {
     grid-template-columns: 1fr;
+    gap: 0.75rem;
   }
 
   .event-detail-head {
     grid-template-columns: 1fr;
+    padding: 0.9rem;
   }
 
   .event-detail-media-actions {
-    right: 0.65rem;
-    bottom: 0.65rem;
-    left: 6rem;
-    max-width: none;
+    position: static;
+    z-index: auto;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    align-items: center;
+    width: 100%;
+    max-width: 100%;
+    gap: 0.5rem;
+    margin-top: 0;
   }
 
   .event-detail-map-cta {
     align-items: stretch;
     flex-direction: column;
+    gap: 0.75rem;
+    padding: 0.85rem;
   }
 
   .event-detail-head-actions,
   .event-detail-favorite-btn,
   .event-detail-calendar-btn,
   .event-detail-map-link {
+    width: 100%;
+    justify-content: center;
     text-align: center;
+  }
+
+  .event-detail-media-actions .event-detail-calendar-btn {
+    flex: 0 0 44px;
+    width: 44px;
+    min-width: 44px;
+    height: 44px;
+    min-height: 44px;
+    padding: 0;
+    border-radius: 999px;
+    font-size: 0;
+    gap: 0;
+  }
+
+  .event-detail-media-actions .event-detail-action-icon {
+    width: 21px;
+    height: 21px;
+  }
+
+  .event-detail-media-actions .event-detail-favorite-btn {
+    flex: 0 0 44px;
+    width: 44px;
+    min-width: 44px;
+    height: 44px;
+    min-height: 44px;
+    padding: 0;
+    border-radius: 999px;
+    font-size: 0;
+    gap: 0;
+  }
+
+  .event-detail-media-actions .event-detail-favorite-icon {
+    width: 21px;
+    height: 21px;
+  }
+
+  .event-detail-description,
+  .event-detail-summary {
+    padding: 0.85rem;
+  }
+
+  .event-detail-block {
+    padding: 0.68rem;
+  }
+
+  .event-detail-block p,
+  .event-detail-description p,
+  .event-detail-head h2,
+  .event-detail-map-cta span {
+    overflow-wrap: anywhere;
   }
 
   .event-detail-grid {
     grid-template-columns: 1fr;
+    gap: 0.6rem;
   }
 }
 
-@media (max-width: 460px) {
+@media (max-width: 480px) {
+  .app-main {
+    padding: 0.62rem;
+  }
+
+  .event-detail-page {
+    gap: 0.75rem;
+  }
+
+  .event-detail-card {
+    padding: 0.68rem;
+    border-radius: 16px;
+  }
+
+  .event-detail-head {
+    padding: 0.78rem;
+    border-radius: 14px;
+  }
+
+  .event-detail-head h2 {
+    font-size: 1.6rem;
+    line-height: 1.15;
+  }
+
+  .event-detail-date-overlay {
+    top: 0.52rem;
+    left: 0.52rem;
+    width: 74px;
+    min-height: 90px;
+    border-radius: 12px;
+  }
+
+  .event-detail-date-overlay strong {
+    font-size: 1.72rem;
+  }
+
+  .event-detail-date-overlay span {
+    font-size: 0.68rem;
+  }
+
+  .event-detail-date-overlay small {
+    font-size: 0.78rem;
+  }
+
+  .event-detail-tags-overlay {
+    position: static;
+    justify-content: flex-start;
+    gap: 0.32rem;
+    pointer-events: auto;
+  }
+
+  .event-detail-tag {
+    min-height: 25px;
+    padding: 0.22rem 0.48rem;
+    font-size: 0.7rem;
+  }
+
+  .event-detail-description,
+  .event-detail-summary,
+  .event-detail-map-cta {
+    border-radius: 14px;
+    padding: 0.72rem;
+  }
+
+  .event-detail-description h3,
+  .event-detail-summary h3 {
+    margin-bottom: 0.5rem;
+    font-size: 1.05rem;
+  }
+
+  .event-detail-description p,
+  .event-detail-block p {
+    font-size: 0.94rem;
+    line-height: 1.45;
+  }
+
+  .app-footer p,
+  .app-footer span,
+  .app-footer a {
+    overflow-wrap: anywhere;
+  }
+
+  .event-detail-block {
+    border-radius: 10px;
+    padding: 0.62rem;
+  }
+
+  .event-detail-block h4 {
+    font-size: 0.76rem;
+    line-height: 1.25;
+  }
+
   .app-footer {
-    padding-inline: 0.85rem;
+    padding: 1.25rem 0.85rem 1rem;
+  }
+
+  .app-footer-inner {
+    gap: 1.15rem;
+  }
+
+  .app-footer-brand {
+    max-width: 100%;
+  }
+
+  .app-footer-group {
+    gap: 0.45rem;
+  }
+
+  .app-footer-group-links {
+    gap: 0.32rem;
   }
 }
