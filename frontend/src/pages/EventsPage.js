@@ -14,6 +14,7 @@ import { noFilteredEventsMessage } from '../utils/eventFilters';
 function EventsPage({ session }) {
   const [timeScope, setTimeScope] = useState('upcoming');
   const canManageEvents = ['admin', 'content_manager'].includes(session?.user?.role);
+  const canDeleteEvents = session?.user?.role === 'admin';
   const {
     events,
     categories,
@@ -143,6 +144,7 @@ function EventsPage({ session }) {
         onToggleFavorite={handleToggleFavorite}
         showFavoriteButton={canUseFavorites}
         canManageEvents={canManageEvents}
+        canDeleteEvents={canDeleteEvents}
         emptyMessage={noFilteredEventsMessage}
         showEmptyState={!loadError}
       />

@@ -95,7 +95,7 @@ function AppRoutes({ session, onSessionChange }) {
       <Route
         path="/organizers"
         element={(
-          <ProtectedRoute session={session} allowedRoles={['admin', 'content_manager']}>
+          <ProtectedRoute session={session} requireAdmin>
             <OrganizersPage />
           </ProtectedRoute>
         )}
@@ -103,7 +103,7 @@ function AppRoutes({ session, onSessionChange }) {
       <Route
         path="/categories"
         element={(
-          <ProtectedRoute session={session} allowedRoles={['admin', 'content_manager']}>
+          <ProtectedRoute session={session} requireAdmin>
             <CategoriesPage />
           </ProtectedRoute>
         )}
@@ -111,7 +111,7 @@ function AppRoutes({ session, onSessionChange }) {
       <Route
         path="/locations"
         element={(
-          <ProtectedRoute session={session} allowedRoles={['admin', 'content_manager']}>
+          <ProtectedRoute session={session} requireAdmin>
             <LocationsPage />
           </ProtectedRoute>
         )}

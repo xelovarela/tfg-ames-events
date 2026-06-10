@@ -106,6 +106,7 @@ const EventList = ({
   onToggleFavorite,
   showFavoriteButton = false,
   canManageEvents = false,
+  canDeleteEvents = false,
   emptyMessage = 'No hay eventos registrados.',
   showEmptyState = true,
   kicker = 'Agenda',
@@ -314,7 +315,7 @@ const EventList = ({
                     </div>
                   </dl>
 
-                  {(showFavoriteButton || canManageEvents) && (
+                  {(showFavoriteButton || canManageEvents || canDeleteEvents) && (
                     <div className="event-list-actions">
                       {canManageEvents && (
                         <>
@@ -334,18 +335,20 @@ const EventList = ({
                           >
                             Editar
                           </Link>
-
-                          <button
-                            type="button"
-                            className="event-list-action-btn event-list-action-danger"
-                            onClick={(clickEvent) => {
-                              clickEvent.stopPropagation();
-                              handleDelete(event.id);
-                            }}
-                          >
-                            Borrar
-                          </button>
                         </>
+                      )}
+
+                      {canDeleteEvents && (
+                        <button
+                          type="button"
+                          className="event-list-action-btn event-list-action-danger"
+                          onClick={(clickEvent) => {
+                            clickEvent.stopPropagation();
+                            handleDelete(event.id);
+                          }}
+                        >
+                          Borrar
+                        </button>
                       )}
 
                       {showFavoriteButton && (

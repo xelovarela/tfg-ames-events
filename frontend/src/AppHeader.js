@@ -16,9 +16,9 @@ const NAV_ITEMS = [
   { to: '/favorites', label: 'Mis favoritos', authenticatedOnly: true },
   { to: '/alerts', label: 'Alertas', authenticatedOnly: true },
   { to: '/audiences', label: 'Audiencias', adminOnly: true },
-  { to: '/organizers', label: 'Organizadores', allowedRoles: ['admin', 'content_manager'] },
-  { to: '/categories', label: 'Categorías', allowedRoles: ['admin', 'content_manager'] },
-  { to: '/locations', label: 'Ubicaciones', allowedRoles: ['admin', 'content_manager'] },
+  { to: '/organizers', label: 'Organizadores', adminOnly: true },
+  { to: '/categories', label: 'Categorías', adminOnly: true },
+  { to: '/locations', label: 'Ubicaciones', adminOnly: true },
   { to: '/admin/users', label: 'Usuarios', adminOnly: true }
 ];
 
