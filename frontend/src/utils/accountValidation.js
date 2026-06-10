@@ -1,12 +1,12 @@
 /**
- * Validaciones de cuenta compartidas por registro, perfil y cambio de contrasena.
+ * Validaciones de cuenta compartidas por registro, perfil y cambio de contraseña.
  * Devuelven mensajes listos para mostrar sin mezclar reglas de formulario en las paginas.
  */
 const MIN_PASSWORD_LENGTH = 8;
 const MAX_USERNAME_LENGTH = 100;
 
 function isValidEmail(email) {
-  // Expresion sencilla suficiente para descartar formatos claramente invalidos.
+  // Expresión sencilla suficiente para descartar formatos claramente inválidos.
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
@@ -19,7 +19,7 @@ function validateRegisterForm({ username, email, password, confirmPassword }) {
   }
 
   if (!isValidEmail(trimmedEmail)) {
-    return 'Debes introducir un email valido.';
+    return 'Debes introducir un email válido.';
   }
 
   if (password.length < MIN_PASSWORD_LENGTH) {
@@ -45,7 +45,7 @@ function validateProfileUsername(username) {
   const trimmedUsername = String(username || '').trim();
 
   if (!trimmedUsername || trimmedUsername.length > MAX_USERNAME_LENGTH) {
-    return 'El nombre de usuario no puede estar vacio.';
+    return 'El nombre de usuario no puede estar vacío.';
   }
 
   return null;

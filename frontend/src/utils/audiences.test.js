@@ -1,11 +1,11 @@
 /**
- * Pruebas de ordenacion de audiencias.
- * Verifican que el publico general y los rangos de edad aparezcan en orden esperado.
+ * Pruebas de ordenación de audiencias.
+ * Verifican que el público general y los rangos de edad aparezcan en orden esperado.
  */
 import { sortAudiencesByAge } from './audiences';
 
-describe('audiences: ordenacion del catalogo de publicos', () => {
-  test('coloca "Todos" al principio y despues ordena por edad minima y maxima', () => {
+describe('audiences: ordenación del catálogo de públicos', () => {
+  test('coloca "Todos" al principio y después ordena por edad mínima y máxima', () => {
     const result = sortAudiencesByAge([
       { name: 'Adultos', age_min: 18, age_max: 99 },
       { name: 'Todos', age_min: null, age_max: null },

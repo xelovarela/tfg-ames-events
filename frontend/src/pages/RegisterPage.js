@@ -1,6 +1,6 @@
 /**
- * Pagina de registro.
- * Valida el formulario en cliente y crea una cuenta pendiente de verificacion por correo.
+ * Página de registro.
+ * Valida el formulario en cliente y crea una cuenta pendiente de verificación por correo.
  */
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -88,7 +88,7 @@ function RegisterPage() {
             autoComplete="email"
           />
 
-          <label htmlFor="password">Contrasena</label>
+          <label htmlFor="password">Contraseña</label>
           <PasswordInput
             id="password"
             className="register-input"

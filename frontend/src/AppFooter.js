@@ -1,6 +1,6 @@
 /**
- * Pie de pagina comun de la aplicacion.
- * Reune enlaces legales, informacion de contacto y accesos secundarios.
+ * Pie de página común de la aplicación.
+ * Reúne enlaces legales, información de contacto y accesos secundarios.
  */
 import React from 'react';
 import { Link } from 'react-router-dom';
@@ -25,8 +25,8 @@ function AppFooter() {
           </div>
         </nav>
 
-        <nav className="app-footer-group" aria-label="Informacion">
-          <span className="app-footer-group-title">Informacion</span>
+        <nav className="app-footer-group" aria-label="Información">
+          <span className="app-footer-group-title">Información</span>
           <div className="app-footer-group-links">
             <Link to="/acerca-de">Acerca de</Link>
             <Link to="/contacto">Contacto</Link>

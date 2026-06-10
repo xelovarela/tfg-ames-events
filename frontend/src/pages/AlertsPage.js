@@ -1,5 +1,5 @@
 /**
- * Pagina de alertas de eventos del usuario autenticado.
+ * Página de alertas de eventos del usuario autenticado.
  * Permite crear filtros guardados y gestionarlos sin salir del patron visual actual.
  */
 import React, { useEffect, useState } from 'react';

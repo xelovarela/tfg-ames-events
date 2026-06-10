@@ -61,7 +61,7 @@ function EventEditPage() {
     <main>
       <h2>Editar evento</h2>
 
-      {/* Navegacion auxiliar para volver al listado o abrir el detalle del evento. */}
+      {/* Navegación auxiliar para volver al listado o abrir el detalle del evento. */}
       <div className="event-detail-nav">
         <Link to="/events" className="app-inline-link">Volver a eventos</Link>
         <span>·</span>

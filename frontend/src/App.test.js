@@ -25,7 +25,7 @@ afterEach(() => {
   jest.restoreAllMocks();
 });
 
-describe('App: pantalla inicial publica', () => {
+describe('App: pantalla inicial pública', () => {
   test('muestra la home real con accesos principales a listado, calendario, mapa y acerca de', async () => {
     render(<App />);
 

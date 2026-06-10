@@ -28,20 +28,20 @@ describe('favoritesApi: favoritos autenticados', () => {
     clearAuthSession();
   });
 
-  test('lista favoritos enviando el token de sesion', async () => {
+  test('lista favoritos enviando el token de sesión', async () => {
     global.fetch.mockResolvedValueOnce(mockJsonResponse({ body: [{ id: 10, title: 'Evento' }] }));
 
     await expect(listFavorites()).resolves.toEqual([{ id: 10, title: 'Evento' }]);
     expect(global.fetch.mock.calls[0][1].headers.Authorization).toBe('Bearer token-admin');
   });
 
-  test('convierte una respuesta sin event_ids en lista vacia para evitar errores de renderizado', async () => {
+  test('convierte una respuesta sin event_ids en lista vacía para evitar errores de renderizado', async () => {
     global.fetch.mockResolvedValueOnce(mockJsonResponse({ body: {} }));
 
     await expect(listFavoriteIds()).resolves.toEqual([]);
   });
 
-  test('crea y elimina favoritos usando los metodos HTTP esperados', async () => {
+  test('crea y elimina favoritos usando los métodos HTTP esperados', async () => {
     global.fetch
       .mockResolvedValueOnce(mockJsonResponse({ status: 201, body: { message: 'ok' } }))
       .mockResolvedValueOnce(mockJsonResponse({ body: { message: 'ok' } }));
@@ -54,7 +54,7 @@ describe('favoritesApi: favoritos autenticados', () => {
     expect(global.fetch.mock.calls[1][1].method).toBe('DELETE');
   });
 
-  test('limpia la sesion y muestra un mensaje claro cuando la API devuelve 401', async () => {
+  test('limpia la sesión y muestra un mensaje claro cuando la API devuelve 401', async () => {
     global.fetch.mockResolvedValueOnce(mockJsonResponse({
       ok: false,
       status: 401,

@@ -1,5 +1,5 @@
 /**
- * Pagina de contacto.
+ * Página de contacto.
  * Muestra vias de comunicacion para consultas, incidencias y propuestas.
  */
 import React from 'react';
@@ -37,7 +37,7 @@ function ContactPage() {
         </p>
       </StaticPageSection>
 
-      <StaticPageSection icon={Mail} title="Que puedes enviar">
+      <StaticPageSection icon={Mail} title="Qué puedes enviar">
         <ul className="static-page-bullets">
           <li>Sugerencias de mejora sobre la plataforma.</li>
           <li>Correcciones de información visible en la agenda.</li>

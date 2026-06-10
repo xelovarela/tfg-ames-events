@@ -1,5 +1,5 @@
 /**
- * Pagina de solicitud de recuperacion de contrasena.
+ * Página de solicitud de recuperación de contraseña.
  * Envia el correo al backend y muestra una respuesta generica por seguridad.
  */
 import React, { useState } from 'react';

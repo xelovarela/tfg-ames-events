@@ -1,5 +1,5 @@
 /**
- * Pagina de verificacion de correo.
+ * Página de verificación de correo.
  * Consume el token recibido por URL y comunica el resultado de activacion.
  */
 import React, { useEffect, useState } from 'react';
@@ -40,7 +40,7 @@ function VerifyEmailPage() {
 
   return (
     <main>
-      <h2>Verificacion de correo</h2>
+      <h2>Verificación de correo</h2>
 
       <section className="verify-card">
         <p className={`verify-message${status === 'success' ? ' verify-message-success' : ''}`}>

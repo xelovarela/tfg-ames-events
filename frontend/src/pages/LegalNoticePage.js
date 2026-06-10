@@ -1,6 +1,6 @@
 /**
- * Pagina de aviso legal.
- * Expone informacion responsable del sitio y condiciones generales de uso.
+ * Página de aviso legal.
+ * Expone información responsable del sitio y condiciones generales de uso.
  */
 import React from 'react';
 import { FileText, Scale, ShieldCheck } from 'lucide-react';
@@ -11,7 +11,7 @@ function LegalNoticePage() {
     <StaticPageLayout
       eyebrow="Legal"
       title="Aviso legal"
-      subtitle="Informacion general sobre el sitio, su naturaleza academica y las condiciones de uso."
+      subtitle="Información general sobre el sitio, su naturaleza académica y las condiciones de uso."
       aside={(
         <div className="static-page-facts">
           <div className="static-page-fact">
@@ -25,7 +25,7 @@ function LegalNoticePage() {
         </div>
       )}
     >
-      <StaticPageSection icon={FileText} title="Informacion general">
+      <StaticPageSection icon={FileText} title="Información general">
         <p>
           Ames Events es una plataforma informativa centrada en la agenda de Ames. El contenido, el diseño y las funciones
           visibles forman parte de un proyecto académico / TFG.
@@ -50,7 +50,7 @@ function LegalNoticePage() {
       <StaticPageSection id="licencia" icon={FileText} title="Propiedad intelectual y enlaces externos">
         <p>
           Salvo que se indique lo contrario, los contenidos propios de Ames Events se publican bajo licencia Creative
-          Commons Reconocimiento-NoComercial 4.0. Los nombres, marcas, imagenes y contenidos externos pertenecen a sus
+          Commons Reconocimiento-NoComercial 4.0. Los nombres, marcas, imágenes y contenidos externos pertenecen a sus
           titulares. Los enlaces a sitios de terceros se ofrecen solo como referencia y cada web mantiene sus propias
           condiciones y politicas.
         </p>

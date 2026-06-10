@@ -155,7 +155,7 @@ function HomePage({ session }) {
 
           <p className="home-event-meta">
             <span className="home-event-meta-icon" aria-hidden="true"><MapPin /></span>
-            <span className="home-event-meta-text">{event.location || 'Ubicacion por confirmar'}</span>
+            <span className="home-event-meta-text">{event.location || 'Ubicación por confirmar'}</span>
           </p>
         </div>
       </article>

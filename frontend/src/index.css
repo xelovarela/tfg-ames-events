@@ -1,6 +1,6 @@
 /*
  * Este archivo define estilos base heredados por toda la aplicación.
- * Ajusta el aspecto tipografico global y la fuente usada para fragmentos de codigo.
+ * Ajusta el aspecto tipográfico global y la fuente usada para fragmentos de código.
  */
 /* Estilos globales iniciales aplicados al documento completo. */
 body {
@@ -12,7 +12,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Fuente monoespaciada para mostrar texto tecnico o fragmentos de codigo. */
+/* Fuente monoespaciada para mostrar texto técnico o fragmentos de código. */
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;

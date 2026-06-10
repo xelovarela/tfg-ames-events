@@ -31,7 +31,7 @@ import './EventFilters.css';
 const DATE_OPTIONS = [
   { value: '', label: 'Todos' },
   { value: 'today', label: 'Hoy' },
-  { value: 'tomorrow', label: 'Manana' },
+  { value: 'tomorrow', label: 'Mañana' },
   { value: 'weekend', label: 'Este finde' },
   { value: 'week', label: 'Esta semana' },
   { value: 'month', label: 'Este mes' }
@@ -290,8 +290,8 @@ function EventFilters({
     filters.datePreset && { key: 'datePreset', label: getDateLabel(filters.datePreset), patch: { datePreset: '' } },
     filters.category && { key: 'category', label: filters.category, patch: { category: '' } },
     filters.freeOnly && { key: 'freeOnly', label: 'Gratis', patch: { freeOnly: false } },
-    filters.locality && { key: 'locality', label: `Ubicacion: ${filters.locality}`, patch: { locality: '' } },
-    filters.audienceId && { key: 'audienceId', label: `Publico: ${getAudienceLabel(filters.audienceId)}`, patch: { audienceId: '' } }
+    filters.locality && { key: 'locality', label: `Ubicación: ${filters.locality}`, patch: { locality: '' } },
+    filters.audienceId && { key: 'audienceId', label: `Público: ${getAudienceLabel(filters.audienceId)}`, patch: { audienceId: '' } }
   ].filter(Boolean);
 
   const renderChipSection = ({ label, icon, options, selectedValue, onSelect }) => (
@@ -362,7 +362,7 @@ function EventFilters({
           className="event-filter-search-input"
           type="search"
           name="search"
-          placeholder="Buscar por titulo, lugar o descripcion"
+          placeholder="Buscar por título, lugar o descripción"
           value={searchValue}
           onChange={handleSearchChange}
         />
@@ -408,13 +408,13 @@ function EventFilters({
         </div>
       </section>
 
-      <section className="event-filter-section event-filter-section-categories" aria-label="Categorias">
+      <section className="event-filter-section event-filter-section-categories" aria-label="Categorías">
         <div className="event-filter-section-head">
           <span className="event-filter-section-icon" aria-hidden="true"><IconTag /></span>
-          <span className="event-filter-chip-label">Categorias</span>
+          <span className="event-filter-chip-label">Categorías</span>
         </div>
 
-        <div className="event-filters-category-grid" role="group" aria-label="Categorias de eventos">
+        <div className="event-filters-category-grid" role="group" aria-label="Categorías de eventos">
           {categories.map((category) => {
             const isActive = safeCategorySelection === category.name;
             return (
@@ -440,12 +440,12 @@ function EventFilters({
       >
         <summary>
           <span className="event-filter-section-icon" aria-hidden="true"><IconMoreFilters /></span>
-          <span>Mas filtros</span>
+          <span>Más filtros</span>
         </summary>
 
         <div className="event-filters-sections">
           {renderChipSection({
-            label: 'Ubicacion',
+            label: 'Ubicación',
             icon: <IconLocation />,
             options: localityOptions.map((locality) => ({ value: locality, label: locality })),
             selectedValue: safeLocalitySelection,
@@ -453,7 +453,7 @@ function EventFilters({
           })}
 
           {renderChipSection({
-            label: 'Publico',
+            label: 'Público',
             icon: <IconUsers />,
             options: audienceOptions,
             selectedValue: safeAudienceSelection,

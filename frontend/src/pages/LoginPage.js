@@ -132,7 +132,7 @@ function LoginPage({ onLogin }) {
             autoComplete="username"
           />
 
-          <label htmlFor="password">Contrasena</label>
+          <label htmlFor="password">Contraseña</label>
           <PasswordInput
             id="password"
             className="login-input"

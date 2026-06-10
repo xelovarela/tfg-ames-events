@@ -287,7 +287,7 @@ const EventForm = ({
 
       {/* Formulario principal con campos básicos, precio opcional y relaciones auxiliares. */}
       <form className="event-form" onSubmit={handleSubmit}>
-        <label className="event-form-label" htmlFor="title">Titulo</label>
+        <label className="event-form-label" htmlFor="title">Título</label>
         <input
           id="title"
           className="event-form-input"
@@ -310,7 +310,7 @@ const EventForm = ({
           onChange={handleChange}
         />
 
-        <label className="event-form-label" htmlFor="description">Descripcion</label>
+        <label className="event-form-label" htmlFor="description">Descripción</label>
         <textarea
           id="description"
           className="event-form-input"
@@ -331,7 +331,7 @@ const EventForm = ({
           accept="image/jpeg,image/png,image/webp,image/gif"
           onChange={handleImageChange}
         />
-        <p className="event-form-help">Si no subes una imagen, se mostrara la imagen de la categoria o la generica por defecto.</p>
+        <p className="event-form-help">Si no subes una imagen, se mostrará la imagen de la categoría o la genérica por defecto.</p>
 
         {eventToEdit?.image_url && (
           <label className="event-form-checkbox">
@@ -340,7 +340,7 @@ const EventForm = ({
               checked={removeImage}
               onChange={handleRemoveImageChange}
             />
-            <span>Quitar imagen actual y usar fallback por categoria</span>
+            <span>Quitar imagen actual y usar fallback por categoría</span>
           </label>
         )}
 
@@ -417,7 +417,7 @@ const EventForm = ({
           ))}
         </select>
 
-        <label className="event-form-label" htmlFor="category_id">Categoria</label>
+        <label className="event-form-label" htmlFor="category_id">Categoría</label>
         <select
           id="category_id"
           className="event-form-input"
@@ -434,7 +434,7 @@ const EventForm = ({
           ))}
         </select>
 
-        <label className="event-form-label" htmlFor="location_id">Ubicacion</label>
+        <label className="event-form-label" htmlFor="location_id">Ubicación</label>
         <select
           id="location_id"
           className="event-form-input"

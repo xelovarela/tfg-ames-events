@@ -1,6 +1,6 @@
 /**
- * Pagina de ayuda.
- * Reune preguntas frecuentes y consejos de uso para busqueda, favoritos y alertas.
+ * Página de ayuda.
+ * Reúne preguntas frecuentes y consejos de uso para búsqueda, favoritos y alertas.
  */
 import React from 'react';
 import { BellRing, CalendarDays, CircleHelp, Copy, Filter, Heart, MapPinned, Search, TriangleAlert } from 'lucide-react';
@@ -10,32 +10,32 @@ const FAQ_ITEMS = [
   {
     icon: Search,
     question: 'Como busco eventos?',
-    answer: 'Entra en la agenda y usa el buscador del panel de filtros. Puedes buscar por titulo, lugar o descripcion.'
+    answer: 'Entra en la agenda y usa el buscador del panel de filtros. Puedes buscar por título, lugar o descripción.'
   },
   {
     icon: Filter,
     question: 'Como uso los filtros?',
-    answer: 'Puedes combinar busqueda, fecha, gratuito, categoria, ubicacion y audiencia. Los filtros activos aparecen como chips y se pueden quitar uno a uno.'
+    answer: 'Puedes combinar búsqueda, fecha, gratuito, categoría, ubicación y audiencia. Los filtros activos aparecen como chips y se pueden quitar uno a uno.'
   },
   {
     icon: MapPinned,
     question: 'Como veo los eventos en mapa?',
-    answer: 'Abre la vista de mapa desde la navegacion principal o el footer. Los marcadores agrupan eventos por ubicacion y comparten los mismos filtros que el listado.'
+    answer: 'Abre la vista de mapa desde la navegación principal o el footer. Los marcadores agrupan eventos por ubicación y comparten los mismos filtros que el listado.'
   },
   {
     icon: CalendarDays,
     question: 'Como uso el calendario?',
-    answer: 'La vista de calendario muestra los eventos por dia. Si eres gestor, tambien puedes alternar entre eventos futuros, pasados o todos.'
+    answer: 'La vista de calendario muestra los eventos por día. Si eres gestor, también puedes alternar entre eventos futuros, pasados o todos.'
   },
   {
     icon: Heart,
     question: 'Como guardo favoritos?',
-    answer: 'Inicia sesion y pulsa el icono de favorito desde el listado o el detalle. Despues puedes revisarlos en Mis favoritos.'
+    answer: 'Inicia sesión y pulsa el icono de favorito desde el listado o el detalle. Después puedes revisarlos en Mis favoritos.'
   },
   {
     icon: BellRing,
     question: 'Como funcionan las alertas?',
-    answer: 'Las alertas permiten recibir avisos cuando se crean eventos que encajan con tus criterios: categoria, ubicacion, audiencia o palabra clave.'
+    answer: 'Las alertas permiten recibir avisos cuando se crean eventos que encajan con tus criterios: categoría, ubicación, audiencia o palabra clave.'
   },
   {
     icon: Copy,
@@ -44,8 +44,8 @@ const FAQ_ITEMS = [
   },
   {
     icon: TriangleAlert,
-    question: 'Que hago si falta informacion?',
-    answer: 'Consulta el detalle del evento o escribe a admin@anxovarela.es para comunicar la correccion. Si tienes cuenta, tambien puedes solicitar acceso para proponer eventos.'
+    question: 'Qué hago si falta información?',
+    answer: 'Consulta el detalle del evento o escribe a admin@anxovarela.es para comunicar la corrección. Si tienes cuenta, también puedes solicitar acceso para proponer eventos.'
   }
 ];
 
@@ -58,7 +58,7 @@ function HelpPage() {
       aside={(
         <div className="static-page-facts">
           <div className="static-page-fact">
-            <strong>Atajo rapido</strong>
+            <strong>Atajo rápido</strong>
             <span>La home, la agenda, el calendario y el mapa estan a un clic en la cabecera o en el footer.</span>
           </div>
           <div className="static-page-fact">

@@ -1,5 +1,5 @@
 /**
- * Pagina de favoritos del usuario.
+ * Página de favoritos del usuario.
  * Carga eventos guardados y permite anadir o retirar favoritos desde el listado.
  */
 import React, { useCallback, useEffect, useState } from 'react';

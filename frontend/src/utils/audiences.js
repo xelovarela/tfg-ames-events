@@ -1,6 +1,6 @@
 /**
- * Utilidades de ordenacion de publicos objetivo.
- * Dan prioridad al publico general y despues ordenan por rango de edad.
+ * Utilidades de ordenación de públicos objetivo.
+ * Dan prioridad al público general y después ordenan por rango de edad.
  */
 function getAudienceOrderValue(audience) {
   if (audience?.name === 'Todos') {

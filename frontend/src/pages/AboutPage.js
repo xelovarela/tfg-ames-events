@@ -1,6 +1,6 @@
 /**
- * Pagina informativa sobre la plataforma.
- * Presenta el objetivo del proyecto, el contexto academico y el enfoque local.
+ * Página informativa sobre la plataforma.
+ * Presenta el objetivo del proyecto, el contexto académico y el enfoque local.
  */
 import React from 'react';
 import { GraduationCap, Info, ShieldCheck, Users } from 'lucide-react';
@@ -9,7 +9,7 @@ import StaticPageLayout, { StaticPageSection } from './StaticPageLayout';
 function AboutPage() {
   return (
     <StaticPageLayout
-      eyebrow="Informacion general"
+      eyebrow="Información general"
       title="Acerca de Ames Events"
       subtitle="Ames Events reúne en un solo lugar la agenda municipal y familiar del concello, con una experiencia clara para familias, personas cuidadoras y ciudadanía en general."
       aside={(
@@ -19,7 +19,7 @@ function AboutPage() {
             <span>Eventos infantiles, familiares, culturales, deportivos y municipales.</span>
           </div>
           <div className="static-page-fact">
-            <strong>Publico</strong>
+            <strong>Público</strong>
             <span>Familias, cuidadores, entidades locales y cualquier persona que quiera planificar mejor su tiempo libre.</span>
           </div>
           <div className="static-page-fact">
@@ -41,13 +41,13 @@ function AboutPage() {
           <li>Actividades infantiles y familiares.</li>
           <li>Propuestas culturales y deportivas.</li>
           <li>Eventos organizados o difundidos por el ambito municipal.</li>
-          <li>Informacion util para decidir rapido que hacer hoy, este fin de semana o en proximas fechas.</li>
+          <li>Información útil para decidir rápido qué hacer hoy, este fin de semana o en próximas fechas.</li>
         </ul>
       </StaticPageSection>
 
       <StaticPageSection icon={ShieldCheck} title="A quién ayuda">
         <p>
-          La idea es reducir fricción: menos tiempo buscando, más claridad para comparar eventos y una navegación mas
+          La idea es reducir fricción: menos tiempo buscando, más claridad para comparar eventos y una navegación más
           amable en movil y escritorio.
         </p>
       </StaticPageSection>

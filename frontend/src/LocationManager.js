@@ -212,7 +212,7 @@ function LocationManager({ onLocationsChanged }) {
       });
       await readJsonResponse(response, 'Error guardando ubicación');
 
-      setMessage(editingId ? 'Ubicacion actualizada correctamente.' : 'Ubicacion creada correctamente.');
+      setMessage(editingId ? 'Ubicación actualizada correctamente.' : 'Ubicación creada correctamente.');
       clearForm();
       await loadLocations();
       if (onLocationsChanged) {
@@ -252,7 +252,7 @@ function LocationManager({ onLocationsChanged }) {
       });
       await readJsonResponse(response, 'Error eliminando ubicación');
 
-      setMessage('Ubicacion eliminada correctamente.');
+      setMessage('Ubicación eliminada correctamente.');
       await loadLocations();
       if (onLocationsChanged) {
         onLocationsChanged();
@@ -323,7 +323,7 @@ function LocationManager({ onLocationsChanged }) {
                   checked={showAreas}
                   onChange={(event) => setShowAreas(event.target.checked)}
                 />
-                Mostrar areas
+                Mostrar áreas
               </label>
             </div>
           </div>
@@ -379,7 +379,7 @@ function LocationManager({ onLocationsChanged }) {
             <div className="locations-map-legend" aria-label="Leyenda del mapa">
               <span><i className="locations-legend-selected" aria-hidden="true" /> Punto seleccionado</span>
               <span><i className="locations-legend-existing" aria-hidden="true" /> Ubicaciones existentes</span>
-              {showAreas && <span><i className="locations-legend-area" aria-hidden="true" /> Areas</span>}
+              {showAreas && <span><i className="locations-legend-area" aria-hidden="true" /> Áreas</span>}
             </div>
           </div>
         </div>

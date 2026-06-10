@@ -22,13 +22,13 @@ const SITEMAP_GROUPS = [
     title: 'Acceso',
     icon: LockKeyhole,
     links: [
-      { to: '/login', label: 'Iniciar sesion' },
+      { to: '/login', label: 'Iniciar sesión' },
       { to: '/register', label: 'Registro' },
-      { to: '/forgot-password', label: 'Recuperar contrasena' }
+      { to: '/forgot-password', label: 'Recuperar contraseña' }
     ]
   },
   {
-    title: 'Informacion',
+    title: 'Información',
     icon: CalendarDays,
     links: [
       { to: '/acerca-de', label: 'Acerca de' },
@@ -58,7 +58,7 @@ function SitemapPage() {
         <div className="static-page-facts">
           <div className="static-page-fact">
             <strong>Objetivo</strong>
-            <span>Encontrar rapido la sección que necesitas sin recorrer toda la navegación.</span>
+            <span>Encontrar rápido la sección que necesitas sin recorrer toda la navegación.</span>
           </div>
           <div className="static-page-fact">
             <strong>Formato</strong>

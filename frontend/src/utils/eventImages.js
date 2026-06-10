@@ -1,6 +1,6 @@
 /**
- * Utilidades de imagenes de evento.
- * Resuelven imagenes propias, imagenes por categoria y textos alternativos.
+ * Utilidades de imágenes de evento.
+ * Resuelven imágenes propias, imágenes por categoría y textos alternativos.
  */
 import { API_BASE_URL } from '../config';
 
@@ -66,7 +66,7 @@ function resolveImageUrl(imageUrl) {
 }
 
 function getEventImageUrl(event) {
-  // Si el backend no aporta imagen valida, se usa una ilustracion estable por categoria.
+  // Si el backend no aporta imagen válida, se usa una ilustración estable por categoría.
   const imageUrl = event?.image_url;
 
   if (!imageUrl || LEGACY_DEMO_IMAGE_PATHS.has(imageUrl)) {

@@ -1,6 +1,6 @@
 /**
- * Pagina de accesibilidad.
- * Resume criterios de uso inclusivo, navegacion con teclado y canales de ayuda.
+ * Página de accesibilidad.
+ * Resume criterios de uso inclusivo, navegación con teclado y canales de ayuda.
  */
 import React from 'react';
 import { Accessibility, Keyboard, MessageSquareText, Type } from 'lucide-react';
@@ -32,7 +32,7 @@ function AccessibilityPage() {
         </p>
       </StaticPageSection>
 
-      <StaticPageSection icon={Keyboard} title="Navegacion por teclado">
+      <StaticPageSection icon={Keyboard} title="Navegación por teclado">
         <ul className="static-page-bullets">
           <li>Los elementos interactivos pueden recorrerse con Tab y activarse con teclado.</li>
           <li>Los formularios usan etiquetas visibles para no depender solo de placeholders.</li>

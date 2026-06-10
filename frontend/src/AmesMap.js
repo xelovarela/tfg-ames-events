@@ -197,7 +197,7 @@ const AmesMap = ({ refreshTrigger, events: externalEvents, showContextLayers = t
             >
               <Popup maxWidth={320} minWidth={220} autoPanPadding={[18, 18]}>
                 <div className="map-popup">
-                  <span className="map-popup-kicker">Ubicacion</span>
+                  <span className="map-popup-kicker">Ubicación</span>
                   <strong className="map-popup-location">{locationGroup.location}</strong>
                   <div className="map-popup-events">
                     {locationGroup.events.map((event) => (

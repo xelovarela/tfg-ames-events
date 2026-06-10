@@ -242,7 +242,7 @@ const EventList = ({
         </p>
       )}
 
-      {/* Estado vacio y renderizado de tarjetas individuales de evento. */}
+      {/* Estado vacío y renderizado de tarjetas individuales de evento. */}
       {events.length === 0 && showEmptyState ? (
         <div className="event-list-empty">
           <strong>No hay eventos para mostrar</strong>
@@ -301,7 +301,7 @@ const EventList = ({
 
                   <dl className="event-list-meta">
                     <div>
-                      <dt><span className="event-list-meta-title-icon" title="Ubicacion"><IconLocation /></span></dt>
+                      <dt><span className="event-list-meta-title-icon" title="Ubicación"><IconLocation /></span></dt>
                       <dd>{event.location || 'No especificada'}</dd>
                     </div>
                     <div>
@@ -371,7 +371,7 @@ const EventList = ({
         </div>
 
         {events.length > EVENTS_PER_PAGE && (
-          <nav className="event-list-pagination" aria-label="Paginacion de eventos">
+          <nav className="event-list-pagination" aria-label="Paginación de eventos">
             <span>
               Mostrando {pageStartIndex + 1}-{pageEndIndex} de {events.length}
             </span>
@@ -385,7 +385,7 @@ const EventList = ({
                 Anterior
               </button>
               <span className="event-list-page-status">
-                Pagina {activePage} de {totalPages}
+                Página {activePage} de {totalPages}
               </span>
               <button
                 type="button"

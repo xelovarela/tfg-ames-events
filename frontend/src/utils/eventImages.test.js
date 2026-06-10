@@ -1,28 +1,28 @@
 /**
- * Pruebas de seleccion de imagenes de evento.
- * Verifican fallback por categoria, URL absoluta y textos alternativos.
+ * Pruebas de selección de imágenes de evento.
+ * Verifican fallback por categoría, URL absoluta y textos alternativos.
  */
 import { getCategoryFallbackImage, getEventImageAlt, getEventImageUrl, DEFAULT_EVENT_IMAGE } from './eventImages';
 
-describe('eventImages: seleccion de imagenes para tarjetas de eventos', () => {
-  test('usa la imagen por defecto cuando el evento no trae imagen ni categoria', () => {
+describe('eventImages: selección de imágenes para tarjetas de eventos', () => {
+  test('usa la imagen por defecto cuando el evento no trae imagen ni categoría', () => {
     expect(getEventImageUrl({})).toBe(DEFAULT_EVENT_IMAGE);
   });
 
-  test('usa una imagen local de categoria cuando no hay imagen subida', () => {
+  test('usa una imagen local de categoría cuando no hay imagen subida', () => {
     expect(getEventImageUrl({ category: 'Cultura' })).toBe('/event-images/category-cultura.webp');
     expect(getEventImageUrl({ category: 'Gastronomía' })).toBe('/event-images/category-gastronomia.webp');
-    expect(getCategoryFallbackImage('Categoria inventada')).toBe(DEFAULT_EVENT_IMAGE);
+    expect(getCategoryFallbackImage('Categoría inventada')).toBe(DEFAULT_EVENT_IMAGE);
   });
 
-  test('prioriza la imagen de categoria enviada por la API frente al fallback local', () => {
+  test('prioriza la imagen de categoría enviada por la API frente al fallback local', () => {
     expect(getEventImageUrl({
       category: 'Cultura',
       category_image_url: '/uploads/categories/category-photo.webp'
     })).toBe('http://localhost:3001/uploads/categories/category-photo.webp');
   });
 
-  test('sustituye imagenes demo antiguas por el fallback de categoria', () => {
+  test('sustituye imágenes demo antiguas por el fallback de categoría', () => {
     expect(getEventImageUrl({
       image_url: '/event-images/demo-sports.jpg',
       category: 'Deporte',
@@ -30,7 +30,7 @@ describe('eventImages: seleccion de imagenes para tarjetas de eventos', () => {
     })).toBe('/event-images/category-deporte.webp');
   });
 
-  test('respeta URLs absolutas de imagenes externas', () => {
+  test('respeta URLs absolutas de imágenes externas', () => {
     const imageUrl = 'https://cdn.example.com/events/photo.jpg';
 
     expect(getEventImageUrl({ image_url: imageUrl })).toBe(imageUrl);

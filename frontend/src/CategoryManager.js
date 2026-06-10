@@ -112,7 +112,7 @@ function CategoryManager({ onCategoriesChanged }) {
       });
       await readJsonResponse(response, 'Error guardando categoría');
 
-      setMessage(editingId ? 'Categoria actualizada correctamente.' : 'Categoria creada correctamente.');
+      setMessage(editingId ? 'Categoría actualizada correctamente.' : 'Categoría creada correctamente.');
       clearForm();
       await loadCategories();
       if (onCategoriesChanged) onCategoriesChanged();
@@ -136,7 +136,7 @@ function CategoryManager({ onCategoriesChanged }) {
       });
       await readJsonResponse(response, 'Error eliminando categoría');
 
-      setMessage('Categoria eliminada correctamente.');
+      setMessage('Categoría eliminada correctamente.');
       await loadCategories();
       if (onCategoriesChanged) onCategoriesChanged();
     } catch (error) {
@@ -193,7 +193,7 @@ function CategoryManager({ onCategoriesChanged }) {
 
         {(imagePreview || (!formData.remove_image && formData.image_url)) && (
           <div className="categories-image-preview">
-            <img src={imagePreview || resolveImageUrl(formData.image_url)} alt="Vista previa de la categoria" />
+            <img src={imagePreview || resolveImageUrl(formData.image_url)} alt="Vista previa de la categoría" />
           </div>
         )}
 

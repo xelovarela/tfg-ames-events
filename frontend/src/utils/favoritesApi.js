@@ -1,6 +1,6 @@
 /**
  * Cliente HTTP de favoritos.
- * Centraliza listado, alta y baja de favoritos con cabeceras de autenticacion.
+ * Centraliza listado, alta y baja de favoritos con cabeceras de autenticación.
  */
 import { API_BASE_URL } from '../config';
 import { withAuthHeaders } from './authFetch';

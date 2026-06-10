@@ -157,7 +157,7 @@ function AudienceManager({ onAudiencesChanged }) {
           className="audiences-input"
           type="number"
           name="age_min"
-          placeholder="Edad minima"
+          placeholder="Edad mínima"
           min="0"
           step="1"
           value={formData.age_min}
@@ -168,7 +168,7 @@ function AudienceManager({ onAudiencesChanged }) {
           className="audiences-input"
           type="number"
           name="age_max"
-          placeholder="Edad maxima"
+          placeholder="Edad máxima"
           min="0"
           step="1"
           value={formData.age_max}

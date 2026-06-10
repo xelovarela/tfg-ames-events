@@ -190,7 +190,7 @@ function OrganizerManager({ onOrganizersChanged }) {
           className="organizers-input"
           type="text"
           name="phone"
-          placeholder="Telefono (opcional)"
+          placeholder="Teléfono (opcional)"
           value={formData.phone}
           onChange={handleChange}
           maxLength={30}
@@ -219,7 +219,7 @@ function OrganizerManager({ onOrganizersChanged }) {
             <article className="organizers-item" key={organizer.id}>
               <strong>{organizer.name}</strong>
               <p>Email: {organizer.email || 'No especificado'}</p>
-              <p>Telefono: {organizer.phone || 'No especificado'}</p>
+              <p>Teléfono: {organizer.phone || 'No especificado'}</p>
               <div className="organizers-item-actions">
                 <button className="organizers-btn organizers-btn-secondary" onClick={() => handleEdit(organizer)}>
                   Editar

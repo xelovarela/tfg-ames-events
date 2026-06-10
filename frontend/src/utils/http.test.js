@@ -1,6 +1,6 @@
 /**
  * Pruebas de lectura de respuestas HTTP.
- * Verifican JSON valido, cuerpos vacios y mensajes de error alternativos.
+ * Verifican JSON válido, cuerpos vacíos y mensajes de error alternativos.
  */
 import { readJsonResponse } from './http';
 

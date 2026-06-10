@@ -21,19 +21,19 @@ function validateAudience(form) {
   }
 
   if (form.age_min !== '' && form.age_min !== null && form.age_min !== undefined && ageMin === null) {
-    return 'La edad minima debe ser un numero entero.';
+    return 'La edad mínima debe ser un número entero.';
   }
 
   if (form.age_max !== '' && form.age_max !== null && form.age_max !== undefined && ageMax === null) {
-    return 'La edad maxima debe ser un numero entero.';
+    return 'La edad máxima debe ser un número entero.';
   }
 
   if ((ageMin === null && ageMax !== null) || (ageMin !== null && ageMax === null)) {
-    return 'Debes indicar edad minima y maxima juntas.';
+    return 'Debes indicar edad mínima y máxima juntas.';
   }
 
   if (ageMin !== null && ageMax !== null && (ageMin < 0 || ageMax < 0 || ageMin > ageMax)) {
-    return 'Rango de edad invalido.';
+    return 'Rango de edad inválido.';
   }
 
   return null;

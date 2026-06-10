@@ -1,5 +1,5 @@
 /**
- * Pagina para solicitar permisos de gestion de contenido.
+ * Página para solicitar permisos de gestión de contenido.
  * Permite enviar una propuesta y revisar el historial de solicitudes propias.
  */
 import React, { useEffect, useMemo, useState } from 'react';

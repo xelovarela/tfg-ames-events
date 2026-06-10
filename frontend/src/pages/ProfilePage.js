@@ -1,6 +1,6 @@
 /**
- * Pagina de perfil.
- * Permite consultar la cuenta, cambiar el nombre visible y actualizar la contrasena.
+ * Página de perfil.
+ * Permite consultar la cuenta, cambiar el nombre visible y actualizar la contraseña.
  */
 import React, { useEffect, useMemo, useState } from 'react';
 import { API_BASE_URL } from '../config';
@@ -25,7 +25,7 @@ async function readJsonOrThrow(response, fallbackMessage) {
 }
 
 function ProfilePage({ session }) {
-  // Separamos datos de perfil y contrasena para validar cada formulario por su cuenta.
+  // Separamos datos de perfil y contraseña para validar cada formulario por su cuenta.
   const [profile, setProfile] = useState(() => session?.user || null);
   const [username, setUsername] = useState(() => getDisplayName(session?.user));
   const [profileMessage, setProfileMessage] = useState('');
@@ -84,7 +84,7 @@ function ProfilePage({ session }) {
 
     const trimmedUsername = username.trim();
     if (!trimmedUsername) {
-      setProfileMessage('El nombre de usuario no puede estar vacio.');
+      setProfileMessage('El nombre de usuario no puede estar vacío.');
       return;
     }
 
@@ -162,7 +162,7 @@ function ProfilePage({ session }) {
       setCurrentPassword('');
       setNewPassword('');
       setConfirmPassword('');
-      setPasswordMessage(data.message || 'Contrasena actualizada correctamente.');
+      setPasswordMessage(data.message || 'Contraseña actualizada correctamente.');
     } catch (error) {
       console.error(error);
       setPasswordMessage(error.message || 'No se pudo cambiar la contraseña.');
@@ -189,7 +189,7 @@ function ProfilePage({ session }) {
 
       <section className="profile-grid">
         <article className="profile-card">
-          <h3>Informacion de la cuenta</h3>
+          <h3>Información de la cuenta</h3>
           <dl className="profile-data-list">
             <div>
               <dt>Nombre de usuario</dt>
@@ -204,7 +204,7 @@ function ProfilePage({ session }) {
               <dd>{profile?.role || 'No disponible'}</dd>
             </div>
             <div>
-              <dt>Verificacion del email</dt>
+              <dt>Verificación del email</dt>
               <dd>{verifiedText}</dd>
             </div>
           </dl>
@@ -232,7 +232,7 @@ function ProfilePage({ session }) {
         <article className="profile-card">
           <h3>Cambiar contraseña</h3>
           <form className="profile-form" onSubmit={handlePasswordSubmit}>
-            <label htmlFor="current-password">Contrasena actual</label>
+            <label htmlFor="current-password">Contraseña actual</label>
             <PasswordInput
               id="current-password"
               className="profile-input"

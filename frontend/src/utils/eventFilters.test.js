@@ -46,18 +46,18 @@ describe('eventFilters: listado y filtros compartidos por mapa y agenda', () => 
     jest.useRealTimers();
   });
 
-  test('devuelve una lista vacia si el origen no es un array', () => {
+  test('devuelve una lista vacía si el origen no es un array', () => {
     expect(filterEvents(null, initialEventFilters)).toEqual([]);
   });
 
-  test('filtra por texto buscando en titulo, descripcion, categoria, lugar y publico', () => {
+  test('filtra por texto buscando en título, descripción, categoría, lugar y público', () => {
     expect(filterEvents(EVENTS, { ...initialEventFilters, search: 'cocina' }).map((event) => event.id))
       .toEqual([2]);
     expect(filterEvents(EVENTS, { ...initialEventFilters, search: 'familias' }).map((event) => event.id))
       .toEqual([1]);
   });
 
-  test('combina categoria, localidad, publico y gratis para mostrar solo eventos compatibles', () => {
+  test('combina categoría, localidad, público y gratis para mostrar solo eventos compatibles', () => {
     expect(filterEvents(EVENTS, {
       ...initialEventFilters,
       category: 'Musica',
@@ -67,7 +67,7 @@ describe('eventFilters: listado y filtros compartidos por mapa y agenda', () => 
     }).map((event) => event.id)).toEqual([1]);
   });
 
-  test('filtra por fecha de hoy y manana usando la fecha actual del sistema', () => {
+  test('filtra por fecha de hoy y mañana usando la fecha actual del sistema', () => {
     expect(filterEvents(EVENTS, { ...initialEventFilters, datePreset: 'today' }).map((event) => event.id))
       .toEqual([1]);
     expect(filterEvents(EVENTS, { ...initialEventFilters, datePreset: 'tomorrow' }).map((event) => event.id))

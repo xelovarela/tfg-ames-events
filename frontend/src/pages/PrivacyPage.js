@@ -1,5 +1,5 @@
 /**
- * Pagina de privacidad.
+ * Página de privacidad.
  * Explica que datos se tratan y como se protegen dentro de la aplicacion.
  */
 import React from 'react';
@@ -11,7 +11,7 @@ function PrivacyPage() {
     <StaticPageLayout
       eyebrow="Legal"
       title="Politica de privacidad"
-      subtitle="Informacion sobre el tratamiento de datos asociado al uso de Ames Events."
+      subtitle="Información sobre el tratamiento de datos asociado al uso de Ames Events."
       aside={(
         <div className="static-page-facts">
           <div className="static-page-fact">

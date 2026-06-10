@@ -1,6 +1,6 @@
 /**
- * Cabecera principal de navegacion.
- * Gestiona enlaces visibles, menu desplegable en movil y acciones de sesion.
+ * Cabecera principal de navegación.
+ * Gestiona enlaces visibles, menú desplegable en móvil y acciones de sesión.
  */
 import React, { useEffect, useRef, useState } from 'react';
 import { CalendarDays, CalendarPlus, ChevronDown, ListFilter, LogOut, MapPin, UserRound } from 'lucide-react';

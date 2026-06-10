@@ -19,11 +19,11 @@ const VALID_EVENT_FORM = {
 const NOW = new Date('2026-05-08T12:00:00');
 
 describe('eventFormValidation: reglas para crear eventos', () => {
-  test('acepta un evento gratuito con titulo, categoria, ubicacion y fecha futura', () => {
+  test('acepta un evento gratuito con título, categoría, ubicación y fecha futura', () => {
     expect(validateEventForm(VALID_EVENT_FORM, { now: NOW })).toBeNull();
   });
 
-  test('rechaza eventos sin titulo, categoria o ubicacion obligatoria', () => {
+  test('rechaza eventos sin título, categoría o ubicación obligatoria', () => {
     expect(validateEventForm({ ...VALID_EVENT_FORM, title: '   ' }, { now: NOW }))
       .toBe('Completa todos los campos obligatorios.');
     expect(validateEventForm({ ...VALID_EVENT_FORM, category_id: '' }, { now: NOW }))
@@ -37,7 +37,7 @@ describe('eventFormValidation: reglas para crear eventos', () => {
       .toBe('Elige una nueva fecha para confirmar la duplicacion.');
   });
 
-  test('rechaza fechas invalidas antes de enviar el formulario a la API', () => {
+  test('rechaza fechas inválidas antes de enviar el formulario a la API', () => {
     expect(validateEventForm({ ...VALID_EVENT_FORM, event_date: 'no-es-fecha' }, { now: NOW }))
       .toBe('La fecha del evento no es valida.');
   });

@@ -1,6 +1,6 @@
 /**
- * Pagina de restablecimiento de contrasena.
- * Lee el token de la URL y envia la nueva contrasena al backend.
+ * Página de restablecimiento de contraseña.
+ * Lee el token de la URL y envía la nueva contraseña al backend.
  */
 import React, { useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
@@ -25,7 +25,7 @@ function ResetPasswordPage() {
     }
 
     if (!token) {
-      setMessage('Token invalido o expirado.');
+      setMessage('Token inválido o expirado.');
       setIsSuccess(false);
       return;
     }
@@ -58,15 +58,15 @@ function ResetPasswordPage() {
         })
       });
 
-      const data = await readJsonResponse(response, 'Token invalido o expirado.');
+      const data = await readJsonResponse(response, 'Token inválido o expirado.');
 
-      setMessage(data.message || 'Contrasena actualizada.');
+      setMessage(data.message || 'Contraseña actualizada.');
       setIsSuccess(true);
       setNewPassword('');
       setConfirmPassword('');
     } catch (error) {
       console.error(error);
-      setMessage('Token invalido o expirado.');
+      setMessage('Token inválido o expirado.');
       setIsSuccess(false);
     } finally {
       setIsSubmitting(false);
@@ -109,7 +109,7 @@ function ResetPasswordPage() {
 
         {message && (
           <p className={`password-reset-message${isSuccess ? ' password-reset-message-success' : ''}`}>
-            {isSuccess ? 'Contrasena actualizada.' : message}
+            {isSuccess ? 'Contraseña actualizada.' : message}
           </p>
         )}
       </section>
