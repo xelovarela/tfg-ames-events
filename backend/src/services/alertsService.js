@@ -261,13 +261,15 @@ async function notifyMatchingAlertsForEvent(event) {
     sentKeys.add(dedupeKey);
 
     try {
-      await emailService.sendEventAlertEmail({
+      const delivery = await emailService.sendEventAlertEmail({
         to: alert.email,
         name: alert.username,
         alertName: alert.name,
         event
       });
-      sentCount += 1;
+      if (delivery?.delivered !== false) {
+        sentCount += 1;
+      }
     } catch (error) {
       console.error(`Error sending alert ${alert.id} for event ${event.id}:`, error);
     }

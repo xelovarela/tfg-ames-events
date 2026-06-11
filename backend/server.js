@@ -20,10 +20,16 @@ const favoritesRoutes = require('./src/routes/favorites');
 const alertsRoutes = require('./src/routes/alerts');
 const contentManagerRequestsRoutes = require('./src/routes/contentManagerRequests');
 
+const corsOriginsEnv = process.env.CORS_ORIGINS || '';
+
 // Validar variables críticas antes de arrancar
 if (process.env.NODE_ENV === 'production') {
   if (!process.env.JWT_SECRET) {
     console.error('ERROR: JWT_SECRET no está configurado en producción.');
+    process.exit(1);
+  }
+  if (!corsOriginsEnv.trim()) {
+    console.error('ERROR: CORS_ORIGINS no está configurado en producción.');
     process.exit(1);
   }
   console.log('✓ JWT_SECRET configurado en producción');
@@ -33,7 +39,7 @@ const app = express();
 
 // Se inicializa la aplicación principal de Express antes de registrar cualquier ruta.
 
-const allowedCorsOrigins = (process.env.CORS_ORIGINS || '')
+const allowedCorsOrigins = corsOriginsEnv
   .split(',')
   .map((origin) => origin.trim())
   .filter(Boolean);

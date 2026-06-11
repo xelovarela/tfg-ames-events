@@ -6,6 +6,7 @@ const assert = require('node:assert/strict');
 const test = require('node:test');
 const jwt = require('jsonwebtoken');
 const {
+  optionalAuth,
   requireAdmin,
   requireAnyRole,
   requireAuth
@@ -61,6 +62,20 @@ test('auth: requireAuth carga id, username y rol desde un JWT válido', () => {
 
   assert.equal(nextCalled, true);
   assert.deepEqual(req.user, { id: 42, username: 'gestor', role: 'content_manager' });
+});
+
+test('auth: optionalAuth ignora tokens invalidos y continua como anonimo', () => {
+  const req = { headers: { authorization: 'Bearer token-invalido' } };
+  const res = createResponse();
+  let nextCalled = false;
+
+  optionalAuth(req, res, () => {
+    nextCalled = true;
+  });
+
+  assert.equal(nextCalled, true);
+  assert.equal(res.statusCode, 200);
+  assert.equal(req.user, undefined);
 });
 
 test('auth: requireAdmin permite admin y bloquea usuarios sin rol administrador', () => {
